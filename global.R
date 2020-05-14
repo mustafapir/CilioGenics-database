@@ -1,5 +1,6 @@
 
 library(DT)
+library(data.table)
 
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
 

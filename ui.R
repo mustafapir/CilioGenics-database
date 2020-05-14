@@ -11,13 +11,13 @@ library(shiny)
 library(shinydashboardPlus)
 library(shinyjs)
 library(shinyWidgets)
-library(formattable)
+#library(formattable)
 library(shinycssloaders)
 library(reactable)
 library(networkD3)
 library(iheatmapr)
 library(cicerone)
-
+library(data.table)
 
 source("global.R")
 
