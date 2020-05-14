@@ -239,9 +239,7 @@ server <- function(input, output, session) {
         })
     
     output$pubtable<-renderReactable({
-        reactable(pubdata(),
-                  selection = "single",
-                  onClick = "select"
+        reactable(pubdata()
                   )}
         )
     

@@ -20,6 +20,7 @@ library(iheatmapr)
 library(cicerone)
 library(data.table)
 library(shinyBS)
+library(dplyr)
 
 source("global.R")
 
