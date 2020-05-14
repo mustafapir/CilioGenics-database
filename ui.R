@@ -9,6 +9,7 @@
 
 library(shiny)
 library(shinydashboardPlus)
+library(shinydashboard)
 library(shinyjs)
 library(shinyWidgets)
 #library(formattable)
