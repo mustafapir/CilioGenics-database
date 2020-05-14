@@ -19,6 +19,7 @@ library(networkD3)
 library(iheatmapr)
 library(cicerone)
 library(data.table)
+library(shinyBS)
 
 source("global.R")
 
