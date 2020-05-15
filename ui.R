@@ -23,11 +23,16 @@ library(shinyBS)
 library(dplyr)
 
 source("global.R")
+source("functions.R")
 
 # Define UI for application that draws a histogram
 
 ui <- dashboardPagePlus(
     header = dashboardHeaderPlus(),
+    sidebar_background = "light",
+    skin = "purple",
+    
+    useShinyjs(),
     
     use_cicerone(),
     sidebar = dashboardSidebar(
@@ -48,7 +53,7 @@ ui <- dashboardPagePlus(
     });
   "),
         ),
-        useShinyjs(),
+        
         fluidRow(
             div(
                 id = "tabButtons",
@@ -56,27 +61,35 @@ ui <- dashboardPagePlus(
                     width = 12,
                     align = "center",
                     br(),
-                    bsButton("homePage", "Home",
-                             icon = icon("home"), type = "action",
-                             style = "default", value = TRUE),
-                    bsButton("proteinPage", "Protein interactions",
-                             icon = icon("toggle-off"), type = "action",
-                             style = "primary", value = TRUE),
+                    actionBttn("homePage", "Home",
+                             icon = icon("home"), 
+                             style = "unite",
+                             color = "default",
+                             size = "sm"),
+                    actionBttn("proteinPage", "Protein interactions",
+                             icon = img(src = "network2.png", height = "20px"), 
+                             color = "primary",
+                             style = "unite",
+                             size = "sm"),
                     # bsButton("showpanel8", "Genetic interactions",
                     #          icon = icon("toggle-off"), type = "action",
                     #          style = "primary", value = TRUE),
                     # bsButton("showpanel8", "Single cell",
                     #          icon = icon("toggle-off"), type = "action",
                     #          style = "primary", value = TRUE),
-                    bsButton("clusterPage", "Clusters",
-                             icon = icon("toggle-off"), type = "action",
-                             style = "primary", value = TRUE),
+                    actionBttn("clusterPage", "Clusters",
+                             icon = img(src = "tree.png", height = "20px"), 
+                             color = "primary",
+                             style = "unite",
+                             size = "sm"),
                     # bsButton("showpanel8", "Motifs",
                     #          icon = icon("toggle-off"), type = "action",
                     #          style = "primary", value = TRUE),
-                    bsButton("pubPage", "Publications",
-                             icon = icon("toggle-off"), type = "action",
-                             style = "primary", value = TRUE),
+                    actionBttn("pubPage", "Publications",
+                             icon = icon("book"), 
+                             color = "primary",
+                             style = "unite",
+                             size = "sm"),
                     # bsButton("showpanel8", "Protein atlas",
                     #          icon = icon("toggle-off"), type = "action",
                     #          style = "primary", value = TRUE)
@@ -178,15 +191,25 @@ ui <- dashboardPagePlus(
                         individual = TRUE
                     ),
                 ),
+            ),
+        ),
+        fluidRow(
+            div(
+                id = "protein_interaction1",
                 column(
-                    width = 12,
+                    width = 6,
                     uiOutput("pro_box1")
+                ),
+                column(
+                    width = 6,
+                    reactableOutput("pro_int")
                 )
                 #column(
                 #    width = 12,
                 #    uiOutput("pro_box2")
-                )
+            )
         ),
+        
         
         fluidRow(
             div(
@@ -206,6 +229,27 @@ ui <- dashboardPagePlus(
                 column(
                     width = 6,
                     withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"))
+                )
+            )
+        ),
+        
+        fluidRow(
+            div(
+                br(), br(),
+                column(
+                    width = 1,
+                    id = "back_button",
+                    tags$div(
+                        title = "click to go back",
+                        actionBttn(
+                            inputId = "back",
+                            label = "BACK", 
+                            style = "material-flat",
+                            color = "royal",
+                            icon = icon("arrow-left"),
+                            size = "sm"
+                        )
+                    )
                 )
             )
         )

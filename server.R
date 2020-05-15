@@ -14,24 +14,43 @@ source("functions.R")
 # Define server logic required to draw a histogram
 server <- function(input, output, session) { 
     
+    addClass(selector = "body", class = "sidebar-collapse")
     
-    
-    guide$init()$start()
     
      observeEvent("", {
+         
+         showModal(modalDialog(
+             includeHTML("intro.html"),
+             easyClose = TRUE,
+             footer = tagList(
+                 actionButton(inputId = "tour", label = "Introductory Tour", icon = icon("info-circle")),
+                 actionButton(inputId = "close", label = "Close") #icon = icon(""))
+             )
+         ))
+         
          show("landing_page")
          hide("protein_interaction")
+         hide("protein_interaction1")
          hide("tabButtons")
          hide("pub")
          hide("cluster_page")
          
      }, once = TRUE)
      
+     observeEvent(input$tour, {
+         removeModal()
+         guide$init()$start()
+     })
+     
     # observeEvent(input$geneName, {
     #     show("protein_interaction")
     #     hide("landing_page")
     #     show("tabButtons")
     # })
+     
+     observeEvent(input$close,{
+         removeModal()
+     })
     
     
      observeEvent(input$geneName_search, { 
@@ -45,7 +64,7 @@ server <- function(input, output, session) {
                   )
               )
           }
-         else if (!(toupper(input$geneName) %in% toupper(final_score_table$Gene_name))){
+         else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name))){
              sendSweetAlert(
                  session = session,
                  title = "ERROR!",
@@ -57,9 +76,15 @@ server <- function(input, output, session) {
          }
          else {
              show("protein_interaction")
+             show("protein_interaction1")
              hide("landing_page")
              show("tabButtons")
+             hide("cluster_page")
+             hide("pub")
+             show("back_button")
              click("proteinPage")
+             #hide("proteinPage")
+             updateTabItems(session, "tabs", selected = character(0))
          }
          
      },
@@ -69,32 +94,42 @@ server <- function(input, output, session) {
     observeEvent(input$homePage, {
          show("landing_page")
          hide("protein_interaction")
+         hide("protein_interaction1")
          hide("tabButtons")
          hide("pub")
          hide("cluster_page")
          click("geneName_reset")
+         hide("back_button")
          updateTabItems(session, "tabs", "hometab")
     })
     
     observeEvent(input$proteinPage, {
         show("protein_interaction")
+        show("protein_interaction1")
         hide("landing_page")
         hide("pub")
         hide("cluster_page")
+        #hide("proteinPage")
     })
     
     observeEvent(input$pubPage, {
         show("pub")
         hide("landing_page")
         hide("protein_interaction")
+        hide("protein_interaction1")
         hide("cluster_page")
+        #hide("pubPage")
+        #show("proteinPage")
     })
     
     observeEvent(input$clusterPage, {
         show("cluster_page")
         hide("landing_page")
         hide("protein_interaction")
+        hide("protein_interaction1")
         hide("pub")
+        #hide("clusterPage")
+        #show("proteinPage")
     })
     
     observeEvent(input$close,{
@@ -104,26 +139,34 @@ server <- function(input, output, session) {
     observeEvent(input$hometab, {
         show("landing_page")
         hide("protein_interaction")
+        hide("protein_interaction1")
         hide("tabButtons")
         hide("cluster_page")
         hide("pub")
+        hide("back_button")
         
     })
     
     observeEvent(input$tabs == "exploretab", {
         show("exploretab")
         hide("protein_interaction")
+        hide("protein_interaction1")
         hide("tabButtons")
         hide("pub")
         show("exptab")
+        hide("cluster_page")
+        hide("back_button")
         #updateTabItems(session, "tabs", "exploretab")
     })
     
     observeEvent(input$tabs == "hometab", {
         show("landing_page")
         hide("protein_interaction")
+        hide("protein_interaction1")
         hide("tabButtons")
         hide("pub")
+        hide("cluster_page")
+        hide("back_button")
         click("geneName_reset")
     })
     
@@ -140,7 +183,11 @@ server <- function(input, output, session) {
                 hide("exptab")
                 show("tabButtons")
                 show("protein_interaction")
+                show("protein_interaction1")
                 hide("landing_page")
+                show("back_button")
+                click("proteinPage")
+                updateTabItems(session, "tabs", selected = character(0))
             #click("geneName_search")
             }
         }
@@ -148,9 +195,31 @@ server <- function(input, output, session) {
     ignoreInit = TRUE,
     ignoreNULL = TRUE)
     
+    observeEvent(input$back, {
+        
+        hide("protein_interaction")
+        hide("protein_interaction1")
+        hide("tabButtons")
+        hide("pub")
+        hide("cluster_page")
+        hide("back_button")
+        show("exptab")
+        show("landing_page")
+    })
+    
     
     genename<-reactive({
-        input$geneName
+        
+        if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
+            (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
+            length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
+            gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
+        }
+        else if (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)){
+            gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
+            }
+        else {gname<-input$geneName}
+        gname
     })
     
     genenumber<-reactive({
@@ -165,18 +234,19 @@ server <- function(input, output, session) {
         b<-intact %>% filter(toupper(Gene_name_A) == toupper(genename()))
         c<-wbP %>% filter(toupper(Gene_name_A) == toupper(genename()))
         zz<-data.frame(rbind(a, b, c))#[which(data.frame(rbind(a, b, c))$Gene_name_A %in% input$proradio),]
-        zz[which(zz$type %in% input$proradio),]
+        colnames(zz)<-c("Interactor A", "Interactor B", "Source")
+        zz[which(zz$Source %in% input$proradio),]
         
     })
     
     pubdata<-reactive({
         
-        data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(input$geneName))]))
+        data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
     })
     
     inputcluster<-reactive({
         
-        as.matrix(nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(input$geneName))]),2:73])
+        as.matrix(nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),2:73])
     })
     
     inputclusternumber<-reactive({
@@ -184,12 +254,19 @@ server <- function(input, output, session) {
         as.matrix(nscores2[which(aa$cluster_number == input$clusternumber),2:73])
     })
     
+    
+    
     selected <- reactive(getReactableState("generaltable2", "selected"))
     
     
     output$networkplot<-renderSimpleNetwork({
         simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
                       opacity = 1, fontSize = 8)
+    })
+    
+    output$pro_int<-renderReactable({
+        
+        reactable(networkdata())
     })
         
     output$generaltable2<-renderReactable({
@@ -218,24 +295,19 @@ server <- function(input, output, session) {
     })
     
     output$textForPro<-renderText({paste("There is no protein interaction for", genename(), "gene")})
-    output$ot<-renderText({paste("this is", input$geneName)})
+    output$ot<-renderText({paste("this is", genename())})
     
         output$pro_box1 <- renderUI({
-            div(
-                style = "position: relative",
-                
-                boxPlus(
+            
+                box(
                     title = paste0("Protein interaction network for ", genename(), " gene"),
-                    closable = TRUE,
-                    collapsible = TRUE,
-                    enable_dropdown = FALSE,
+                    width = 12,
                     if (length(networkdata()[[1]]) == 0){
                         #print(paste("There is no protein interaction for", genename(), "gene"))
                         textOutput("textForPro")
                     }
                     else {withSpinner(simpleNetworkOutput("networkplot"))}
                 )
-            )
         })
     
     output$pubtable<-renderReactable({
