@@ -23,6 +23,6 @@ colnames(anot)[1]<-"Class"
 
 my_colour = list(organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"), 
                  Class = c(Animals = "firebrick3", Fungi = "dodgerblue3", Protists = "darkgrey", Plants = "chartreuse", Other = "ghostwhite", Bacteria = "gray0"))
-
+gene_synonyms2<-fread("./data/gene_synonyms2.csv")
 
 
