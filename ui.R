@@ -245,7 +245,7 @@ ui <- dashboardPagePlus(
                             inputId = "back",
                             label = "BACK", 
                             style = "material-flat",
-                            color = "royal",
+                            color = "primary",
                             icon = icon("arrow-left"),
                             size = "sm"
                         )
