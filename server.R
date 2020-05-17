@@ -254,6 +254,10 @@ server <- function(input, output, session) {
         as.matrix(nscores2[which(aa$cluster_number == input$clusternumber),2:73])
     })
     
+    inputclustertable<-reactive({
+        
+        data.frame('Gene name' = nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),1])
+    })
     
     
     selected <- reactive(getReactableState("generaltable2", "selected"))
@@ -311,9 +315,9 @@ server <- function(input, output, session) {
         })
     
     output$pubtable<-renderReactable({
-        reactable(pubdata()
-                  )}
-        )
+        reactable(pubdata(), resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
+        })
     
     output$heatmapcluster<-renderIheatmap({
         
@@ -322,6 +326,12 @@ server <- function(input, output, session) {
             add_col_labels(size = 0.6,font = list(size = 9), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
+    })
+    
+    output$hclustertable<-renderReactable({
+        
+        reactable(inputclustertable(), resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
     })
     
     output$heatmapclusternumber<-renderIheatmap({

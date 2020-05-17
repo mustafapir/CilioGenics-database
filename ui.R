@@ -45,7 +45,7 @@ ui <- dashboardPagePlus(
     ),
     body = dashboardBody(
         tags$head(
-            #tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+            tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
             tags$script(src = "enter_button.js"),
             tags$script("
     Shiny.addCustomMessageHandler('geneName', function(value) {
@@ -227,8 +227,9 @@ ui <- dashboardPagePlus(
                 br(), br(),
                 id = "cluster_page",
                 column(
-                    width = 6,
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"))
+                    width = 12,
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px")),
+                    withSpinner(reactableOutput("hclustertable"))
                 )
             )
         ),
