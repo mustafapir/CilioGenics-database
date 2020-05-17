@@ -46,6 +46,7 @@ ui <- dashboardPagePlus(
     body = dashboardBody(
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
+            tags$link(rel = "stylesheet", type = "text/css", href = "stylesheet.css"),
             tags$script(src = "enter_button.js"),
             tags$script("
     Shiny.addCustomMessageHandler('geneName', function(value) {
