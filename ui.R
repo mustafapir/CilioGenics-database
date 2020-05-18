@@ -189,7 +189,14 @@ ui <- dashboardPagePlus(
                         direction = "vertical",
                         individual = TRUE
                     ),
-                ),
+                ), br(),
+                column(
+                    width = 3,
+                    switchInput(
+                        label = "Switch on only if total number of interaction is less than 4",
+                        inputId = "pro_children"
+                    )
+                )
             ),
         ),
         fluidRow(
@@ -201,7 +208,7 @@ ui <- dashboardPagePlus(
                 ),
                 column(
                     width = 6,
-                    reactableOutput("pro_int")
+                    uiOutput("protable")
                 )
                 #column(
                 #    width = 12,

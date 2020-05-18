@@ -257,6 +257,15 @@ server <- function(input, output, session) {
         
     })
     
+    networkdata2<-reactive({
+        
+        a<-data.frame(rbind(biogrid, intact, wbP))
+        colnames(a)<-c("Interactor A", "Interactor B", "Source")
+        b<-a[which(a[[1]] %in% networkdata()[[2]]),]
+        data.frame(rbind(networkdata(), b))
+
+    })
+    
     pubdata<-reactive({
         
         data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
@@ -291,9 +300,30 @@ server <- function(input, output, session) {
                       opacity = 1, fontSize = 8)
     })
     
+    output$networkplot2<-renderSimpleNetwork({
+        simpleNetwork(networkdata2(), height = "200px", width = "200px", zoom = TRUE,
+                      opacity = 1, fontSize = 8, charge = -10)
+    })
+    
     output$pro_int<-renderReactable({
         
-        reactable(networkdata())
+        reactable(networkdata(), resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
+    })
+    
+    output$pro_int2<-renderReactable({
+        
+        reactable(networkdata2(), resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
+    })
+    
+    output$protable<-renderUI({
+        
+        if (input$pro_children == TRUE){
+            
+            withSpinner(reactableOutput("pro_int2"))
+        }
+        else {withSpinner(reactableOutput("pro_int"))}
     })
         
     output$generaltable2<-renderReactable({
@@ -378,7 +408,14 @@ server <- function(input, output, session) {
                         #print(paste("There is no protein interaction for", genename(), "gene"))
                         textOutput("textForPro")
                     }
-                    else {withSpinner(simpleNetworkOutput("networkplot"))}
+                    else if (input$pro_children == FALSE){
+                        
+                        withSpinner(simpleNetworkOutput("networkplot"))
+                    }
+                    else if (length(networkdata2()[[1]] != 0)){
+                        
+                        withSpinner(simpleNetworkOutput("networkplot2"))
+                    }
                 )
         })
     
