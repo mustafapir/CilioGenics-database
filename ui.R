@@ -1,11 +1,4 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 
 library(shiny)
 library(shinydashboardPlus)
@@ -25,7 +18,6 @@ library(dplyr)
 source("global.R")
 source("functions.R")
 
-# Define UI for application that draws a histogram
 
 ui <- dashboardPagePlus(
     header = dashboardHeaderPlus(),
@@ -151,7 +143,10 @@ ui <- dashboardPagePlus(
                                 title = "Gene table",
                                 id = "tab1",
                                 withSpinner(reactableOutput("generaltable2")),
-                                textOutput("ot")
+                                br(), br(),
+                                div(title = "Gene order by categories",
+                                withSpinner(reactableOutput("generaltable3")))
+                                #textOutput("ot")
                             ),
                             tabPanel(
                                 id = "tab2",
@@ -165,7 +160,10 @@ ui <- dashboardPagePlus(
                                         "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
                                         )
                                 ),
-                                withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"))
+                                withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px")),
+                                br(), br(),
+                                tabPanel(title = "Genes ordered by categories", id = "geneorder",
+                                withSpinner(reactableOutput("hclusternumbertable")))
                             )
                         )
                     )
@@ -229,8 +227,11 @@ ui <- dashboardPagePlus(
                 id = "cluster_page",
                 column(
                     width = 12,
+                    box(width = 12,
                     withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px")),
+                    br(), br(),
                     withSpinner(reactableOutput("hclustertable"))
+                    )
                 )
             )
         ),

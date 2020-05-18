@@ -1,17 +1,9 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
 library(shiny)
 
 source("functions.R")
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output, session) { 
     
     addClass(selector = "body", class = "sidebar-collapse")
@@ -195,6 +187,28 @@ server <- function(input, output, session) {
     ignoreInit = TRUE,
     ignoreNULL = TRUE)
     
+    
+    observeEvent(genenumber2(), {
+        if (length(genenumber2() != "") != 0){
+            if (genenumber2() != ""){
+                session$sendCustomMessage("geneName", genenumber2())
+                #updateTabItems(session, "tabs", "hometab")
+                hide("exptab")
+                show("tabButtons")
+                show("protein_interaction")
+                show("protein_interaction1")
+                hide("landing_page")
+                show("back_button")
+                click("proteinPage")
+                updateTabItems(session, "tabs", selected = character(0))
+                #click("geneName_search")
+            }
+        }
+    },
+    ignoreInit = TRUE,
+    ignoreNULL = TRUE)
+    
+    
     observeEvent(input$back, {
         
         hide("protein_interaction")
@@ -224,6 +238,10 @@ server <- function(input, output, session) {
     
     genenumber<-reactive({
         final_score_table$Gene_name[selected()]
+    })
+    
+    genenumber2<-reactive({
+        final_score_table$Gene_name[selected2()]
     })
     
     
@@ -259,9 +277,14 @@ server <- function(input, output, session) {
         data.frame('Gene name' = nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),1])
     })
     
+    inputclusternumbertable<-reactive({
+        
+        data.frame('Gene_name' = nscores2[which(aa$cluster_number == input$clusternumber),1])
+    })
+    
     
     selected <- reactive(getReactableState("generaltable2", "selected"))
-    
+    selected2 <- reactive(getReactableState("generaltable3", "selected"))
     
     output$networkplot<-renderSimpleNetwork({
         simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
@@ -289,7 +312,17 @@ server <- function(input, output, session) {
                       Motif_score = colDef(name = "Motifs", 
                                                          format = colFormat(digits = 3)),
                       Publication_score = colDef(name = "Publications", 
-                                                         format = colFormat(digits = 3))
+                                                         format = colFormat(digits = 3)),
+                      Protein_atlas_score = colDef(name = "Protein atlas", 
+                                                 format = colFormat(digits = 3)),
+                      Total_score = colDef(name = "Raw score", 
+                                                 format = colFormat(digits = 3)),
+                      Norm_total_score = colDef(name = "Normalized score", 
+                                                 format = colFormat(digits = 3)),
+                      Publication_score = colDef(name = "Publications", 
+                                                 format = colFormat(digits = 3)),
+                      Weighted_total_scores = colDef(name = "Weighted score", 
+                                                     format = colFormat(digits = 3))
                   
                       ),
                   selection = "single",
@@ -298,8 +331,43 @@ server <- function(input, output, session) {
             
     })
     
+    output$generaltable3<-renderReactable({
+        
+        reactable(final_seq_table, resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  columns =list(
+                      Protein_interaction_score = colDef(name = "Protein interactions", 
+                                                         format = colFormat(digits = 0)),
+                      Genetic_interaction_score = colDef(name = "Genetic interactions", 
+                                                         format = colFormat(digits = 0)),
+                      Single_cell_score = colDef(name = "Single cell", 
+                                                 format = colFormat(digits = 0)),
+                      Cluster_score = colDef(name = "Clusters", 
+                                             format = colFormat(digits = 0)),
+                      Motif_score = colDef(name = "Motifs", 
+                                           format = colFormat(digits = 0)),
+                      Publication_score = colDef(name = "Publications", 
+                                                 format = colFormat(digits = 0)),
+                      Protein_atlas_score = colDef(name = "Protein atlas", 
+                                                   format = colFormat(digits = 0)),
+                      Total_score = colDef(name = "Raw score", 
+                                           format = colFormat(digits = 0)),
+                      Norm_total_score = colDef(name = "Normalized score", 
+                                                format = colFormat(digits = 0)),
+                      Publication_score = colDef(name = "Publications", 
+                                                 format = colFormat(digits = 0)),
+                      Weighted_total_scores = colDef(name = "Weighted score", 
+                                                     format = colFormat(digits = 0))
+                      
+                  ),
+                  selection = "single",
+                  onClick = "select"
+        )
+        
+    })
+    
     output$textForPro<-renderText({paste("There is no protein interaction for", genename(), "gene")})
-    output$ot<-renderText({paste("this is", genename())})
+    #output$ot<-renderText({paste("this is", genename())})
     
         output$pro_box1 <- renderUI({
             
@@ -323,7 +391,7 @@ server <- function(input, output, session) {
         
         main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'))%>%
             add_row_labels(size = 0.05,font = list(size = 7))%>%
-            add_col_labels(size = 0.6,font = list(size = 9), textangle=90, 
+            add_col_labels(size = 0.6, font = list(family = "Open Sans", size = 14), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
     })
@@ -334,11 +402,17 @@ server <- function(input, output, session) {
                   searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
     })
     
+    output$hclusternumbertable<-renderReactable({
+        
+        reactable(inputclusternumbertable(), resizable = TRUE, filterable = TRUE,
+                  defaultPageSize = 10, showPageSizeOptions = TRUE)
+    })
+    
     output$heatmapclusternumber<-renderIheatmap({
         
         main_heatmap(inputclusternumber(), layout = list(paper_bgcolor='transparent'))%>%
             add_row_labels(size = 0.05,font = list(size = 7))%>%
-            add_col_labels(size = 0.6,font = list(size = 9), textangle=90, 
+            add_col_labels(size = 0.6,font = list(family = "Open Sans", size = 14), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
     })

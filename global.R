@@ -25,4 +25,11 @@ my_colour = list(organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3
                  Class = c(Animals = "firebrick3", Fungi = "dodgerblue3", Protists = "darkgrey", Plants = "chartreuse", Other = "ghostwhite", Bacteria = "gray0"))
 gene_synonyms2<-fread("./data/gene_synonyms2.csv")
 
+final_seq_table<-final_score_table
+
+for (i in 2:11){
+  
+  final_seq_table<-final_seq_table[order(final_seq_table[[i]], decreasing = TRUE),]
+  final_seq_table[[i]]<-c(1:length(final_seq_table[[i]]))
+}
 
