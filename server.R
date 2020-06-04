@@ -148,6 +148,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$pubPage, {
         show("pub")
+        hide("general_info")
         hide("landing_page")
         hide("protein_interaction")
         hide("protein_interaction1")
@@ -158,6 +159,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$clusterPage, {
         show("cluster_page")
+        hide("general_info")
         hide("landing_page")
         hide("protein_interaction")
         hide("protein_interaction1")
