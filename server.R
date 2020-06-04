@@ -70,7 +70,7 @@ server <- function(input, output, session) {
          else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) > 1){
              showModal(modalDialog(
                  h3("Multiple Results"),
-                 radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one and click enter"), geneoption(), selected = character(0)),
+                 radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one: "), geneoption(), selected = character(0)),
                  easyClose = TRUE,
                  footer = tagList(
                      actionButton(inputId = "close", label = "Close", icon = icon("close"))
