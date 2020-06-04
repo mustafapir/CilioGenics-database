@@ -1,6 +1,7 @@
 
 library(DT)
 library(data.table)
+library(dplyr)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
