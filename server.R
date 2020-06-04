@@ -47,17 +47,23 @@ server <- function(input, output, session) {
     
      observeEvent(input$geneName_search, { 
           if (genename() == ""){
-              showModal(modalDialog(
-                  "Please first write a gene name",
-                  easyClose = TRUE,
-                  footer = tagList(
-                      actionButton(inputId = "close", label = "Close", icon = icon("info-circle"))
-                  )
-                  )
+              sendSweetAlert(
+                  session = session,
+                  title = "WARNING!",
+                  text = "Please first write a gene name, gene id or Ensembl id",
+                  type = "warning",
+                  showCloseButton = TRUE
               )
+              # showModal(modalDialog(
+              #     "Please first write a gene name",
+              #     easyClose = TRUE,
+              #     footer = tagList(
+              #         actionButton(inputId = "close", label = "Close", icon = icon("info-circle"))
+              #     )
+              #     )
+              # )
           }
-         else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name)) && 
-                  length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1){
+         else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name))){
              sendSweetAlert(
                  session = session,
                  title = "ERROR!",
@@ -282,8 +288,7 @@ server <- function(input, output, session) {
         else if (input$geneName %in% homsap$GeneID){
             gname<-homsap$Symbol[which(homsap$GeneID %in% input$geneName)]
         }
-        else {
-            if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
+            else if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
                 (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
                 length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
                 gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
@@ -292,7 +297,7 @@ server <- function(input, output, session) {
                 gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
             }
             else {gname<-input$geneName}
-        }
+        
         gname
     })
     
