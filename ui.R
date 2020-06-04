@@ -20,22 +20,30 @@ source("functions.R")
 
 
 ui <- dashboardPagePlus(
+     
+  
+    collapse_sidebar = TRUE,
     header = dashboardHeaderPlus(),
     sidebar_background = "light",
     skin = "purple",
     
+    
     useShinyjs(),
     
     use_cicerone(),
+    
     sidebar = dashboardSidebar(
-        
+        collapsed = TRUE,
         sidebarMenu(
             id = "tabs",
             menuItem("Home", tabName = "hometab", icon = icon("home")),
             menuItem("Gene list", tabName = "exploretab", icon = icon("search"))
         )
     ),
+    
     body = dashboardBody(
+        
+      x<-uiOutput("modalgene"),
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
             tags$link(rel = "stylesheet", type = "text/css", href = "stylesheet.css"),
@@ -59,11 +67,16 @@ ui <- dashboardPagePlus(
                              style = "unite",
                              color = "default",
                              size = "sm"),
-                    actionBttn("proteinPage", "Protein interactions",
+                    actionBttn("generalPage", "General Information",
                              icon = img(src = "network2.png", height = "20px"), 
                              color = "primary",
                              style = "unite",
                              size = "sm"),
+                    actionBttn("proteinPage", "Protein interactions",
+                               icon = img(src = "network2.png", height = "20px"), 
+                               color = "primary",
+                               style = "unite",
+                               size = "sm"),
                     # bsButton("showpanel8", "Genetic interactions",
                     #          icon = icon("toggle-off"), type = "action",
                     #          style = "primary", value = TRUE),
@@ -121,13 +134,12 @@ ui <- dashboardPagePlus(
                                 label = "Explore the gene list",
                                 icon = icon("list"),
                                 style = "minimal",
-                                color = "primary"),
-                            #textOutput("ot")
+                                color = "primary")
                         )
                     )
                 )
             ),
-    
+      
             
             tabItem("exploretab",
             
@@ -160,16 +172,57 @@ ui <- dashboardPagePlus(
                                         "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
                                         )
                                 ),
-                                withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px")),
-                                br(), br(),
-                                tabPanel(title = "Genes ordered by categories", id = "geneorder",
-                                withSpinner(reactableOutput("hclusternumbertable")))
+                                fluidRow(
+                                  column(
+                                    width = 9,
+                                    withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"))
+                                  ),
+                                  column(
+                                    width = 3,
+                                    withSpinner(reactableOutput("hclusternumbertable"))
+                                  )
+                                )
+                  
                             )
                         )
                     )
                     )
             )
         ),
+        
+        # fluidRow(
+        #     div(
+        #       br(), br(),
+        #       
+        #       id = "generalinfo",
+        #       
+        #     )
+        # ),
+        
+        fluidRow(
+          div(
+            br(), br(),
+            
+            id = "general_info",
+            boxPlus(
+              title = "Gene info",
+              solidHeader = TRUE,
+              status = "primary",
+              #background = "purple",
+              width = 12,
+              htmlOutput("textgeneid")
+            ),
+            
+            boxPlus(
+              
+              progressBar(id = "pb8", value = 21271, total = 21271, status = "info", display_pct = TRUE, striped = TRUE, title = "Overall percentile")
+              
+            )
+            
+          )
+        ),
+        
+        
         
         fluidRow(
             div(
@@ -217,13 +270,19 @@ ui <- dashboardPagePlus(
         ),
         
         
+        
         fluidRow(
             div(
                 br(), br(),
                 id = "pub",
                 column(
                     width = 6,
-                    reactableOutput("pubtable")
+                    boxPlus(
+                      title = "List of publications",
+                      solidHeader = TRUE,
+                      status = "primary",
+                      reactableOutput("pubtable")
+                    )
                 )
             )
         ),
@@ -232,14 +291,8 @@ ui <- dashboardPagePlus(
             div(
                 br(), br(),
                 id = "cluster_page",
-                column(
-                    width = 12,
-                    box(width = 12,
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px")),
-                    br(), br(),
-                    withSpinner(reactableOutput("hclustertable"))
-                    )
-                )
+                uiOutput("clusterui"),
+                uiOutput("clustertableui")
             )
         ),
         

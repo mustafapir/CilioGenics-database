@@ -2,11 +2,15 @@
 library(shiny)
 
 source("functions.R")
+options(reactable.theme = reactableTheme(
+    #backgroundColor = "CadetBlue",
+    #borderColor = "SteelBlue",
+    
+))
 
+GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
 
 server <- function(input, output, session) { 
-    
-    addClass(selector = "body", class = "sidebar-collapse")
     
     
      observeEvent("", {
@@ -16,7 +20,7 @@ server <- function(input, output, session) {
              easyClose = TRUE,
              footer = tagList(
                  actionButton(inputId = "tour", label = "Introductory Tour", icon = icon("info-circle")),
-                 actionButton(inputId = "close", label = "Close") #icon = icon(""))
+                 actionButton(inputId = "close", label = "Close", icon = icon("close"))
              )
          ))
          
@@ -26,6 +30,7 @@ server <- function(input, output, session) {
          hide("tabButtons")
          hide("pub")
          hide("cluster_page")
+         hide("general_info")
          
      }, once = TRUE)
      
@@ -34,11 +39,6 @@ server <- function(input, output, session) {
          guide$init()$start()
      })
      
-    # observeEvent(input$geneName, {
-    #     show("protein_interaction")
-    #     hide("landing_page")
-    #     show("tabButtons")
-    # })
      
      observeEvent(input$close,{
          removeModal()
@@ -56,7 +56,8 @@ server <- function(input, output, session) {
                   )
               )
           }
-         else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name))){
+         else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name)) && 
+                  length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1){
              sendSweetAlert(
                  session = session,
                  title = "ERROR!",
@@ -66,15 +67,29 @@ server <- function(input, output, session) {
              )
              #click("geneName_reset")
          }
+         else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) > 1){
+             showModal(modalDialog(
+                 h3("Multiple Results"),
+                 radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one and click enter"), geneoption(), selected = character(0)),
+                 easyClose = TRUE,
+                 footer = tagList(
+                     actionButton(inputId = "close", label = "Close", icon = icon("close"))
+                 )
+             )
+            )
+             #click("geneName_reset")
+         }
          else {
-             show("protein_interaction")
-             show("protein_interaction1")
+             updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
+             show("general_info")
+             hide("protein_interaction")
+             hide("protein_interaction1")
              hide("landing_page")
              show("tabButtons")
              hide("cluster_page")
              hide("pub")
              show("back_button")
-             click("proteinPage")
+             click("generalPage")
              #hide("proteinPage")
              updateTabItems(session, "tabs", selected = character(0))
          }
@@ -83,8 +98,34 @@ server <- function(input, output, session) {
      ignoreInit = TRUE,
      ignoreNULL = TRUE
      )
+     
+     observeEvent(input$generadio, {
+         session$sendCustomMessage("geneName", input$generadio)
+         show("general_info")
+         hide("protein_interaction")
+         hide("protein_interaction1")
+         hide("landing_page")
+         show("tabButtons")
+         hide("cluster_page")
+         hide("pub")
+         show("back_button")
+         click("generalPage")
+         #hide("proteinPage")
+         updateTabItems(session, "tabs", selected = character(0))
+     })
+     
+     
+    observeEvent(input$generalPage, {
+        show("general_info")
+        hide("protein_interaction")
+        hide("protein_interaction1")
+        hide("pub")
+        hide("cluster_page")
+    })
+    
     observeEvent(input$homePage, {
          show("landing_page")
+         hide("general_info")
          hide("protein_interaction")
          hide("protein_interaction1")
          hide("tabButtons")
@@ -98,6 +139,7 @@ server <- function(input, output, session) {
     observeEvent(input$proteinPage, {
         show("protein_interaction")
         show("protein_interaction1")
+        hide("general_info")
         hide("landing_page")
         hide("pub")
         hide("cluster_page")
@@ -128,8 +170,13 @@ server <- function(input, output, session) {
         removeModal()
     })
     
+    observeEvent(input$generadio,{
+        removeModal()
+    })
+    
     observeEvent(input$hometab, {
         show("landing_page")
+        hide("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
@@ -141,6 +188,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$tabs == "exploretab", {
         show("exploretab")
+        hide("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
@@ -153,6 +201,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$tabs == "hometab", {
         show("landing_page")
+        hide("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
@@ -174,11 +223,12 @@ server <- function(input, output, session) {
                 #updateTabItems(session, "tabs", "hometab")
                 hide("exptab")
                 show("tabButtons")
-                show("protein_interaction")
-                show("protein_interaction1")
+                show("general_info")
+                hide("protein_interaction")
+                hide("protein_interaction1")
                 hide("landing_page")
                 show("back_button")
-                click("proteinPage")
+                click("generalPage")
                 updateTabItems(session, "tabs", selected = character(0))
             #click("geneName_search")
             }
@@ -195,11 +245,12 @@ server <- function(input, output, session) {
                 #updateTabItems(session, "tabs", "hometab")
                 hide("exptab")
                 show("tabButtons")
-                show("protein_interaction")
-                show("protein_interaction1")
+                show("general_info")
+                hide("protein_interaction")
+                hide("protein_interaction1")
                 hide("landing_page")
                 show("back_button")
-                click("proteinPage")
+                click("generalPage")
                 updateTabItems(session, "tabs", selected = character(0))
                 #click("geneName_search")
             }
@@ -210,7 +261,7 @@ server <- function(input, output, session) {
     
     
     observeEvent(input$back, {
-        
+        hide("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
@@ -223,18 +274,55 @@ server <- function(input, output, session) {
     
     
     genename<-reactive({
-        
-        if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
-            (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
-            length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
-            gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
+        if (toupper(input$geneName) %in% ens$`Gene stable ID`){
+            gname<-ens$`Gene name`[which(ens$`Gene stable ID` %in% toupper(input$geneName))]
         }
-        else if (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)){
-            gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
+        else if (input$geneName %in% homsap$GeneID){
+            gname<-homsap$Symbol[which(homsap$GeneID %in% input$geneName)]
+        }
+        else {
+            if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
+                (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
+                length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
+                gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
             }
-        else {gname<-input$geneName}
+            else if (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)){
+                gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
+            }
+            else {gname<-input$geneName}
+        }
         gname
     })
+    
+    geneoption<-reactive({
+        
+        c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))])
+    })
+    
+    # generadioname<-reactive({
+    #     generadio
+    # })
+
+    # Gene info **************** #
+    
+    geneid<-reactive({
+        
+        homsap$GeneID[which(homsap$Symbol == genename())]
+    })
+    
+    genedescription<-reactive({
+        homsap$description[which(homsap$Symbol == genename())]
+    })
+    
+    genesynonyms<-reactive({
+        homsap$Synonyms[which(homsap$Symbol == genename())]
+    })
+    
+    geneensembl<-reactive({
+        ens$`Gene stable ID`[which(ens$`Gene name` == genename())]
+    })
+    
+    # *************************** #
     
     genenumber<-reactive({
         final_score_table$Gene_name[selected()]
@@ -253,8 +341,16 @@ server <- function(input, output, session) {
         c<-wbP %>% filter(toupper(Gene_name_A) == toupper(genename()))
         zz<-data.frame(rbind(a, b, c))#[which(data.frame(rbind(a, b, c))$Gene_name_A %in% input$proradio),]
         colnames(zz)<-c("Interactor A", "Interactor B", "Source")
-        zz[which(zz$Source %in% input$proradio),]
+        #zz$`Gold standard`<-"NO"
+        #zz$`Gold standard`<-final_score_table1$goldstandard[which(final_score_table1$goldstandard %in% zz[[2]])]
         
+        if (length(zz[[1]]) > 0){
+            zz$`Gold standard` <- "NO"
+            zz$`Gold standard`[which(zz[[2]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+            zz$CilioGenics <- "NO"
+            zz$CilioGenics[which(zz[[2]] %in% ciliogenics[[1]])]<-"YES"
+        }
+        zz[which(zz$Source %in% input$proradio),]
     })
     
     networkdata2<-reactive({
@@ -276,6 +372,11 @@ server <- function(input, output, session) {
         as.matrix(nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),2:73])
     })
     
+    inputclusternamenumber<-reactive({
+        
+        aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]
+    })
+    
     inputclusternumber<-reactive({
         
         as.matrix(nscores2[which(aa$cluster_number == input$clusternumber),2:73])
@@ -283,17 +384,41 @@ server <- function(input, output, session) {
     
     inputclustertable<-reactive({
         
-        data.frame('Gene name' = nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),1])
+        df<-data.frame('Gene name' = nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),1])
+        df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
+        df$`Gold standard` <- "NO"
+        df$`Gold standard`[which(df[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+        df$CilioGenics <- "NO"
+        df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
+        df
     })
     
     inputclusternumbertable<-reactive({
         
-        data.frame('Gene_name' = nscores2[which(aa$cluster_number == input$clusternumber),1])
+        a<-data.frame('Gene name' = nscores2[which(aa$cluster_number == input$clusternumber),1])
+        a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
+        a$`Gold standard` <- "NO"
+        a$`Gold standard`[which(a[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+        a$CilioGenics <- "NO"
+        a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
+        a
     })
     
     
     selected <- reactive(getReactableState("generaltable2", "selected"))
     selected2 <- reactive(getReactableState("generaltable3", "selected"))
+    
+    inputseq<-reactive({
+        final_score_table$Seq[which(final_score_table$Gene_name == genename())]
+    })
+    
+    
+    
+    # output$modalgene<-renderUI({
+    #     option1<-geneoption()
+    #     radioButtons("generadio", "Which genes", geneoption(), selected = character(0))
+    # })
+    
     
     output$networkplot<-renderSimpleNetwork({
         simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
@@ -317,13 +442,37 @@ server <- function(input, output, session) {
                   searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
     })
     
-    output$protable<-renderUI({
+    output$textgeneid<-renderText({
         
-        if (input$pro_children == TRUE){
+        paste(
+            "<table style=\"font-size:17px\">", 
             
-            withSpinner(reactableOutput("pro_int2"))
-        }
-        else {withSpinner(reactableOutput("pro_int"))}
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene name:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genename(), "</td>", "</tr>",
+            
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene description:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genedescription(), "</td>", "</tr>",
+            
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "NCBI gene ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", geneid(), "</td>", "</tr>",
+
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", genesynonyms(), "</td>", "</tr>",
+            
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Ensembl ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", geneensembl(), "</td>", "</tr>",
+            
+            "<table>")
+    })
+    
+    
+    output$protable<-renderUI({
+        boxPlus(
+            width = 12,
+            title = paste("Genes interacting with ", genename(), "gene"),
+            solidHeader = TRUE,
+            status = "primary",
+            if (input$pro_children == TRUE){
+                
+                withSpinner(reactableOutput("pro_int2"))
+            }
+            else {withSpinner(reactableOutput("pro_int"))}
+        )
     })
         
     output$generaltable2<-renderReactable({
@@ -353,8 +502,20 @@ server <- function(input, output, session) {
                                                  format = colFormat(digits = 3)),
                       Weighted_total_scores = colDef(name = "Weighted score", 
                                                      format = colFormat(digits = 3))
+                      
                   
                       ),
+                  # defaultColDef = colDef(
+                  #     style = function(value) {
+                  #         if (!is.numeric(value)) return()
+                  #         normalized <- (value - min(final_score_table[,-1])) / (max(final_score_table[,-1]) - min(final_score_table[,-1]))
+                  #         color <- GnYlRd(normalized)
+                  #         list(background = color)
+                  #     },
+                  #     format = colFormat(digits = 1),
+                  #     minWidth = 50
+                  # ),
+                  rowStyle = list(cursor = "pointer"),
                   selection = "single",
                   onClick = "select"
         )
@@ -389,7 +550,9 @@ server <- function(input, output, session) {
                       Weighted_total_scores = colDef(name = "Weighted score", 
                                                      format = colFormat(digits = 0))
                       
+                      
                   ),
+                  rowStyle = list(cursor = "pointer"),
                   selection = "single",
                   onClick = "select"
         )
@@ -399,11 +562,15 @@ server <- function(input, output, session) {
     output$textForPro<-renderText({paste("There is no protein interaction for", genename(), "gene")})
     #output$ot<-renderText({paste("this is", genename())})
     
+
+    
         output$pro_box1 <- renderUI({
             
-                box(
+                boxPlus(
                     title = paste0("Protein interaction network for ", genename(), " gene"),
                     width = 12,
+                    solidHeader = TRUE,
+                    status = "primary",
                     if (length(networkdata()[[1]]) == 0){
                         #print(paste("There is no protein interaction for", genename(), "gene"))
                         textOutput("textForPro")
@@ -418,10 +585,39 @@ server <- function(input, output, session) {
                     }
                 )
         })
+        
+        output$clusterui<-renderUI({
+            
+            column(
+                width = 9,
+                boxPlus(
+                    width = 12,
+                    solidHeader = TRUE,
+                    status = "primary",
+                    title = paste("Cluster", inputclusternamenumber()),
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"))))
+        })
+        
+        output$clustertableui<-renderUI({
+            
+            
+            column(
+                width = 3,
+                boxPlus(
+                    title = paste("Genes in cluster", inputclusternamenumber()),
+                    solidHeader = TRUE,
+                    status = "primary",
+                    width = 12,
+                    withSpinner(reactableOutput("hclustertable"))
+                )
+                
+            )
+        })
     
     output$pubtable<-renderReactable({
         reactable(pubdata(), resizable = TRUE, filterable = TRUE,
-                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  highlight = TRUE)
         })
     
     output$heatmapcluster<-renderIheatmap({
@@ -436,13 +632,22 @@ server <- function(input, output, session) {
     output$hclustertable<-renderReactable({
         
         reactable(inputclustertable(), resizable = TRUE, filterable = TRUE,
-                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  highlight = TRUE,
+                  columns = list(
+                      Score = colDef(name = "Score", 
+                             format = colFormat(digits = 3)),
+                      gene_name = colDef(name = "Gene name")
+                  ))
     })
     
     output$hclusternumbertable<-renderReactable({
         
         reactable(inputclusternumbertable(), resizable = TRUE, filterable = TRUE,
-                  defaultPageSize = 10, showPageSizeOptions = TRUE)
+                  columns = list(Score = colDef(format = colFormat(digits = 3)),
+                                 gene_name = colDef(name = "Gene name")),
+                  defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  highlight = TRUE)
     })
     
     output$heatmapclusternumber<-renderIheatmap({

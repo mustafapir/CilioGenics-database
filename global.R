@@ -2,7 +2,17 @@
 library(DT)
 library(data.table)
 
+ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
+ciliogenics<-final_score_table %>%
+  filter(Weighted_total_scores >= 0.5)
+#final_score_table1<-final_score_table
+# final_score_table1$goldstandard<-"NO"
+# final_score_table1$goldstandard[which(final_score_table1$goldstandard %in% ciliaryGenes1[[1]])]<-"YES"
+ciliaryGenes1$gold<-"YES"
+
+homsap<-fread("./data/Homo_sapiens.gene_info")
+ens<-fread("./data/ens.txt")
 
 biogrid<-fread("./data/biogrid.csv")
 intact<-fread("./data/intact.csv")
