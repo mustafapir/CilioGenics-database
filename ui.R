@@ -20,10 +20,12 @@ source("functions.R")
 
 
 ui <- dashboardPagePlus(
-     
+    
+   
+    header = dashboardHeaderPlus(),
+  
     enable_preloader = TRUE,
     collapse_sidebar = TRUE,
-    header = dashboardHeaderPlus(),
     sidebar_background = "light",
     skin = "green",
     
@@ -43,8 +45,16 @@ ui <- dashboardPagePlus(
     ),
     
     body = dashboardBody(
+      
+      tags$head(
+        tags$link(rel = "shortcut icon", href = "favicon.ico"),
+        tags$link(rel = "apple-touch-icon", sizes = "180x180", href = "apple-icon-180x180.png"),
+        tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "/favicon-32x32.png"),
+        tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "/favicon-16x16.png")
+      ),
         
-      x<-uiOutput("modalgene"),
+      uiOutput("modalgene"),
+      
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
             tags$link(rel = "stylesheet", type = "text/css", href = "stylesheet.css"),
@@ -69,9 +79,10 @@ ui <- dashboardPagePlus(
                         id = "landing_page",
                         tags$head(tags$script(src = "enter_button.js")),
                         column(12,
+                            #img(src='Logo_ciliogenics.png', align = "center", width = "250px", height = "250px"),
                             tags$script(src = "enter_button.js"),
                             align = "center",
-                            br(), br(), br(), br(),
+                            br(), br(),
                             HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
                             br(), br(),
                             
@@ -132,10 +143,10 @@ ui <- dashboardPagePlus(
                                 br(), br(),
                                 title = "Gene table",
                                 id = "tab1",
-                                withSpinner(reactableOutput("generaltable2"), color = "#808000"),
+                                withSpinner(reactableOutput("generaltable2"), color = "#10c891"),
                                 br(), br(),
                                 div(title = "Gene order by categories",
-                                withSpinner(reactableOutput("generaltable3"), color = "#808000"))
+                                withSpinner(reactableOutput("generaltable3"), color = "#10c891"))
                                 #textOutput("ot")
                             ),
                             tabPanel(
@@ -153,11 +164,11 @@ ui <- dashboardPagePlus(
                                 fluidRow(
                                   column(
                                     width = 9,
-                                    withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), color = "#808000")
+                                    withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), color = "#10c891")
                                   ),
                                   column(
                                     width = 3,
-                                    withSpinner(reactableOutput("hclusternumbertable"), color = "#808000")
+                                    withSpinner(reactableOutput("hclusternumbertable"), color = "#10c891")
                                   )
                                 )
                   
@@ -221,13 +232,13 @@ ui <- dashboardPagePlus(
                         individual = TRUE
                     ),
                 ), br(),
-                column(
-                    width = 3,
-                    switchInput(
-                        label = "Switch on only if total number of interaction is less than 4",
-                        inputId = "pro_children"
-                    )
-                )
+                # column(
+                #     width = 3,
+                #     switchInput(
+                #         label = "Switch on only if total number of interaction is less than 4",
+                #         inputId = "pro_children"
+                #     )
+                # )
             ),
         ),
         fluidRow(

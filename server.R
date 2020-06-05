@@ -460,7 +460,7 @@ server <- function(input, output, session) {
                                color = "default",
                                size = "sm"),
                     actionBttn("generalPage", "General Information",
-                               icon = img(src = "network2.png", height = "20px"), 
+                               icon = icon("info"), 
                                color = "success",
                                style = "unite",
                                size = "sm"),
@@ -504,7 +504,7 @@ server <- function(input, output, session) {
                                    color = "default",
                                    size = "sm"),
                         actionBttn("generalPage", "General Information",
-                                   icon = img(src = "network2.png", height = "20px"), 
+                                   icon = icon("info"), 
                                    color = "success",
                                    style = "unite",
                                    size = "sm"),
@@ -591,11 +591,11 @@ server <- function(input, output, session) {
             title = paste("Genes interacting with ", genename(), "gene"),
             solidHeader = TRUE,
             status = "success",
-            if (input$pro_children == TRUE){
-                
-                withSpinner(reactableOutput("pro_int2"), color = "#808000")
-            }
-            else {withSpinner(reactableOutput("pro_int"), color = "#808000")}
+            # if (input$pro_children == TRUE){
+            #     
+            #     withSpinner(reactableOutput("pro_int2"), color = "#10c891")
+            # }
+            withSpinner(reactableOutput("pro_int"), color = "#10c891")
         )
     })
         
@@ -699,14 +699,14 @@ server <- function(input, output, session) {
                         #print(paste("There is no protein interaction for", genename(), "gene"))
                         textOutput("textForPro")
                     }
-                    else if (input$pro_children == FALSE){
+                    else {#if (input$pro_children == FALSE){
                         
-                        withSpinner(simpleNetworkOutput("networkplot"), color = "#808000")
+                        withSpinner(simpleNetworkOutput("networkplot"), color = "#10c891")
                     }
-                    else if (length(networkdata2()[[1]] != 0)){
-                        
-                        withSpinner(simpleNetworkOutput("networkplot2"), color = "#808000")
-                    }
+                    # else if (length(networkdata2()[[1]] != 0)){
+                    #     
+                    #     withSpinner(simpleNetworkOutput("networkplot2"), color = "#10c891")
+                    # }
                 )
         })
         
@@ -719,7 +719,7 @@ server <- function(input, output, session) {
                     solidHeader = TRUE,
                     status = "success",
                     title = paste("Cluster", inputclusternamenumber()),
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"), color = "#808000")))
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"), color = "#10c891")))
         })
         
         output$clustertableui<-renderUI({
@@ -732,7 +732,7 @@ server <- function(input, output, session) {
                     solidHeader = TRUE,
                     status = "success",
                     width = 12,
-                    withSpinner(reactableOutput("hclustertable"), color = "#808000")
+                    withSpinner(reactableOutput("hclustertable"), color = "#10c891")
                 )
                 
             )

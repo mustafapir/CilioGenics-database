@@ -13,9 +13,9 @@ guide <- Cicerone$
     "explore",
     "Explore gene list",
     "Instead of searching a gene, here you can explore our gene list with scores."
-  )$
-  step(
-    "exploredt",
-    "Gene list",
-    "You can click a gene to further explore in detail. The numbers on second table represent order of gene in that column."
-  )
+  )#$
+  # step(
+  #   "exploredt",
+  #   "Gene list",
+  #   "You can click a gene to further explore in detail. The numbers on second table represent order of gene in that column."
+  # )
