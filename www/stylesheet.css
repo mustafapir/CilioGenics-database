@@ -11,7 +11,21 @@
 
 }
 
-.padding-table-columns td
-{
-    padding:0 5px 0 0; /* Only right padding*/
+
+.sidebar {
+  color: #FFF;
+  position: fixed;
+  white-space: nowrap;
+  overflow: visible;
 }
+
+.main-header {
+  position: fixed;
+  width:100%;
+}
+
+.content {
+  margin-top: 50px;
+}
+
+

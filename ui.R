@@ -21,11 +21,11 @@ source("functions.R")
 
 ui <- dashboardPagePlus(
      
-  
+    enable_preloader = TRUE,
     collapse_sidebar = TRUE,
     header = dashboardHeaderPlus(),
     sidebar_background = "light",
-    skin = "purple",
+    skin = "green",
     
     
     useShinyjs(),
@@ -33,6 +33,7 @@ ui <- dashboardPagePlus(
     use_cicerone(),
     
     sidebar = dashboardSidebar(
+        header = singleton(tags$head(includeHTML(("google-analytics.html")))),
         collapsed = TRUE,
         sidebarMenu(
             id = "tabs",
@@ -55,7 +56,7 @@ ui <- dashboardPagePlus(
   "),
         ),
         
-        fluidRow(
+        absolutePanel(
             div(
                 id = "tabButtons",
                 column(
@@ -69,41 +70,50 @@ ui <- dashboardPagePlus(
                              size = "sm"),
                     actionBttn("generalPage", "General Information",
                              icon = img(src = "network2.png", height = "20px"), 
-                             color = "primary",
+                             color = "success",
                              style = "unite",
                              size = "sm"),
                     actionBttn("proteinPage", "Protein interactions",
                                icon = img(src = "network2.png", height = "20px"), 
-                               color = "primary",
+                               color = "success",
                                style = "unite",
                                size = "sm"),
                     # bsButton("showpanel8", "Genetic interactions",
                     #          icon = icon("toggle-off"), type = "action",
-                    #          style = "primary", value = TRUE),
+                    #          style = "success", value = TRUE),
                     # bsButton("showpanel8", "Single cell",
                     #          icon = icon("toggle-off"), type = "action",
-                    #          style = "primary", value = TRUE),
+                    #          style = "success", value = TRUE),
                     actionBttn("clusterPage", "Clusters",
                              icon = img(src = "tree.png", height = "20px"), 
-                             color = "primary",
+                             color = "success",
                              style = "unite",
                              size = "sm"),
                     # bsButton("showpanel8", "Motifs",
                     #          icon = icon("toggle-off"), type = "action",
-                    #          style = "primary", value = TRUE),
+                    #          style = "success", value = TRUE),
                     actionBttn("pubPage", "Publications",
                              icon = icon("book"), 
-                             color = "primary",
+                             color = "success",
                              style = "unite",
                              size = "sm"),
                     # bsButton("showpanel8", "Protein atlas",
                     #          icon = icon("toggle-off"), type = "action",
-                    #          style = "primary", value = TRUE)
+                    #          style = "success", value = TRUE)
                     
                 )
-            )
+            ),
+            top = "50px",
+            left = 0,
+            right = 0,
+            
+            fixed = TRUE,
+            style = "z-index: 10;"
         ),
+      
         
+      
+        br(), br(),
         tabItems(
             tabItem("hometab",
                 fluidRow(
@@ -134,7 +144,7 @@ ui <- dashboardPagePlus(
                                 label = "Explore the gene list",
                                 icon = icon("list"),
                                 style = "minimal",
-                                color = "primary")
+                                color = "success")
                         )
                     )
                 )
@@ -143,6 +153,27 @@ ui <- dashboardPagePlus(
             
             tabItem("exploretab",
             
+                    # fluidRow(
+                    #   div(
+                    #     id = "tabButtons2",
+                    #     column(
+                    #       width = 12,
+                    #       align = "center",
+                    #       br(),
+                    #       actionBttn("homePage1", "Home",
+                    #                  icon = icon("home"), 
+                    #                  style = "unite",
+                    #                  color = "default",
+                    #                  size = "sm"),
+                    #       actionBttn("generalPage1", "General Information",
+                    #                  icon = img(src = "network2.png", height = "20px"), 
+                    #                  color = "success",
+                    #                  style = "unite",
+                    #                  size = "sm")
+                    #     )
+                    #   )
+                    # ),
+                    
                     fluidRow(
                         div(
                             id = "exptab",
@@ -154,10 +185,10 @@ ui <- dashboardPagePlus(
                                 br(), br(),
                                 title = "Gene table",
                                 id = "tab1",
-                                withSpinner(reactableOutput("generaltable2")),
+                                withSpinner(reactableOutput("generaltable2"), color = "#808000"),
                                 br(), br(),
                                 div(title = "Gene order by categories",
-                                withSpinner(reactableOutput("generaltable3")))
+                                withSpinner(reactableOutput("generaltable3"), color = "#808000"))
                                 #textOutput("ot")
                             ),
                             tabPanel(
@@ -175,11 +206,11 @@ ui <- dashboardPagePlus(
                                 fluidRow(
                                   column(
                                     width = 9,
-                                    withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"))
+                                    withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), color = "#808000")
                                   ),
                                   column(
                                     width = 3,
-                                    withSpinner(reactableOutput("hclusternumbertable"))
+                                    withSpinner(reactableOutput("hclusternumbertable"), color = "#808000")
                                   )
                                 )
                   
@@ -207,7 +238,7 @@ ui <- dashboardPagePlus(
             boxPlus(
               title = "Gene info",
               solidHeader = TRUE,
-              status = "primary",
+              status = "success",
               #background = "purple",
               width = 12,
               htmlOutput("textgeneid")
@@ -237,7 +268,7 @@ ui <- dashboardPagePlus(
                         label = "Select the source of interaction: ",
                         choices = c("Biogrid" = "Biogrid", "Intact" = "Intact", "Wormbase" = "Wormbase"),
                         selected = c("Biogrid", "Intact", "Wormbase"),
-                        justified = TRUE, status = "primary",
+                        justified = TRUE, status = "success",
                         checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon")),
                         direction = "vertical",
                         individual = TRUE
@@ -280,7 +311,7 @@ ui <- dashboardPagePlus(
                     boxPlus(
                       title = "List of publications",
                       solidHeader = TRUE,
-                      status = "primary",
+                      status = "success",
                       reactableOutput("pubtable")
                     )
                 )
@@ -308,7 +339,7 @@ ui <- dashboardPagePlus(
                             inputId = "back",
                             label = "BACK", 
                             style = "material-flat",
-                            color = "primary",
+                            color = "success",
                             icon = icon("arrow-left"),
                             size = "sm"
                         )

@@ -28,6 +28,7 @@ server <- function(input, output, session) {
          hide("protein_interaction")
          hide("protein_interaction1")
          hide("tabButtons")
+         #hide("tabButtons2")
          hide("pub")
          hide("cluster_page")
          hide("general_info")
@@ -63,6 +64,19 @@ server <- function(input, output, session) {
               #     )
               # )
           }
+         else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) > 1){
+             showModal(modalDialog(
+                 h3("Multiple Results"),
+                 radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one: "), geneoption(), selected = character(0)),
+                 easyClose = TRUE,
+                 footer = tagList(
+                     actionButton(inputId = "close", label = "Close", icon = icon("close"))
+                 )
+             )
+             )
+             #click("geneName_reset")
+         }
+         
          else if (!(toupper(genename()) %in% toupper(gene_synonyms2$Gene_name))){
              sendSweetAlert(
                  session = session,
@@ -73,18 +87,7 @@ server <- function(input, output, session) {
              )
              #click("geneName_reset")
          }
-         else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) > 1){
-             showModal(modalDialog(
-                 h3("Multiple Results"),
-                 radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one: "), geneoption(), selected = character(0)),
-                 easyClose = TRUE,
-                 footer = tagList(
-                     actionButton(inputId = "close", label = "Close", icon = icon("close"))
-                 )
-             )
-            )
-             #click("geneName_reset")
-         }
+         
          else {
              updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
              show("general_info")
@@ -92,6 +95,7 @@ server <- function(input, output, session) {
              hide("protein_interaction1")
              hide("landing_page")
              show("tabButtons")
+             #hide("tabButtons2")
              hide("cluster_page")
              hide("pub")
              show("back_button")
@@ -107,11 +111,13 @@ server <- function(input, output, session) {
      
      observeEvent(input$generadio, {
          session$sendCustomMessage("geneName", input$generadio)
+         #updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
          show("general_info")
          hide("protein_interaction")
          hide("protein_interaction1")
          hide("landing_page")
          show("tabButtons")
+         #hide("tabButtons2")
          hide("cluster_page")
          hide("pub")
          show("back_button")
@@ -120,9 +126,13 @@ server <- function(input, output, session) {
          updateTabItems(session, "tabs", selected = character(0))
      })
      
+    observeEvent(input$geneName, {
+        updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
+    })
      
     observeEvent(input$generalPage, {
         show("general_info")
+        #hide("tabButtons2")
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("pub")
@@ -135,6 +145,7 @@ server <- function(input, output, session) {
          hide("protein_interaction")
          hide("protein_interaction1")
          hide("tabButtons")
+         #hide("tabButtons2")
          hide("pub")
          hide("cluster_page")
          click("geneName_reset")
@@ -145,6 +156,7 @@ server <- function(input, output, session) {
     observeEvent(input$proteinPage, {
         show("protein_interaction")
         show("protein_interaction1")
+        #hide("tabButtons2")
         hide("general_info")
         hide("landing_page")
         hide("pub")
@@ -154,6 +166,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$pubPage, {
         show("pub")
+        #hide("tabButtons2")
         hide("general_info")
         hide("landing_page")
         hide("protein_interaction")
@@ -165,6 +178,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$clusterPage, {
         show("cluster_page")
+        #hide("tabButtons2")
         hide("general_info")
         hide("landing_page")
         hide("protein_interaction")
@@ -188,6 +202,7 @@ server <- function(input, output, session) {
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
+        #hide("tabButtons2")
         hide("cluster_page")
         hide("pub")
         hide("back_button")
@@ -196,6 +211,7 @@ server <- function(input, output, session) {
     
     observeEvent(input$tabs == "exploretab", {
         show("exploretab")
+        #show("tabButtons2")
         hide("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
@@ -213,6 +229,7 @@ server <- function(input, output, session) {
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("tabButtons")
+        #hide("tabButtons2")
         hide("pub")
         hide("cluster_page")
         hide("back_button")
@@ -222,6 +239,7 @@ server <- function(input, output, session) {
     observeEvent(input$explore, {
         
         updateTabItems(session, "tabs", "exploretab")
+        #show("tabButtons2")
     })
     
     observeEvent(genenumber(), {
@@ -230,6 +248,7 @@ server <- function(input, output, session) {
                 session$sendCustomMessage("geneName", genenumber())
                 #updateTabItems(session, "tabs", "hometab")
                 hide("exptab")
+                #hide("tabButtons2")
                 show("tabButtons")
                 show("general_info")
                 hide("protein_interaction")
@@ -252,6 +271,7 @@ server <- function(input, output, session) {
                 session$sendCustomMessage("geneName", genenumber2())
                 #updateTabItems(session, "tabs", "hometab")
                 hide("exptab")
+                #hide("tabButtons2")
                 show("tabButtons")
                 show("general_info")
                 hide("protein_interaction")
@@ -277,6 +297,7 @@ server <- function(input, output, session) {
         hide("cluster_page")
         hide("back_button")
         show("exptab")
+        #show("tabButtons2")
         show("landing_page")
     })
     
@@ -288,7 +309,8 @@ server <- function(input, output, session) {
         else if (input$geneName %in% homsap$GeneID){
             gname<-homsap$Symbol[which(homsap$GeneID %in% input$geneName)]
         }
-            else if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
+            else {
+                if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
                 (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
                 length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
                 gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
@@ -297,6 +319,7 @@ server <- function(input, output, session) {
                 gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
             }
             else {gname<-input$geneName}
+            }
         
         gname
     })
@@ -473,12 +496,12 @@ server <- function(input, output, session) {
             width = 12,
             title = paste("Genes interacting with ", genename(), "gene"),
             solidHeader = TRUE,
-            status = "primary",
+            status = "success",
             if (input$pro_children == TRUE){
                 
-                withSpinner(reactableOutput("pro_int2"))
+                withSpinner(reactableOutput("pro_int2"), color = "#808000")
             }
-            else {withSpinner(reactableOutput("pro_int"))}
+            else {withSpinner(reactableOutput("pro_int"), color = "#808000")}
         )
     })
         
@@ -577,18 +600,18 @@ server <- function(input, output, session) {
                     title = paste0("Protein interaction network for ", genename(), " gene"),
                     width = 12,
                     solidHeader = TRUE,
-                    status = "primary",
+                    status = "success",
                     if (length(networkdata()[[1]]) == 0){
                         #print(paste("There is no protein interaction for", genename(), "gene"))
                         textOutput("textForPro")
                     }
                     else if (input$pro_children == FALSE){
                         
-                        withSpinner(simpleNetworkOutput("networkplot"))
+                        withSpinner(simpleNetworkOutput("networkplot"), color = "#808000")
                     }
                     else if (length(networkdata2()[[1]] != 0)){
                         
-                        withSpinner(simpleNetworkOutput("networkplot2"))
+                        withSpinner(simpleNetworkOutput("networkplot2"), color = "#808000")
                     }
                 )
         })
@@ -600,9 +623,9 @@ server <- function(input, output, session) {
                 boxPlus(
                     width = 12,
                     solidHeader = TRUE,
-                    status = "primary",
+                    status = "success",
                     title = paste("Cluster", inputclusternamenumber()),
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"))))
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"), color = "#808000")))
         })
         
         output$clustertableui<-renderUI({
@@ -613,9 +636,9 @@ server <- function(input, output, session) {
                 boxPlus(
                     title = paste("Genes in cluster", inputclusternamenumber()),
                     solidHeader = TRUE,
-                    status = "primary",
+                    status = "success",
                     width = 12,
-                    withSpinner(reactableOutput("hclustertable"))
+                    withSpinner(reactableOutput("hclustertable"), color = "#808000")
                 )
                 
             )
