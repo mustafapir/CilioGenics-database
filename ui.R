@@ -66,7 +66,7 @@ ui <- dashboardPagePlus(
   "),
         ),
         
-        #uiOutput("buttonsui"),
+        uiOutput("buttonsui"),
       
         
       
