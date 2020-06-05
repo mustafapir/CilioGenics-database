@@ -66,11 +66,11 @@ ui <- dashboardPagePlus(
   "),
         ),
         
-        uiOutput("buttonsui"),
+        #uiOutput("buttonsui"),
       
         
       
-        br(), br(), br(),
+        br(),
         tabItems(
             tabItem("hometab",
                 fluidRow(

@@ -317,7 +317,7 @@ server <- function(input, output, session) {
                 gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
             }
             else if (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)){
-                gname<-unique(gene_synonyms2$Gene_name[which(gene_synonyms2$Gene_name %in% toupper(input$geneName))])
+                gname<-unique(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_name) %in% toupper(input$geneName))])
             }
             else {gname<-input$geneName}
             }
