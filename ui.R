@@ -60,7 +60,7 @@ ui <- dashboardPagePlus(
       
         
       
-        br(), br(),
+        br(), br(), br(),
         tabItems(
             tabItem("hometab",
                 fluidRow(

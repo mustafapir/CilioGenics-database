@@ -528,7 +528,7 @@ server <- function(input, output, session) {
                         
                     )
                 ),
-                top = "20px",
+                top = "30px",
                 left = 0,
                 right = 0,
                 fixed = FALSE,
