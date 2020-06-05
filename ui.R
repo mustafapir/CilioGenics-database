@@ -56,60 +56,7 @@ ui <- dashboardPagePlus(
   "),
         ),
         
-        absolutePanel(
-            div(
-                id = "tabButtons",
-                column(
-                    width = 12,
-                    align = "center",
-                    br(),
-                    actionBttn("homePage", "Home",
-                             icon = icon("home"), 
-                             style = "unite",
-                             color = "default",
-                             size = "sm"),
-                    actionBttn("generalPage", "General Information",
-                             icon = img(src = "network2.png", height = "20px"), 
-                             color = "success",
-                             style = "unite",
-                             size = "sm"),
-                    actionBttn("proteinPage", "Protein interactions",
-                               icon = img(src = "network2.png", height = "20px"), 
-                               color = "success",
-                               style = "unite",
-                               size = "sm"),
-                    # bsButton("showpanel8", "Genetic interactions",
-                    #          icon = icon("toggle-off"), type = "action",
-                    #          style = "success", value = TRUE),
-                    # bsButton("showpanel8", "Single cell",
-                    #          icon = icon("toggle-off"), type = "action",
-                    #          style = "success", value = TRUE),
-                    actionBttn("clusterPage", "Clusters",
-                             icon = img(src = "tree.png", height = "20px"), 
-                             color = "success",
-                             style = "unite",
-                             size = "sm"),
-                    # bsButton("showpanel8", "Motifs",
-                    #          icon = icon("toggle-off"), type = "action",
-                    #          style = "success", value = TRUE),
-                    actionBttn("pubPage", "Publications",
-                             icon = icon("book"), 
-                             color = "success",
-                             style = "unite",
-                             size = "sm"),
-                    # bsButton("showpanel8", "Protein atlas",
-                    #          icon = icon("toggle-off"), type = "action",
-                    #          style = "success", value = TRUE)
-                    
-                )
-            ),
-            top = "50px",
-            left = 0,
-            right = 0,
-            
-            fixed = TRUE,
-            style = "z-index: 10;"
-        ),
+        uiOutput("buttonsui"),
       
         
       

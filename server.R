@@ -443,6 +443,58 @@ server <- function(input, output, session) {
     })
     
     
+    userdata<-reactive({
+        session$clientData$pixelratio
+    })
+    
+    output$buttonsui<-renderUI({
+        absolutePanel(
+            div(
+                id = "tabButtons",
+                column(
+                    width = 12,
+                    align = "center",
+                    br(),
+                    actionBttn("homePage", "Home",
+                               icon = icon("home"), 
+                               style = "unite",
+                               color = "default",
+                               size = "sm"),
+                    actionBttn("generalPage", "General Information",
+                               icon = img(src = "network2.png", height = "20px"), 
+                               color = "success",
+                               style = "unite",
+                               size = "sm"),
+                    actionBttn("proteinPage", "Protein interactions",
+                               icon = img(src = "network2.png", height = "20px"), 
+                               color = "success",
+                               style = "unite",
+                               size = "sm"),
+                    
+                    actionBttn("clusterPage", "Clusters",
+                               icon = img(src = "tree.png", height = "20px"), 
+                               color = "success",
+                               style = "unite",
+                               size = "sm"),
+                    
+                    actionBttn("pubPage", "Publications",
+                               icon = icon("book"), 
+                               color = "success",
+                               style = "unite",
+                               size = "sm"),
+                    
+                )
+            ),
+            top = "50px",
+            left = 0,
+            right = 0,
+            if(userdata()==""){
+            fixed = TRUE}
+            else {fixed = FALSE},
+            style = "z-index: 10;"
+        )
+    })
+    
     
     # output$modalgene<-renderUI({
     #     option1<-geneoption()
@@ -477,7 +529,7 @@ server <- function(input, output, session) {
         paste(
             "<table style=\"font-size:17px\">", 
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene name:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genename(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene name:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", userdata(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene description:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genedescription(), "</td>", "</tr>",
             
