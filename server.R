@@ -289,6 +289,53 @@ server <- function(input, output, session) {
     ignoreNULL = TRUE)
     
     
+     observeEvent(selected3(), {
+         if (length(genenumbercluster() != "") != 0){
+             if (genenumbercluster() != ""){
+                 session$sendCustomMessage("geneName", genenumbercluster())
+                 #updateTabItems(session, "tabs", "hometab")
+                 #hide("exptab")
+                 #hide("tabButtons2")
+                 #show("buttonsui")
+                 show("general_info")
+                 hide("protein_interaction")
+                 hide("protein_interaction1")
+                 hide("landing_page")
+                 show("back_button")
+                 click("generalPage")
+                 updateTabItems(session, "tabs", selected = character(0))
+                 #click("geneName_search")
+             }
+         }
+     },
+    ignoreInit = TRUE,
+    ignoreNULL = TRUE)
+    
+     
+    observeEvent(genenumbergeneralcluster(), {
+         if (length(genenumbergeneralcluster() != "") != 0){
+             if (genenumbergeneralcluster() != ""){
+                 session$sendCustomMessage("geneName", genenumbergeneralcluster())
+                 #updateTabItems(session, "tabs", "hometab")
+                 hide("exptab")
+                 #hide("tabButtons2")
+                 show("buttonsui")
+                 show("general_info")
+                 hide("protein_interaction")
+                 hide("protein_interaction1")
+                 hide("landing_page")
+                 show("back_button")
+                 click("generalPage")
+                 updateTabItems(session, "tabs", selected = character(0))
+                 #click("geneName_search")
+             }
+         }
+     },
+     ignoreInit = TRUE,
+     ignoreNULL = TRUE)
+    
+     
+    
     observeEvent(input$back, {
         hide("general_info")
         hide("protein_interaction")
@@ -360,10 +407,16 @@ server <- function(input, output, session) {
     })
     
     genenumber2<-reactive({
-        final_score_table$Gene_name[selected2()]
+        final_seq_table$Gene_name[selected2()]
     })
     
+    genenumbercluster<-reactive({
+        inputclustertable()[[1]][selected3()]
+    })
     
+    genenumbergeneralcluster<-reactive({
+        inputclusternumbertable()[[1]][selected4()]
+    })
     
     networkdata<-reactive({
         
@@ -395,12 +448,19 @@ server <- function(input, output, session) {
     
     pubdata<-reactive({
         
-        data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
+        a<-data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
+        b<-merge(a, publ, by = "Publication")
+        b$Link <- paste0("<a href='",b$Link,"' target='_blank'>",b$Link,"</a>")
+        b
     })
     
     inputcluster<-reactive({
         
-        as.matrix(nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),2:73])
+        a<-as.matrix(nscores2[which(aa$cluster_number == aa$cluster_number[which(toupper(aa$Gene_name) == toupper(genename()))]),2:73])
+        if (length(a[,1]) > 500){
+            a<-a[1:500,]
+        }
+        a
     })
     
     inputclusternamenumber<-reactive({
@@ -438,6 +498,8 @@ server <- function(input, output, session) {
     
     selected <- reactive(getReactableState("generaltable2", "selected"))
     selected2 <- reactive(getReactableState("generaltable3", "selected"))
+    selected3 <- reactive(getReactableState("hclustertable", "selected"))
+    selected4 <- reactive(getReactableState("hclusternumbertable", "selected"))
     
     inputseq<-reactive({
         final_score_table$Seq[which(final_score_table$Gene_name == genename())]
@@ -741,16 +803,22 @@ server <- function(input, output, session) {
     output$pubtable<-renderReactable({
         reactable(pubdata(), resizable = TRUE, filterable = TRUE,
                   searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
-                  highlight = TRUE)
+                  highlight = TRUE,
+                  columns = list(
+                      Link = colDef(html = TRUE)
+                  )
+        )
         })
     
     output$heatmapcluster<-renderIheatmap({
-        
-        main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'))%>%
+        input$clusterPage
+        hmap <- isolate(inputcluster())
+        main_heatmap(hmap, layout = list(paper_bgcolor='transparent'))%>%
             add_row_labels(size = 0.05,font = list(size = 7))%>%
             add_col_labels(size = 0.6, font = list(family = "Open Sans", size = 14), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
+        
     })
     
     output$hclustertable<-renderReactable({
@@ -762,7 +830,10 @@ server <- function(input, output, session) {
                       Score = colDef(name = "Score", 
                              format = colFormat(digits = 3)),
                       gene_name = colDef(name = "Gene name")
-                  ))
+                  ),
+                  rowStyle = list(cursor = "pointer"),
+                  selection = "single",
+                  onClick = "select")
     })
     
     output$hclusternumbertable<-renderReactable({
@@ -771,7 +842,10 @@ server <- function(input, output, session) {
                   columns = list(Score = colDef(format = colFormat(digits = 3)),
                                  gene_name = colDef(name = "Gene name")),
                   defaultPageSize = 10, showPageSizeOptions = TRUE,
-                  highlight = TRUE)
+                  highlight = TRUE,
+                  rowStyle = list(cursor = "pointer"),
+                  selection = "single",
+                  onClick = "select")
     })
     
     output$heatmapclusternumber<-renderIheatmap({
@@ -779,7 +853,7 @@ server <- function(input, output, session) {
         main_heatmap(inputclusternumber(), layout = list(paper_bgcolor='transparent'))%>%
             add_row_labels(size = 0.05,font = list(size = 7))%>%
             add_col_labels(size = 0.6,font = list(family = "Open Sans", size = 14), textangle=90, 
-                           tickvals = c(1:length(colnames(inputcluster()))))%>%
+                           tickvals = c(1:length(colnames(inputclusternumber()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
     })
 

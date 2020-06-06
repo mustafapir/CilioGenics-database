@@ -2,6 +2,7 @@
 library(DT)
 library(data.table)
 library(dplyr)
+library(readxl)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
@@ -20,6 +21,7 @@ intact<-fread("./data/intact.csv")
 wbP<-fread("./data/wormbaseP1.csv")
 
 publications<-fread("./data/publications.csv")
+publ<-read_xlsx("./data/Publications.xlsx")
 nscores2<-fread("./data/nscores2.csv", )
 aa<-fread("./data/aa.csv")
 row.names(nscores2)<-nscores2$gene_name

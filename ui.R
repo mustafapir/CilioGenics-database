@@ -267,6 +267,7 @@ ui <- dashboardPagePlus(
                 column(
                     width = 6,
                     boxPlus(
+                      width = 12,
                       title = "List of publications",
                       solidHeader = TRUE,
                       status = "success",
