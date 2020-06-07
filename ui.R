@@ -68,7 +68,8 @@ ui <- dashboardPagePlus(
   "),
         ),
         
-        uiOutput("buttonsui"),
+        uiOutput("buttonsui"), #br(), br(),
+        uiOutput("space"),
       
         br(), br(),
         tabItems(
@@ -274,7 +275,7 @@ ui <- dashboardPagePlus(
                       title = "List of publications",
                       solidHeader = TRUE,
                       status = "success",
-                      reactableOutput("pubtable")
+                      uiOutput("pubui")
                     )
                 )
             )

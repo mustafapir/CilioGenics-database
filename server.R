@@ -515,7 +515,7 @@ server <- function(input, output, session) {
     
     inputscorestate<-reactive({
         if (inputscore() >= 0.5){
-            dashboardLabel("High Probability", status = "success")
+            dashboardLabel("Highly Probability", status = "success")
         }
         else if (inputscore() < 0.5 && inputscore() >= 0.4){
             dashboardLabel("Mild Probability", status = "info")
@@ -643,11 +643,19 @@ server <- function(input, output, session) {
                 top = "35px",
                 left = 0,
                 right = 0,
-                bottom = "10px",
                 fixed = FALSE,
                 style = "z-index: 10;"
             ) 
         }
+    })
+    
+    output$space<-renderUI({
+        if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+            
+        }
+        else {br()
+            br()
+            br()}
     })
     
     output$networkplot<-renderSimpleNetwork({
@@ -885,6 +893,16 @@ server <- function(input, output, session) {
                   )
         )
         })
+    
+    output$puberror<-renderText({paste("There is no publication data for", genename(), "gene")})
+    
+    output$pubui<-renderUI({
+        if (length(unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))])) > 0){
+            reactableOutput("pubtable")
+        }
+        else {h4(textOutput("puberror"))}
+    })
+
     
     output$heatmapcluster<-renderIheatmap({
         input$clusterPage
