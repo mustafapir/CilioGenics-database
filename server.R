@@ -515,7 +515,7 @@ server <- function(input, output, session) {
     
     inputscorestate<-reactive({
         if (inputscore() >= 0.5){
-            dashboardLabel("Highly Probability", status = "success")
+            dashboardLabel("High Probability", status = "success")
         }
         else if (inputscore() < 0.5 && inputscore() >= 0.4){
             dashboardLabel("Mild Probability", status = "info")
