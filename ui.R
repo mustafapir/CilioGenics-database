@@ -46,6 +46,8 @@ ui <- dashboardPagePlus(
     
     body = dashboardBody(
       
+      
+      
       tags$head(
         tags$link(rel = "shortcut icon", href = "favicon.ico"),
         tags$link(rel = "apple-touch-icon", sizes = "180x180", href = "apple-icon-180x180.png"),
@@ -68,9 +70,7 @@ ui <- dashboardPagePlus(
         
         uiOutput("buttonsui"),
       
-        
-      
-        br(),
+        br(), br(),
         tabItems(
             tabItem("hometab",
                 fluidRow(
@@ -179,14 +179,6 @@ ui <- dashboardPagePlus(
             )
         ),
         
-        # fluidRow(
-        #     div(
-        #       br(), br(),
-        #       
-        #       id = "generalinfo",
-        #       
-        #     )
-        # ),
         
         fluidRow(
           div(
@@ -198,13 +190,23 @@ ui <- dashboardPagePlus(
               solidHeader = TRUE,
               status = "success",
               #background = "purple",
-              width = 12,
+              width = 6,
               htmlOutput("textgeneid")
             ),
             
             boxPlus(
-              
-              progressBar(id = "pb8", value = 21271, total = 21271, status = "info", display_pct = TRUE, striped = TRUE, title = "Overall percentile")
+              title = "Rankings in Each Category (Lower is Better)",
+              solidHeader = TRUE,
+              status = "success",
+              width = 6,
+              uiOutput("bargeneinfo"),
+              uiOutput("bargeneinfo1"),
+              uiOutput("bargeneinfo2"),
+              uiOutput("bargeneinfo3"),
+              uiOutput("bargeneinfo4"),
+              uiOutput("bargeneinfo5"),
+              uiOutput("bargeneinfo6"),
+              uiOutput("bargeneinfo7")
               
             )
             
@@ -215,7 +217,8 @@ ui <- dashboardPagePlus(
         
         fluidRow(
             div(
-                br(), br(),
+              style="margin-left:15px",
+                br(),
             
                 id = "protein_interaction",
                 column(

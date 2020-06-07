@@ -46,6 +46,7 @@ server <- function(input, output, session) {
          removeModal()
      })
     
+     
     
      observeEvent(input$geneName_search, { 
           if (genename() == ""){
@@ -90,7 +91,7 @@ server <- function(input, output, session) {
          }
          
          else {
-             updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
+             
              show("general_info")
              hide("protein_interaction")
              hide("protein_interaction1")
@@ -376,10 +377,6 @@ server <- function(input, output, session) {
         
         c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))])
     })
-    
-    # generadioname<-reactive({
-    #     generadio
-    # })
 
     # Gene info **************** #
     
@@ -501,10 +498,63 @@ server <- function(input, output, session) {
     selected3 <- reactive(getReactableState("hclustertable", "selected"))
     selected4 <- reactive(getReactableState("hclusternumbertable", "selected"))
     
+    inputscore<-reactive({
+        final_score_table$Weighted_total_scores[which(final_score_table$Gene_name == genename())]
+    })
+   
+    
+    # inputscorestate<-reactive({
+    #     if (inputscore() >= 0.5){
+    #         "<H4 style=\"color:#009a00\";>High probability</H4>"
+    #     }
+    #     else if (inputscore() < 0.5 && inputscore() >= 0.4){
+    #         "<H4 style=\"color:#38a1db\";>Mild probability</H4>"
+    #     }
+    #     else {"<H4 style=\"color:#f01a1a\";>Low probability</H4>"}
+    # })
+    
+    inputscorestate<-reactive({
+        if (inputscore() >= 0.5){
+            dashboardLabel("High Probability", status = "success")
+        }
+        else if (inputscore() < 0.5 && inputscore() >= 0.4){
+            dashboardLabel("Mild Probability", status = "info")
+        }
+        else {dashboardLabel("Low Probability", status = "danger")}
+    })
+    
+    
     inputseq<-reactive({
         final_score_table$Seq[which(final_score_table$Gene_name == genename())]
     })
     
+    inputseq1<-reactive({
+        final_seq_table$Protein_interaction_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq2<-reactive({
+        final_seq_table$Genetic_interaction_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq3<-reactive({
+        final_seq_table$Single_cell_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq4<-reactive({
+        final_seq_table$Cluster_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq5<-reactive({
+        final_seq_table$Motif_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq6<-reactive({
+        final_seq_table$Publication_score[which(final_seq_table$Gene_name == genename())]
+    })
+    
+    inputseq7<-reactive({
+        final_seq_table$Protein_atlas_score[which(final_seq_table$Gene_name == genename())]
+    })
     
     
     output$buttonsui<-renderUI({
@@ -593,18 +643,12 @@ server <- function(input, output, session) {
                 top = "35px",
                 left = 0,
                 right = 0,
+                bottom = "10px",
                 fixed = FALSE,
                 style = "z-index: 10;"
             ) 
         }
     })
-    
-    
-    # output$modalgene<-renderUI({
-    #     option1<-geneoption()
-    #     radioButtons("generadio", "Which genes", geneoption(), selected = character(0))
-    # })
-    
     
     output$networkplot<-renderSimpleNetwork({
         simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
@@ -643,8 +687,40 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Ensembl ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", geneensembl(), "</td>", "</tr>",
             
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "CilioGenics score:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", format(round(inputscore(), 3), nsmall = 3), "</td>", "</tr>",
+            
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Probability of being ciliary gene:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscorestate(), "</td>", "</tr>",
+            
             "<table>")
     })
+    
+    
+     output$bargeneinfo<-renderUI({
+         
+         genebar("pb", inputseq(), "Overall percentile")
+     })
+     output$bargeneinfo1<-renderUI({    
+         genebar("pb1", inputseq1(), "Protein interaction")
+     })
+     output$bargeneinfo2<-renderUI({    
+         genebar("pb2", inputseq2(), "Genetic interaction")
+     })
+     output$bargeneinfo3<-renderUI({    
+         genebar("pb3", inputseq3(), "Single cell")
+     })
+     output$bargeneinfo4<-renderUI({    
+         genebar("pb4", inputseq4(), "Cluster")
+     })
+     output$bargeneinfo5<-renderUI({    
+         genebar("pb5", inputseq5(), "Motif")
+     })
+     output$bargeneinfo6<-renderUI({    
+         genebar("pb6", inputseq6(), "Publication")
+     })
+     output$bargeneinfo7<-renderUI({    
+         genebar("pb7", inputseq7(), "Protein Atlas")
+     
+     })
     
     
     output$protable<-renderUI({
