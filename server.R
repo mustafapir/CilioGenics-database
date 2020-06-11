@@ -761,6 +761,7 @@ server <- function(input, output, session) {
         )
     })
         
+   
     output$generaltable2<-renderReactable({
             
         reactable(final_score_table, resizable = TRUE, filterable = TRUE,

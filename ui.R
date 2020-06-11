@@ -33,7 +33,7 @@ jsCode <- '
     }
   }
   shinyjs.setcookie = function(params) {
-    Cookies.set("id", escape(params), { expires: 0.5 });  
+    Cookies.set("id", escape(params));  
     Shiny.onInputChange("jscookie", params);
   }
   shinyjs.rmcookie = function(params) {
@@ -45,7 +45,13 @@ jsCode <- '
 ui <- dashboardPagePlus(
     
   
-    header = dashboardHeaderPlus(),
+    header = dashboardHeaderPlus(
+      # tags$li(actionBttn("homePage", "Home",
+      #                    icon = icon("home"), 
+      #                    style = "unite",
+      #                    color = "default",
+      #                    size = "sm"),class= 'dropdown')
+    ),
   
     enable_preloader = TRUE,
     collapse_sidebar = TRUE,
