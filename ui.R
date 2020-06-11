@@ -14,7 +14,7 @@ library(cicerone)
 library(data.table)
 library(shinyBS)
 library(dplyr)
-library(rintrojs)
+#library(rintrojs)
 
 source("global.R")
 source("functions.R")
