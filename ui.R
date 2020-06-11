@@ -14,14 +14,37 @@ library(cicerone)
 library(data.table)
 library(shinyBS)
 library(dplyr)
+library(rintrojs)
 
 source("global.R")
 source("functions.R")
 
 
+#addResourcePath("js", "www")
+
+jsCode <- '
+  shinyjs.getcookie = function(params) {
+    var cookie = Cookies.get("id");
+    if (typeof cookie !== "undefined") {
+      Shiny.onInputChange("jscookie", cookie);
+    } else {
+      var cookie = "";
+      Shiny.onInputChange("jscookie", cookie);
+    }
+  }
+  shinyjs.setcookie = function(params) {
+    Cookies.set("id", escape(params), { expires: 0.5 });  
+    Shiny.onInputChange("jscookie", params);
+  }
+  shinyjs.rmcookie = function(params) {
+    Cookies.remove("id");
+    Shiny.onInputChange("jscookie", "");
+  }
+'
+
 ui <- dashboardPagePlus(
     
-   
+  introjsUI(),
     header = dashboardHeaderPlus(),
   
     enable_preloader = TRUE,
@@ -29,23 +52,29 @@ ui <- dashboardPagePlus(
     sidebar_background = "light",
     skin = "green",
     
-    
-    useShinyjs(),
-    
     use_cicerone(),
     
     sidebar = dashboardSidebar(
         header = singleton(tags$head(includeHTML(("google-analytics.html")))),
         collapsed = TRUE,
-        sidebarMenu(
-            id = "tabs",
-            menuItem("Home", tabName = "hometab", icon = icon("home")),
-            menuItem("Gene list", tabName = "exploretab", icon = icon("search"))
+        
+        div(
+          id = "tabs1",
+          sidebarMenu(
+              id = "tabs",
+              menuItem("Home", tabName = "hometab", icon = icon("home")),
+              menuItem("Gene list", tabName = "exploretab", icon = icon("search"))
+          )
         )
     ),
     
     body = dashboardBody(
       
+      useShinyjs(),
+      extendShinyjs(text = jsCode),
+      tags$head(
+        tags$script(src = "js-cookie.js")
+      ),
       
       
       tags$head(
@@ -56,7 +85,7 @@ ui <- dashboardPagePlus(
       ),
         
       uiOutput("modalgene"),
-      
+      textOutput("sometextop"),
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
             tags$link(rel = "stylesheet", type = "text/css", href = "stylesheet.css"),
@@ -67,12 +96,14 @@ ui <- dashboardPagePlus(
     });
   "),
         ),
-        
+        div(
+          id = "buttonscicerone",
         uiOutput("buttonsui"), #br(), br(),
-        uiOutput("space"),
+        uiOutput("space")),
       
         br(), br(),
         tabItems(
+          
             tabItem("hometab",
                 fluidRow(
                     tags$head(tags$script(src = "enter_button.js")),
@@ -87,6 +118,7 @@ ui <- dashboardPagePlus(
                             HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
                             br(), br(),
                             
+                            introBox(
                             searchInput(
                                 inputId = "geneName",
                                 label = HTML("<h4><center>Search a gene name</center></h4>"),
@@ -96,14 +128,21 @@ ui <- dashboardPagePlus(
                                 width = "40%",
                                 value = NULL
                             ),
+                            data.step = 1,
+                            data.intro = "You can search by gene name, NCBI gene ID, Ensembl ID and gene synonyms."),
+                            
                             HTML("<h3><center>OR</center></h3>"),
                             br(),
+                            
+                            introBox(
                             actionBttn(
                                 inputId = "explore",
                                 label = "Explore the gene list",
                                 icon = icon("list"),
                                 style = "minimal",
-                                color = "success")
+                                color = "success"),
+                            data.step = 2,
+                            data.intro = "Alternatively, you can explore the gene list and clusters."),
                         )
                     )
                 )
@@ -269,7 +308,7 @@ ui <- dashboardPagePlus(
                 br(), br(),
                 id = "pub",
                 column(
-                    width = 6,
+                    width = 12,
                     boxPlus(
                       width = 12,
                       title = "List of publications",

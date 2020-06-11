@@ -22,7 +22,7 @@ wbP<-fread("./data/wormbaseP1.csv")
 
 publications<-fread("./data/publications.csv")
 publ<-read_xlsx("./data/Publications.xlsx")
-nscores2<-fread("./data/nscores2.csv", )
+nscores2<-fread("./data/nscores21.csv", )
 aa<-fread("./data/aa.csv")
 row.names(nscores2)<-nscores2$gene_name
 
