@@ -118,7 +118,6 @@ ui <- dashboardPagePlus(
                             HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
                             br(), br(),
                             
-                            introBox(
                             searchInput(
                                 inputId = "geneName",
                                 label = HTML("<h4><center>Search a gene name</center></h4>"),
@@ -128,22 +127,19 @@ ui <- dashboardPagePlus(
                                 width = "40%",
                                 value = NULL
                             ),
-                            data.step = 1,
-                            data.intro = "You can search by gene name, NCBI gene ID, Ensembl ID and gene synonyms."),
                             
                             HTML("<h3><center>OR</center></h3>"),
                             br(),
                             
-                            introBox(
+                            
                             actionBttn(
                                 inputId = "explore",
                                 label = "Explore the gene list",
                                 icon = icon("list"),
                                 style = "minimal",
                                 color = "success"),
-                            data.step = 2,
-                            data.intro = "Alternatively, you can explore the gene list and clusters."),
                         )
+                        
                     )
                 )
             ),
