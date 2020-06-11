@@ -44,7 +44,7 @@ jsCode <- '
 
 ui <- dashboardPagePlus(
     
-  introjsUI(),
+  
     header = dashboardHeaderPlus(),
   
     enable_preloader = TRUE,
