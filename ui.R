@@ -234,6 +234,7 @@ ui <- dashboardPagePlus(
               #background = "purple",
               width = 6,
               htmlOutput("textgeneid")
+              
             ),
             
             boxPlus(

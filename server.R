@@ -481,7 +481,7 @@ server <- function(input, output, session) {
     
     inputclustertable<-reactive({
         
-        df<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper("CXorf51A"))]),1], stringsAsFactors = FALSE)
+        df<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]),1], stringsAsFactors = FALSE)
         df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
         df$`Gold standard` <- "NO"
         df$`Gold standard`[which(df[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
@@ -967,6 +967,6 @@ server <- function(input, output, session) {
                            tickvals = c(1:length(colnames(inputclusternumber()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
     })
-
+    
     
 }
