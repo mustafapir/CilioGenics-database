@@ -84,9 +84,9 @@ ui <- dashboardPagePlus(
       
       
       tags$head(
+        tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "/favicon-32x32.png"),
         tags$link(rel = "shortcut icon", href = "favicon.ico"),
         tags$link(rel = "apple-touch-icon", sizes = "180x180", href = "apple-icon-180x180.png"),
-        tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "/favicon-32x32.png"),
         tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "/favicon-16x16.png")
       ),
         

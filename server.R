@@ -403,7 +403,11 @@ server <- function(input, output, session) {
     })
     
     geneensembl<-reactive({
-        ens$`Gene stable ID`[which(ens$`Gene name` == genename())]
+        a<-ens$`Gene stable ID`[which(ens$`Gene name` == genename())]
+        if (length(a) > 1){
+            a<-paste0(a, collapse = "|\n")
+        }
+        a
     })
     
     # *************************** #
