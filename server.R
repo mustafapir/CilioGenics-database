@@ -399,7 +399,11 @@ server <- function(input, output, session) {
     })
     
     genesynonyms<-reactive({
-        homsap$Synonyms[which(homsap$Symbol == genename())]
+        a<-homsap2$Synonyms[which(homsap2$Symbol == genename())]
+        if (length(a) > 1){
+            a<-paste0(a, collapse = "|\n")
+        }
+        a
     })
     
     geneensembl<-reactive({

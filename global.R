@@ -3,6 +3,7 @@ library(DT)
 library(data.table)
 library(dplyr)
 library(readxl)
+library(tidyr)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
@@ -14,6 +15,9 @@ ciliogenics<-final_score_table %>%
 ciliaryGenes1$gold<-"YES"
 
 homsap<-fread("./data/Homo_sapiens.gene_info")
+homsap2<-homsap %>% 
+  separate_rows(Synonyms, sep = "\\|")
+
 ens<-fread("./data/ens.txt")
 
 biogrid<-fread("./data/biogrid.csv")
