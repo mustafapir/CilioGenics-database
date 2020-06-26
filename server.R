@@ -58,6 +58,7 @@ server <- function(input, output, session) {
      
     
      observeEvent(input$geneName_search, { 
+         session$sendCustomMessage("geneName", trimmedGname())
           if (genename() == ""){
               sendSweetAlert(
                   session = session,
@@ -67,7 +68,7 @@ server <- function(input, output, session) {
                   showCloseButton = TRUE
               )
           }
-         else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) > 1){
+         else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) > 1){
              showModal(modalDialog(
                  h3("Multiple Results"),
                  radioGroupButtons("generadio", h4("It appears there are multiple genes corresponding to the input. Please select one: "), geneoption(), selected = character(0)),
@@ -130,7 +131,7 @@ server <- function(input, output, session) {
          updateTabItems(session, "tabs", selected = character(0))
      })
      
-    observeEvent(input$geneName, {
+    observeEvent(trimmedGname(), {
         updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
     })
      
@@ -359,24 +360,28 @@ server <- function(input, output, session) {
         #guide1$init()$start()
     })
     
+    trimmedGname<-reactive({
+        trimmed<-trimws(input$geneName)
+        trimmed
+    })
     
     genename<-reactive({
-        if (toupper(input$geneName) %in% ens$`Gene stable ID`){
-            gname<-ens$`Gene name`[which(ens$`Gene stable ID` %in% toupper(input$geneName))]
+        if (toupper(trimmedGname()) %in% ens$`Gene stable ID`){
+            gname<-ens$`Gene name`[which(ens$`Gene stable ID` %in% toupper(trimmedGname()))]
         }
-        else if (input$geneName %in% homsap$GeneID){
-            gname<-homsap$Symbol[which(homsap$GeneID %in% input$geneName)]
+        else if (trimmedGname() %in% homsap$GeneID){
+            gname<-homsap$Symbol[which(homsap$GeneID %in% trimmedGname())]
         }
             else {
-                if (!(toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)) && 
-                (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
-                length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName)])) == 1) {
-                gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))]
+                if (!(toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_name)) && 
+                (toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
+                length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) == 1) {
+                gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))]
             }
-            else if (toupper(input$geneName) %in% toupper(gene_synonyms2$Gene_name)){
-                gname<-unique(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_name) %in% toupper(input$geneName))])
+            else if (toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_name)){
+                gname<-unique(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_name) %in% toupper(trimmedGname()))])
             }
-            else {gname<-input$geneName}
+            else {gname<-trimmedGname()}
             }
         
         gname
@@ -384,7 +389,7 @@ server <- function(input, output, session) {
     
     geneoption<-reactive({
         
-        c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(input$geneName))])
+        c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))])
     })
 
     # Gene info **************** #
