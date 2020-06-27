@@ -103,6 +103,9 @@ ui <- dashboardPagePlus(
     Shiny.setInputValue('geneName', value);
     });
   "),
+            tags$script("Shiny.addCustomMessageHandler('close_drop1', function(x){
+                  $('html').click();
+                });")
         ),
         div(
           id = "buttonscicerone",
@@ -300,9 +303,6 @@ ui <- dashboardPagePlus(
                     width = 6,
                     uiOutput("protable")
                 )
-                #column(
-                #    width = 12,
-                #    uiOutput("pro_box2")
             )
         ),
         
@@ -329,33 +329,6 @@ ui <- dashboardPagePlus(
             div(
                 br(), br(),
                 id = "cluster_page",
-                # column(
-                #   width = 9,
-                #   boxPlus(
-                #     width = 12,
-                #     htmlOutput("textclstr"),
-                #     solidHeader = TRUE,
-                #     status = "success",
-                #     #title = paste("Cluster", html(htmlOutput("textclstr"))),
-                #     dropdownButton(
-                #       prettyRadioButtons(
-                #         inputId = "hmapradio",
-                #         label = "Genes to display:",
-                #         choices = c("Cluster", "Only selected gene"),
-                #         selected = "Cluster",
-                #         plain = TRUE,
-                #       ),
-                #       circle = FALSE, status = "success",
-                #       icon = icon("gear"), width = "100px",
-                #       inline = FALSE,
-                #       tooltip = tooltipOptions(title = "Click to select content displayed"),
-                #       
-                #       inputId = "drpdwnbttn"
-                #     ),
-                #     br(), br(),
-                #     uiOutput("clstrui1")
-                #   )
-                # ),
                 uiOutput("clusterui"),
                 uiOutput("clustertableui")
             )

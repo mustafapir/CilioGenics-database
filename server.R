@@ -361,9 +361,9 @@ server <- function(input, output, session) {
         #guide1$init()$start()
     })
     
-    observeEvent(inputclustergname(), {
-        toggleDropdownButton(inputId = "drpdwnbttn")
-    }, ignoreInit = TRUE)
+    observeEvent(input$hmapradio, {
+        session$sendCustomMessage("close_drop1", "")
+    })
     
     trimmedGname<-reactive({
         trimmed<-trimws(input$geneName)
@@ -607,23 +607,38 @@ server <- function(input, output, session) {
     
     reactiveHeatmap1<-reactive({
         hmap <- isolate(inputcluster())
-        main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
+        hmap2 <- isolate(inputclusterGene())
+        mmap<-main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
             add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
-    })
-    
-    reactiveHeatmap2<-reactive({
-        hmap <- isolate(inputclusterGene())
-        main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
-                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+        
+        mmap2<-main_heatmap(hmap2, layout = list(paper_bgcolor='transparent'), 
+                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
+        
+        if(inputclustergname() == "clusterradbut"){
+            mmap
+        }
+        else {  
+            mmap2
+        }
     })
+    
+    # reactiveHeatmap2<-reactive({
+    #     hmap <- isolate(inputclusterGene())
+    #     main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
+    #                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+    #         add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+    #         add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+    #                        tickvals = c(1:length(colnames(inputcluster()))))%>%
+    #         add_col_annotation(annotation=anot, side="top", size = 0.1)
+    # })
     
     
     
@@ -921,6 +936,8 @@ server <- function(input, output, session) {
         })
         
         output$clusterui<-renderUI({
+            div(
+                style = "position: relative",
             column(
                 width = 9,
                 boxPlus(
@@ -928,7 +945,7 @@ server <- function(input, output, session) {
                     solidHeader = TRUE,
                     status = "success",
                     title = paste("Cluster", inputclusternamenumber()),
-                    height = "800px",
+                    height = "820px",
                     div(
                         style = "position: absolute; left: 0.5em; bottom: 0.5em;",
                         dropdown(
@@ -936,47 +953,37 @@ server <- function(input, output, session) {
                                 inputId = "hmapradio",
                                 label = "Genes to display:", 
                                 choiceNames = c("Cluster", genename()), 
-                                choiceValues = c("cluster", "gene"), 
-                                selected = "year", 
-                                direction = "vertical"
+                                choiceValues = c("clusterradbut", "generadbut"),
+                                direction = "vertical",
+                                selected = "clusterradbut"
                             ),
                             size = "xm",
                             icon = icon("gear", class = "opt"), 
+                            up = TRUE,
+                            inputId = "ddownid"
+                        )
+                    ),
+                    div(
+                        style = "position: absolute; left: 6em;bottom: 0.5em;",
+                        dropdown(
+                            downloadButton(outputId = "hmap1", label = "Download plot"),
+                            size = "xm",
+                            icon = icon("download", class = "opt"), 
                             up = TRUE
                         )
                     ),
-                    textOutput("xxx"),
-            
-                    if (length(inputclustergname()) == 0){
-                        downloadFunction("hmap1")
-                    }
-                    else {
-                        if (inputclustergname() == "cluster"){
-                            downloadFunction("hmap1")
-                        }
-                        else{downloadFunction("hmap2")}
-                    }
-                    ,
-                    if (length(inputclustergname()) == 0){
-                        withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "700px"), color = "#10c891")
-                    }
-                    else {
-                        if (inputclustergname() == "cluster"){
-                            withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "700px"), color = "#10c891")
-                        }
-                        else{withSpinner(iheatmaprOutput("heatmapclusterGene", width = "100%", height = "700px"), color = "#10c891")}
-                    }
-                
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "700px"), color = "#10c891")
                 )
+            )
             )
         })
         
-        output$clstrui1<-renderUI({
-            if (inputclustergname() == "Cluster"){
-                withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"), color = "#10c891")
-            }
-            else{withSpinner(iheatmaprOutput("heatmapclusterGene", width = "100%", height = "420px"), color = "#10c891")}
-        })
+        # output$clstrui1<-renderUI({
+        #     if (inputclustergname() == "Cluster"){
+        #         withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "600px"), color = "#10c891")
+        #     }
+        #     else{withSpinner(iheatmaprOutput("heatmapclusterGene", width = "100%", height = "420px"), color = "#10c891")}
+        # })
         
         output$textclstr<-renderUI({
             titleTag <- shiny::tags$h3(class = "box-title", paste("Cluster", inputclusternamenumber()))
@@ -1021,13 +1028,7 @@ server <- function(input, output, session) {
 
     
     output$heatmapcluster<-renderIheatmap({
-        input$clusterPage
         reactiveHeatmap1()
-    })
-    
-    output$heatmapclusterGene<-renderIheatmap({
-        input$clusterPage
-        reactiveHeatmap2()
     })
     
     output$hclustertable<-renderReactable({
@@ -1075,15 +1076,4 @@ server <- function(input, output, session) {
         },
         contentType = "image/png"
     )
-    
-    output$hmap2<-downloadHandler(
-        filename =paste0("cluster_", genename(), ".png"),
-        content = function(file){
-            save_iheatmap(reactiveHeatmap2(), file, vwidth=2000,vheight=1000)
-        },
-        contentType = "image/png"
-    )
-    output$xxx<-renderText({
-        inputclustergname()
-    })
 }
