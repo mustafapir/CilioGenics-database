@@ -14,12 +14,13 @@ library(cicerone)
 library(data.table)
 library(shinyBS)
 library(dplyr)
+library(webshot)
 
 #library(rintrojs)
 
 source("global.R")
 source("functions.R")
-
+webshot::install_phantomjs()
 
 #addResourcePath("js", "www")
 
@@ -328,6 +329,33 @@ ui <- dashboardPagePlus(
             div(
                 br(), br(),
                 id = "cluster_page",
+                # column(
+                #   width = 9,
+                #   boxPlus(
+                #     width = 12,
+                #     htmlOutput("textclstr"),
+                #     solidHeader = TRUE,
+                #     status = "success",
+                #     #title = paste("Cluster", html(htmlOutput("textclstr"))),
+                #     dropdownButton(
+                #       prettyRadioButtons(
+                #         inputId = "hmapradio",
+                #         label = "Genes to display:",
+                #         choices = c("Cluster", "Only selected gene"),
+                #         selected = "Cluster",
+                #         plain = TRUE,
+                #       ),
+                #       circle = FALSE, status = "success",
+                #       icon = icon("gear"), width = "100px",
+                #       inline = FALSE,
+                #       tooltip = tooltipOptions(title = "Click to select content displayed"),
+                #       
+                #       inputId = "drpdwnbttn"
+                #     ),
+                #     br(), br(),
+                #     uiOutput("clstrui1")
+                #   )
+                # ),
                 uiOutput("clusterui"),
                 uiOutput("clustertableui")
             )

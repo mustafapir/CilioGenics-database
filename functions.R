@@ -49,3 +49,15 @@ guide1 <- Cicerone$
 
   sessionid <- "OQGYIrpOvV3KnOpBSPgOhqGxz2dE5A9IpKhP6Dy2kd7xIQhLjwYzskn9mIhRAVHo29"
   
+  downloadFunction <- function(id) {
+    div(
+      style = "position: absolute; left: 6em;bottom: 0.5em;",
+      dropdown(
+        downloadButton(outputId = id, label = "Download plot"),
+        size = "xm",
+        icon = icon("download", class = "opt"), 
+        up = TRUE
+      )
+    )
+  }
+  
