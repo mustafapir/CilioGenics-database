@@ -945,7 +945,8 @@ server <- function(input, output, session) {
                             up = TRUE
                         )
                     ),
-                    
+                    textOutput("xxx"),
+            
                     if (length(inputclustergname()) == 0){
                         downloadFunction("hmap1")
                     }
@@ -957,7 +958,7 @@ server <- function(input, output, session) {
                     }
                     ,
                     if (length(inputclustergname()) == 0){
-                        withSpinner(iheatmaprOutput("heatmapclusterGene", width = "100%", height = "700px"), color = "#10c891")
+                        withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "700px"), color = "#10c891")
                     }
                     else {
                         if (inputclustergname() == "cluster"){
@@ -965,6 +966,7 @@ server <- function(input, output, session) {
                         }
                         else{withSpinner(iheatmaprOutput("heatmapclusterGene", width = "100%", height = "700px"), color = "#10c891")}
                     }
+                
                 )
             )
         })
@@ -1081,5 +1083,7 @@ server <- function(input, output, session) {
         },
         contentType = "image/png"
     )
-    
+    output$xxx<-renderText({
+        inputclustergname()
+    })
 }
