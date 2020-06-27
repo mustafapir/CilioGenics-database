@@ -365,6 +365,10 @@ server <- function(input, output, session) {
         session$sendCustomMessage("close_drop1", "")
     })
     
+    observeEvent(input$hmap1, {
+        session$sendCustomMessage("close_drop1", "")
+    })
+    
     trimmedGname<-reactive({
         trimmed<-trimws(input$geneName)
         trimmed
@@ -492,7 +496,7 @@ server <- function(input, output, session) {
         
         a<-as.matrix(nscores2[which(nscores2$Gene_name == toupper(genename())),2:73])
         a<-rbind(a,a)
-        rownames(a)<-c(genename(),"")
+        rownames(a)<-c(nscores2$Gene_name[which(nscores2$Gene_name == toupper(genename()))],"")
         a
     })
     
@@ -966,7 +970,7 @@ server <- function(input, output, session) {
                     div(
                         style = "position: absolute; left: 6em;bottom: 0.5em;",
                         dropdown(
-                            downloadButton(outputId = "hmap1", label = "Download plot"),
+                            downloadButton(outputId = "hmap1", label = "Download heatmap"),
                             size = "xm",
                             icon = icon("download", class = "opt"), 
                             up = TRUE
@@ -1068,9 +1072,18 @@ server <- function(input, output, session) {
             add_col_annotation(annotation=anot, side="top", size = 0.1)
     })
     
+    reactiveDownload<-reactive({
+        if (inputclustergname() == "clusterradbut"){
+            filename = paste0("cluster_", inputclusternamenumber(), "_heatmap.png")
+        }
+        else {filename = paste0(genename(), "_heatmap.png")}
+        filename
+    })
     
     output$hmap1<-downloadHandler(
-        filename =paste0("cluster_", inputclusternamenumber(), ".png"),
+        filename = function() {
+           reactiveDownload() 
+        },
         content = function(file){
             save_iheatmap(reactiveHeatmap1(), file, vwidth=2000,vheight=1000)
         },
