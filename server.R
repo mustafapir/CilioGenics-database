@@ -610,16 +610,16 @@ server <- function(input, output, session) {
     
     
     reactiveHeatmap1<-reactive({
-        hmap <- isolate(inputcluster())
-        hmap2 <- isolate(inputclusterGene())
-        mmap<-main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
+        #hmap <- isolate(inputcluster())
+        #hmap2 <- isolate(inputclusterGene())
+        mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'), 
                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
             add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
         
-        mmap2<-main_heatmap(hmap2, layout = list(paper_bgcolor='transparent'), 
+        mmap2<-main_heatmap(inputclusterGene(), layout = list(paper_bgcolor='transparent'), 
                             tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
@@ -1032,6 +1032,7 @@ server <- function(input, output, session) {
 
     
     output$heatmapcluster<-renderIheatmap({
+        input$clusterPage
         reactiveHeatmap1()
     })
     
