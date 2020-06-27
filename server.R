@@ -607,7 +607,7 @@ server <- function(input, output, session) {
     
     reactiveHeatmap1<-reactive({
         hmap <- isolate(inputcluster())
-        heatmapp<-main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
+        main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
             add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
@@ -617,7 +617,7 @@ server <- function(input, output, session) {
     
     reactiveHeatmap2<-reactive({
         hmap <- isolate(inputclusterGene())
-        heatmapp<-main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
+        main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
                      tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
