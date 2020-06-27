@@ -336,7 +336,7 @@ ui <- dashboardPagePlus(
         
         fluidRow(
             div(
-                br(), br(),
+                
                 column(
                     width = 1,
                     id = "back_button",

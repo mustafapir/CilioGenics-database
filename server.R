@@ -949,7 +949,7 @@ server <- function(input, output, session) {
                     solidHeader = TRUE,
                     status = "success",
                     title = paste("Cluster", inputclusternamenumber()),
-                    height = "820px",
+                    height = "750px",
                     div(
                         style = "position: absolute; left: 0.5em; bottom: 0.5em;",
                         dropdown(
@@ -970,13 +970,13 @@ server <- function(input, output, session) {
                     div(
                         style = "position: absolute; left: 6em;bottom: 0.5em;",
                         dropdown(
-                            downloadButton(outputId = "hmap1", label = "Download heatmap"),
+                            downloadButton(outputId = "hmap1", label = "Download Plot"),
                             size = "xm",
                             icon = icon("download", class = "opt"), 
                             up = TRUE
                         )
                     ),
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "700px"), color = "#10c891")
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), color = "#10c891")
                 )
             )
             )
