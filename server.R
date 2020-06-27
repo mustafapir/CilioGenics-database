@@ -228,6 +228,7 @@ server <- function(input, output, session) {
         show("exptab")
         hide("cluster_page")
         hide("back_button")
+        updateReactable("hclusternumbertable", selected = NA)
         #updateTabItems(session, "tabs", "exploretab")
     })
     
@@ -242,6 +243,7 @@ server <- function(input, output, session) {
         hide("cluster_page")
         hide("back_button")
         click("geneName_reset")
+        updateReactable("hclusternumbertable", selected = NA)
     })
     
     observeEvent(input$explore, {
@@ -355,6 +357,9 @@ server <- function(input, output, session) {
         show("exptab")
         #show("tabButtons2")
         show("landing_page")
+        updateReactable("hclusternumbertable", selected = NA)
+        #click("geneName_reset")
+        #session$sendCustomMessage("geneName", "")
     })
     
     observeEvent(input$help1, {
