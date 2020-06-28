@@ -362,6 +362,8 @@ server <- function(input, output, session) {
         #session$sendCustomMessage("geneName", "")
     })
     
+    
+    
     observeEvent(input$help1, {
         #guide1$init()$start()
     })
@@ -615,6 +617,7 @@ server <- function(input, output, session) {
     
     
     reactiveHeatmap1<-reactive({
+        req(input$geneName)
         #hmap <- isolate(inputcluster())
         #hmap2 <- isolate(inputclusterGene())
         mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'), 
@@ -638,18 +641,40 @@ server <- function(input, output, session) {
             mmap2
         }
     })
+    #************************************************************************************
+    hmapEvent <- reactive({
+        a<-iheatmapr_event(reactiveHeatmap1(), event = "click")
+        if (!is.null(a)){
+            x<-data.frame(unlist(a))[[1]][2]+1
+        }
+        else {x <- "NA"}
+        x
+    })
     
-    # reactiveHeatmap2<-reactive({
-    #     hmap <- isolate(inputclusterGene())
-    #     main_heatmap(hmap, layout = list(paper_bgcolor='transparent'), 
-    #                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-    #         add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-    #         add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
-    #                        tickvals = c(1:length(colnames(inputcluster()))))%>%
-    #         add_col_annotation(annotation=anot, side="top", size = 0.1)
-    # })
+    genenumberclusterhmap<-reactive({
+        req(hmapEvent())
+        inputclustertable()[[1]][hmapEvent()]
+    })
     
-    
+        observeEvent(hmapEvent(),{
+            req(hmapEvent(), genenumberclusterhmap())
+            if (length(genenumberclusterhmap() != "") != 0){
+                if (genenumberclusterhmap() != ""){
+                    session$sendCustomMessage("geneName", genenumberclusterhmap())
+                    show("general_info")
+                    hide("protein_interaction")
+                    hide("protein_interaction1")
+                    hide("landing_page")
+                    show("back_button")
+                    click("generalPage")
+                    reset("clusterPage")
+                    updateTabItems(session, "tabs", selected = character(0))
+                }
+            }
+        },
+        ignoreInit = TRUE,
+        ignoreNULL = TRUE
+        )
     
     output$buttonsui<-renderUI({
         if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
@@ -981,6 +1006,7 @@ server <- function(input, output, session) {
                             up = TRUE
                         )
                     ),
+                    #tableOutput("xxx"),
                     withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), color = "#10c891")
                 )
             )
@@ -1095,4 +1121,7 @@ server <- function(input, output, session) {
         },
         contentType = "image/png"
     )
+     # output$xxx<-renderTable({
+     #     is.null(iheatmapr_event(reactiveHeatmap1(), event = "click"))
+     # })
 }
