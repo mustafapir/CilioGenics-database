@@ -105,6 +105,9 @@ ui <- dashboardPagePlus(
   "),
             tags$script("Shiny.addCustomMessageHandler('close_drop1', function(x){
                   $('html').click();
+                });"),
+            tags$script("Shiny.addCustomMessageHandler('close_drop2', function(x){
+                  $('html').click();
                 });")
         ),
         div(
