@@ -103,6 +103,12 @@ ui <- dashboardPagePlus(
     Shiny.setInputValue('geneName', value);
     });
   "),
+            tags$script("
+    Shiny.addCustomMessageHandler('hmapEvent', function(value) {
+    Shiny.setInputValue('hmapEvent', value);
+    });
+  "),
+            
             tags$script("Shiny.addCustomMessageHandler('close_drop1', function(x){
                   $('html').click();
                 });"),

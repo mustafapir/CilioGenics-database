@@ -380,6 +380,23 @@ server <- function(input, output, session) {
         session$sendCustomMessage("close_drop2", "")
     })
     
+    # observeEvent({
+    #     req(input$clusterPage, inputclusternamenumber())
+    #     if (length(inputcluster()[,1]) == 500){
+    #     showModal(modalDialog(
+    #         h3("Multiple Results"),
+    #         h4("There are more than 500 genes in this cluster. Only first 500 genes are shown on the heatmap. To see the full map, refer to Cluster tab of gene list page"),
+    #         easyClose = TRUE,
+    #         footer = tagList(
+    #             actionButton(inputId = "close", label = "Close", icon = icon("close"))
+    #         )
+    #     )
+    #     )
+    #     }
+    # })
+    
+    #clnum<-reactiveVal(0)
+    
     
     trimmedGname<-reactive({
         trimmed<-trimws(input$geneName)
@@ -650,53 +667,61 @@ server <- function(input, output, session) {
     #************************************************************************************
     #hmapclick <- reactive({iheatmapr_event(heatmapclusternumberR(), event = "click")})
     
-    genenumberclusterhmap2<-reactive({
-        req(hmapEvent())
-        if (!is.null(hmapclick())){
-            x<-data.frame(unlist(hmapclick()))[[1]][2]+1
-        }
-        else {x <- "NA"}
-        inputclustertable()[[1]][x]
-    })
     
     
-    hmapEvent <- reactive({
-        
-        iheatmapr_event(heatmapclusternumberR(), event = "click")
-    })
     
-    genenumberclusterhmap<-reactive({
-        req(hmapEvent())
-        if (!is.null(hmapEvent())){
-            x<-data.frame(unlist(hmapEvent()))[[1]][2]+1
-        }
-        else {x <- "NA"}
-        inputclusternumbertable()[[1]][x]
-    })
-    
-        observeEvent(hmapEvent(),{
-            req(hmapEvent(), genenumberclusterhmap())
-            if (length(genenumberclusterhmap() != "") != 0){
-                if (genenumberclusterhmap() != ""){
-                    session$sendCustomMessage("geneName", genenumberclusterhmap())
-                    show("general_info")
-                    hide("protein_interaction")
-                    hide("protein_interaction1")
-                    hide("landing_page")
-                    hide("cluster_page")
-                    hide("pub")
-                    hide("exptab")
-                    show("buttonsui")
-                    show("back_button")
-                    #click("generalPage")
-                    #reset("clusterPage")
-                    updateTabItems(session, "tabs", selected = character(0))
-                }
-            }
-        },
-        ignoreInit = TRUE,
-        ignoreNULL = TRUE
-        )
+    # status<-reactiveVal(0)
+    # status2<-reactiveVal(1)
+    # observeEvent(input$clusternumber, {
+    #     status(1)
+    # })
+    # 
+    # 
+    #     hmapEvent <- reactive({
+    #         #if (status()==0){
+    #         
+    #         iheatmapr_event(heatmapclusternumberR(), event = "relayout")
+    #         #}
+    #         #else {NULL}
+    #     })
+    # 
+    # 
+    # genenumberclusterhmap<-reactive({
+    #     req(hmapEvent())
+    #     if (!is.null(hmapEvent())){
+    #         x<-data.frame(unlist(hmapEvent()))[[1]][2]+1
+    #     }
+    #     else {x <- "NA"}
+    #     inputclusternumbertable()[[1]][x]
+    # })
+    # 
+    # 
+    #     observeEvent(c(hmapEvent(),status(0)),{
+    #         req(genenumberclusterhmap())
+    #         if (length(genenumberclusterhmap() != "") != 0){
+    #             if (genenumberclusterhmap() != "" && !status() == 1){
+    #                 session$sendCustomMessage("geneName", genenumberclusterhmap())
+    #                 show("general_info")
+    #                 hide("protein_interaction")
+    #                 hide("protein_interaction1")
+    #                 hide("landing_page")
+    #                 hide("cluster_page")
+    #                 hide("pub")
+    #                 hide("exptab")
+    #                 show("buttonsui")
+    #                 show("back_button")
+    #                 #click("generalPage")
+    #                 #reset("clusterPage")
+    #                 updateTabItems(session, "tabs", selected = character(0))
+    #                 updateReactable("hclusternumbertable", selected = NA)
+    #                 session$sendCustomMessage("hmapEvent", NULL)
+    #                 status(0)
+    #             }
+    #         }
+    #     },
+    #     ignoreInit = TRUE,
+    #     ignoreNULL = TRUE
+    #     )
     
     output$buttonsui<-renderUI({
         if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
