@@ -80,8 +80,7 @@ ui <- dashboardPagePlus(
     body = dashboardBody(
       
       useShinyjs(),
-      extendShinyjs(text = jsCode),
-      extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
+      #extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
       tags$head(
         tags$script(src = "js-cookie.js")
       ),
