@@ -15,6 +15,7 @@ library(data.table)
 library(shinyBS)
 library(dplyr)
 library(webshot)
+library(V8)
 
 #library(rintrojs)
 
