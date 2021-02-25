@@ -1,4 +1,3 @@
-
 library(DT)
 library(data.table)
 library(dplyr)
@@ -50,3 +49,38 @@ for (i in 2:11){
   final_seq_table[[i]]<-c(1:length(final_seq_table[[i]]))
 }
 
+orange_pal <- function(x){
+  if (!is.na(x)){
+    rgb(colorRamp(c("#ffe4cc", "#ffb54d"))(x), maxColorValue = 255)
+  } else {
+    "#e9e9e9" #grey
+  }
+}
+
+stylefunc <- function(value, index, name) {
+  normalized <- (value - min(df4[name], na.rm = T)) /
+    (max(df4[name], na.rm = T) - min(df4[name], na.rm = T))
+  color <- orange_pal(normalized)
+  list(background = color)
+}
+
+coldefs <- list(
+  reactable::colDef(style = stylefunc, minWidth = 100)
+)
+
+
+df4<-data.frame(df2, stringsAsFactors = FALSE)
+rownames(df4)<-df1$symbol
+#df4<-df4[,c(-1,-2)]
+numcols <- df4 %>% dplyr::select(where(is.numeric)) %>% colnames()
+# replicate list to required length
+coldefs <- rep(coldefs,length(numcols))
+# name elements of list according to cols
+names(coldefs) <- numcols
+
+
+
+omim<-fread("./data/mim2gene.txt", skip = 4) %>%
+  filter(`MIM Entry Type (see FAQ 1.3 at https://omim.org/help/faq)` == "gene") %>%
+  filter(`Approved Gene Symbol (HGNC)` != "")
+colnames(omim)[c(1,4)]<-c("omim_id","Gene_name")
