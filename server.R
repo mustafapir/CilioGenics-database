@@ -1,5 +1,6 @@
 library(shiny)
 library(webshot)
+library(pheatmap)
 webshot::install_phantomjs
 source("functions.R")
 options(reactable.theme = reactableTheme(
