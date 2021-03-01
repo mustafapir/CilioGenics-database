@@ -238,7 +238,7 @@ ui <- dashboardPagePlus(
                         inputId = "clusternumber2",
                         label = "Select cluster number to explore", 
                         choices = list(
-                          "Ciliary organisms specific clusters" = 5,
+                          "Ciliary cells specific clusters" = 5,
                           "Neurons specific cluster" = 7,
                           "Low specificity" = c(1:4,6,8:20)
                         )
