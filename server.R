@@ -1467,4 +1467,52 @@ server <- function(input, output, session) {
         )
     })
     
+    
+    
+    # Single cell cluster numbers
+    
+    r_scclusternumber<-reactive({
+        a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
+        rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
+        a
+    })
+    
+    r_scclusternumbertable<-reactive({
+        
+        a<-data.frame(celegans_sc[which(celegans_sc$tree == input$clusternumber2),29])
+        colnames(a)<-"Gene_name"
+        a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
+        a$`Gold standard` <- "NO"
+        a$`Gold standard`[which(a[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+        a$CilioGenics <- "NO"
+        a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
+        a
+    })
+    
+    output$schclusternumbertable<-renderReactable({
+        
+        reactable(r_scclusternumbertable(), resizable = TRUE, filterable = TRUE,
+                  columns = list(Score = colDef(format = colFormat(digits = 3)),
+                                 Gene_name = colDef(name = "Gene name")),
+                  defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  highlight = TRUE,
+                  rowStyle = list(cursor = "pointer"),
+                  selection = "single",
+                  onClick = "select")
+    })
+    
+    scheatmapclusternumberR<-reactive({
+        main_heatmap(r_scclusternumber(), layout = list(paper_bgcolor='transparent'),
+                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+            add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+            add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                           tickvals = c(1:length(colnames(r_scclusternumber()))))%>%
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+    })
+    
+    output$scheatmapclusternumber<-renderIheatmap({
+        
+        scheatmapclusternumberR()
+    })
+    
 }

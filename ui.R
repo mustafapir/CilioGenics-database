@@ -194,6 +194,7 @@ ui <- dashboardPagePlus(
                     id = "exploredt",
                     width = 12,
                     title = "Explore the genes",
+                    
                     tabPanel(
                       br(), br(),
                       title = "Gene table",
@@ -204,6 +205,7 @@ ui <- dashboardPagePlus(
                           withSpinner(reactableOutput("generaltable3"), color = "#10c891"))
                       #textOutput("ot")
                     ),
+                    
                     tabPanel(
                       id = "tab2",
                       title = "Clusters",
@@ -227,7 +229,33 @@ ui <- dashboardPagePlus(
                         )
                       )
                       
+                    ),
+                    
+                    tabPanel(
+                      id = "tab3",
+                      title = "Single cell clusters",
+                      pickerInput(
+                        inputId = "clusternumber2",
+                        label = "Select cluster number to explore", 
+                        choices = list(
+                          "Ciliary organisms specific clusters" = 5,
+                          "Neurons specific cluster" = 7,
+                          "Low specificity" = c(1:4,6,8:20)
+                        )
+                      ),
+                      fluidRow(
+                        column(
+                          width = 9,
+                          withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), color = "#10c891")
+                        ),
+                        column(
+                          width = 3,
+                          withSpinner(reactableOutput("schclusternumbertable"), color = "#10c891")
+                        )
+                      )
+                      
                     )
+                    
                   )
                 )
               )
