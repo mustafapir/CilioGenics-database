@@ -243,6 +243,7 @@ ui <- dashboardPagePlus(
                           "Low specificity" = c(1:4,6,8:20)
                         )
                       ),
+                      uiOutput("pickeroutput"),
                       fluidRow(
                         column(
                           width = 9,

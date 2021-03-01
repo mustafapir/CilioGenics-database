@@ -1477,6 +1477,13 @@ server <- function(input, output, session) {
         a
     })
     
+    r_scgenenumber<-reactive({
+        a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(input$clusternumber3)),2:28])
+        a<-rbind(a,a)
+        rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(input$clusternumber3))],"")
+        a
+    })
+    
     r_scclusternumbertable<-reactive({
         
         a<-data.frame(celegans_sc[which(celegans_sc$tree == input$clusternumber2),29])
@@ -1510,9 +1517,38 @@ server <- function(input, output, session) {
             add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
     })
     
-    output$scheatmapclusternumber<-renderIheatmap({
-        
-        scheatmapclusternumberR()
+    scheatmapgenenumberR<-reactive({
+        main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'), 
+                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+            add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                           tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
     })
     
+    output$scheatmapclusternumber<-renderIheatmap({
+        if (input$clusternumber3 == "None"){
+            scheatmapclusternumberR()
+        }
+        else {
+            scheatmapgenenumberR()
+        }
+    })
+    
+    genelistforpicker<-reactive({
+        a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
+        #a<-a[1]
+        a
+    })
+    
+    output$pickeroutput<-renderUI({
+        
+        pickerInput(
+            inputId = "clusternumber3",
+            label = "Select a gene to explore", 
+            choices = list(
+                "Gene name" = c("None", genelistforpicker())
+            )
+        )
+    })
 }
