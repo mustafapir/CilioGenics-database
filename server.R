@@ -1291,10 +1291,7 @@ server <- function(input, output, session) {
                   bordered = TRUE, striped = TRUE, highlight = TRUE, defaultPageSize = 10)
     })
     
-    # output$xxx<-renderTable({
-    #     is.null(iheatmapr_event(reactiveHeatmap1(), event = "click"))
-    # })
-    # 
+    
     
     # ***************************************************
     
@@ -1305,9 +1302,6 @@ server <- function(input, output, session) {
         #if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
         a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
         rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
-        # if (length(a[,1]) > 500){
-        #     a<-a[1:500,]
-        # }
         a
         #else {paste("There is no C. elegans single cell data for", genename(), "gene")}
     })
@@ -1418,6 +1412,25 @@ server <- function(input, output, session) {
             )
         )
     })
+    
+    reactiveDownload2<-reactive({
+        if (r_scgeneradio() == "clusterradbut"){
+            filename = paste0("cluster_", r_scclusternumber(), "_heatmap.png")
+        }
+        else {filename = paste0(genename(), "_heatmap.png")}
+        filename
+    })
+    
+    output$scdownloadbttn<-downloadHandler(
+        filename = function() {
+            reactiveDownload2() 
+        },
+        content = function(file){
+            save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
+        },
+        contentType = "image/png"
+    )
+    
     
     # Single cell cluster table
     
