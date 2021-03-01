@@ -1478,9 +1478,10 @@ server <- function(input, output, session) {
     })
     
     r_scgenenumber<-reactive({
-        a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(input$clusternumber3)),2:28])
+        b<-celegans_sc[which(celegans_sc$tree == input$clusternumber2),]
+        a<-as.matrix(b[which(b$Human_gene_name == toupper(input$clusternumber3)),2:28])
         a<-rbind(a,a)
-        rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(input$clusternumber3))],"")
+        rownames(a)<-c(b$Human_gene_name[which(b$Human_gene_name == toupper(input$clusternumber3))],"")
         a
     })
     
