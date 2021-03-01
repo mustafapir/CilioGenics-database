@@ -1302,14 +1302,14 @@ server <- function(input, output, session) {
     # Main cluster
     
     r_scmainheatmap<-reactive({
-        if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
+        #if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
         a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
         rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
         # if (length(a[,1]) > 500){
         #     a<-a[1:500,]
         # }
-        a}
-        else {paste("There is no C. elegans single cell data for", genename(), "gene")}
+        a
+        #else {paste("There is no C. elegans single cell data for", genename(), "gene")}
     })
     
     r_scgeneheatmap<-reactive({
@@ -1471,7 +1471,7 @@ server <- function(input, output, session) {
     
     # Single cell cluster numbers
     
-    r_scclusternumber<-reactive({
+    r_scclusternumber2<-reactive({
         a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
         rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
         a
@@ -1509,11 +1509,11 @@ server <- function(input, output, session) {
     })
     
     scheatmapclusternumberR<-reactive({
-        main_heatmap(r_scclusternumber(), layout = list(paper_bgcolor='transparent'),
+        main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
                      tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
             add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
-                           tickvals = c(1:length(colnames(r_scclusternumber()))))%>%
+                           tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
             add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
     })
     
