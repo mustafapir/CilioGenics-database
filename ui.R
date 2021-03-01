@@ -356,6 +356,16 @@ ui <- dashboardPagePlus(
       )
     ),
     
+    
+    fluidRow(
+      div(
+        br(), br(),
+        id = "sc_cluster_page",
+        uiOutput("scclusterui"),
+        uiOutput("scclustertableui")
+      )
+    ),
+    
     fluidRow(
       div(
         br(), br(),
@@ -364,6 +374,7 @@ ui <- dashboardPagePlus(
         uiOutput("clustertableui")
       )
     ),
+  
     
     fluidRow(
       div(

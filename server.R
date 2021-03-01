@@ -25,6 +25,7 @@ server <- function(input, output, session) {
         hide("pub")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("general_info")
         
     }, once = TRUE)
@@ -101,8 +102,10 @@ server <- function(input, output, session) {
             hide("protein_interaction1")
             hide("landing_page")
             show("buttonsui")
+            #show("tabbuttons")
             #hide("tabButtons2")
             hide("cluster_page")
+            hide("sc_cluster_page")
             hide("pub")
             hide("single_cell")
             show("back_button")
@@ -127,6 +130,7 @@ server <- function(input, output, session) {
         show("buttonsui")
         #hide("tabButtons2")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("pub")
         hide("single_cell")
         show("back_button")
@@ -147,6 +151,7 @@ server <- function(input, output, session) {
         hide("pub")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
     })
     
     observeEvent(input$homePage, {
@@ -159,6 +164,7 @@ server <- function(input, output, session) {
         #hide("tabButtons2")
         hide("pub")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("single_cell")
         click("geneName_reset")
         hide("back_button")
@@ -174,6 +180,7 @@ server <- function(input, output, session) {
         hide("pub")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
         #hide("proteinPage")
     })
     
@@ -186,6 +193,7 @@ server <- function(input, output, session) {
         hide("protein_interaction1")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
         #hide("pubPage")
         #show("proteinPage")
     })
@@ -199,6 +207,7 @@ server <- function(input, output, session) {
         hide("protein_interaction1")
         hide("pub")
         hide("cluster_page")
+        hide("sc_cluster_page")
         #hide("pubPage")
         #show("proteinPage")
     })
@@ -211,6 +220,22 @@ server <- function(input, output, session) {
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("pub")
+        hide("sc_cluster_page")
+        hide("single_cell")
+        #hide("clusterPage")
+        #show("proteinPage")
+    })
+    
+    
+    observeEvent(input$scclusterPage, {
+        show("sc_cluster_page")
+        #hide("tabButtons2")
+        hide("general_info")
+        hide("landing_page")
+        hide("protein_interaction")
+        hide("protein_interaction1")
+        hide("pub")
+        hide("cluster_page")
         hide("single_cell")
         #hide("clusterPage")
         #show("proteinPage")
@@ -232,6 +257,7 @@ server <- function(input, output, session) {
         hide("buttonsui")
         #hide("tabButtons2")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("pub")
         hide("single_cell")
         hide("back_button")
@@ -250,6 +276,7 @@ server <- function(input, output, session) {
         hide("single_cell")
         show("exptab")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("back_button")
         updateReactable("hclusternumbertable", selected = NA)
         #updateTabItems(session, "tabs", "exploretab")
@@ -265,6 +292,7 @@ server <- function(input, output, session) {
         hide("pub")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("back_button")
         click("geneName_reset")
         updateReactable("hclusternumbertable", selected = NA)
@@ -378,6 +406,7 @@ server <- function(input, output, session) {
         hide("pub")
         hide("single_cell")
         hide("cluster_page")
+        hide("sc_cluster_page")
         hide("back_button")
         show("exptab")
         #show("tabButtons2")
@@ -790,6 +819,12 @@ server <- function(input, output, session) {
                                    style = "unite",
                                    size = "sm"),
                         
+                        actionBttn("scclusterPage", "Single Cell Clusters",
+                                   icon = img(src = "tree.png", height = "20px"), 
+                                   color = "success",
+                                   style = "unite",
+                                   size = "sm"),
+                        
                         actionBttn("clusterPage", "Clusters",
                                    icon = img(src = "tree.png", height = "20px"), 
                                    color = "success",
@@ -830,6 +865,18 @@ server <- function(input, output, session) {
                                    size = "sm"),
                         actionBttn("proteinPage", "Protein interactions",
                                    icon = img(src = "network2.png", height = "20px"), 
+                                   color = "success",
+                                   style = "unite",
+                                   size = "sm"),
+                        
+                        actionBttn("scPage", "Single Cell Analysis",
+                                   icon = img(src = "tree.png", height = "20px"), 
+                                   color = "success",
+                                   style = "unite",
+                                   size = "sm"),
+                        
+                        actionBttn("scclusterPage", "Single Cell Clusters",
+                                   icon = img(src = "tree.png", height = "20px"), 
                                    color = "success",
                                    style = "unite",
                                    size = "sm"),
@@ -1207,7 +1254,7 @@ server <- function(input, output, session) {
         heatmapclusternumberR()
     })
     
-    reactiveDownload<-reactive({
+    reactiveDownload1<-reactive({
         if (inputclustergname() == "clusterradbut"){
             filename = paste0("cluster_", inputclusternamenumber(), "_heatmap.png")
         }
@@ -1217,7 +1264,7 @@ server <- function(input, output, session) {
     
     output$hmap1<-downloadHandler(
         filename = function() {
-            reactiveDownload() 
+            reactiveDownload1() 
         },
         content = function(file){
             save_iheatmap(reactiveHeatmap1(), file, vwidth=2000,vheight=1000)
@@ -1248,4 +1295,176 @@ server <- function(input, output, session) {
     #     is.null(iheatmapr_event(reactiveHeatmap1(), event = "click"))
     # })
     # 
+    
+    # ***************************************************
+    
+    # Single cell cluster heatmap
+    # Main cluster
+    
+    r_scmainheatmap<-reactive({
+        if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
+        a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
+        rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
+        # if (length(a[,1]) > 500){
+        #     a<-a[1:500,]
+        # }
+        a}
+        else {paste("There is no C. elegans single cell data for", genename(), "gene")}
+    })
+    
+    r_scgeneheatmap<-reactive({
+        
+        a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(genename())),2:28])
+        a<-rbind(a,a)
+        rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(genename()))],"")
+        a
+    })
+    
+    r_scclusternumber<-reactive({
+        celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]
+    })
+    
+    r_scgeneradio<-reactive({
+        input$scclusterradio
+    })
+    
+    observeEvent(input$scclusterradio, {
+        session$sendCustomMessage("close_drop1", "")
+    })
+    
+    observeEvent(input$scdownloadbttn, {
+        session$sendCustomMessage("close_drop1", "")
+    })
+    
+    observeEvent(input$scclusterheatmap, {
+        session$sendCustomMessage("close_drop2", "")
+    })
+    
+    r_sctwoheatmap<-reactive({
+        req(input$geneName)
+        r_scgeneradio()
+        hmap <- isolate(r_scmainheatmap())
+        hmap2 <- isolate(r_scgeneheatmap())
+        if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
+        mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
+                           tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
+            add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                           tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+        
+        mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
+                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+            add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                           tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+        }
+        
+        if(r_scgeneradio() == "clusterradbut"){
+            mmap
+        }
+        else {  
+            mmap2
+        }
+    })
+    
+    output$scheatmapcluster<-renderIheatmap({
+        input$scclusterPage
+        r_sctwoheatmap()
+    })
+    
+    output$scclusterui<-renderUI({
+        div(
+            style = "position: relative",
+            column(
+                id = "scclusterheatmap",
+                width = 9,
+                boxPlus(
+                    width = 12,
+                    solidHeader = TRUE,
+                    status = "success",
+                    title = paste("Cluster", r_scclusternumber()),
+                    height = "750px",
+                    div(
+                        style = "position: absolute; left: 0.5em; bottom: 0.5em;",
+                        dropdown(
+                            radioGroupButtons(
+                                inputId = "scclusterradio",
+                                label = "Genes to display:", 
+                                choiceNames = c("Cluster", genename()), 
+                                choiceValues = c("clusterradbut", "generadbut"),
+                                direction = "vertical",
+                                selected = "clusterradbut"
+                            ),
+                            size = "xm",
+                            icon = icon("gear", class = "opt"), 
+                            up = TRUE,
+                            inputId = "ddownid"
+                        )
+                    ),
+                    div(
+                        style = "position: absolute; left: 6em;bottom: 0.5em;",
+                        dropdown(
+                            downloadButton(outputId = "scdownloadbttn", label = "Download Plot"),
+                            size = "xm",
+                            icon = icon("download", class = "opt"), 
+                            up = TRUE
+                        )
+                    ),
+                    #tableOutput("xxx"),
+                    withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), color = "#10c891")
+                )
+            )
+        )
+    })
+    
+    # Single cell cluster table
+    
+    # genenumbercluster<-reactive({
+    #     inputclustertable()[[1]][selected3()]
+    # })
+    
+    r_scclustertable<-reactive({
+        
+        df<-data.frame(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),29], stringsAsFactors = FALSE)
+        colnames(df)<-"Gene_name"
+        df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
+        df$`Gold standard` <- "NO"
+        df$`Gold standard`[which(df[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+        df$CilioGenics <- "NO"
+        df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
+        df
+    })
+    
+    
+    output$scclustertable<-renderReactable({
+        
+        reactable(r_scclustertable(), resizable = TRUE, filterable = TRUE,
+                  searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+                  highlight = TRUE,
+                  columns = list(
+                      Score = colDef(name = "Score", 
+                                     format = colFormat(digits = 3)),
+                      Gene_name = colDef(name = "Gene name")
+                  ),
+                  rowStyle = list(cursor = "pointer"),
+                  selection = "single",
+                  onClick = "select")
+    })
+    
+    output$scclustertableui<-renderUI({
+        column(
+            width = 3,
+            boxPlus(
+                title = paste("Genes in cluster", r_scclusternumber()),
+                solidHeader = TRUE,
+                status = "success",
+                width = 12,
+                withSpinner(reactableOutput("scclustertable"), color = "#10c891")
+            )
+            
+        )
+    })
+    
 }

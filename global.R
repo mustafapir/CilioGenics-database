@@ -50,6 +50,27 @@ for (i in 2:11){
   final_seq_table[[i]]<-c(1:length(final_seq_table[[i]]))
 }
 
+# Single cell clusters
+
+aa1<-fread("./data/aa1_whom3.txt")
+celegans_sc<-fread("./data/celegans_sc_binary_whom.txt")
+
+
+
+cells<-colnames(celegans_sc)[c(2:28)]
+anot_sc<-data.frame(`Cell types` = rep(c("Nonciliary", "Ciliary"), c(25,2)))
+row.names(anot_sc)<-cells
+colnames(anot_sc)<-"Cell type"
+
+my_colour_sc = list(`Cell types` = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"))
+
+
+
+
+
+
+
+
 # Heatmap
 
 cgenes<-fread("./data/ciliarygenes.tsv")
