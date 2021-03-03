@@ -4,9 +4,10 @@ library(pheatmap)
 webshot::install_phantomjs
 source("functions.R")
 options(reactable.theme = reactableTheme(
-    #backgroundColor = "CadetBlue",
-    #borderColor = "SteelBlue",
-    
+    # backgroundColor = "hsla(233, 9%, 19%, 0)",
+    # inputStyle = list(backgroundColor = "hsla(233, 9%, 25%, 0.5)")
+    #     borderColor = "SteelBlue",
+    #     
 ))
 
 GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
@@ -943,11 +944,11 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene description:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genedescription(), "</td>", "</tr>",
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "NCBI gene ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", geneid(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "NCBI gene ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", "<a href=", paste0("https://www.ncbi.nlm.nih.gov/gene/",geneid()),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", geneid(),  "</td>", "</tr>",
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", genesynonyms(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Ensembl ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", "<a href=", paste0("https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=",geneensembl()),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", geneensembl(), "</td>", "</tr>",
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Ensembl ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", geneensembl(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genesynonyms(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
             
@@ -1340,19 +1341,19 @@ server <- function(input, output, session) {
         hmap <- isolate(r_scmainheatmap())
         hmap2 <- isolate(r_scgeneheatmap())
         if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
-        mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
-                           tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
-            add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
-                           tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
-        
-        mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
-                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-            add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
-                           tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+            mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
+                               tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
+                add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                               tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+                add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+            
+            mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
+                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+                add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                               tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+                add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
         }
         
         if(r_scgeneradio() == "clusterradbut"){
@@ -1533,7 +1534,7 @@ server <- function(input, output, session) {
     
     scheatmapgenenumberR<-reactive({
         main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'), 
-                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
@@ -1565,4 +1566,5 @@ server <- function(input, output, session) {
             )
         )
     })
+    waiter_hide()
 }

@@ -14,6 +14,8 @@ library(shinyBS)
 library(dplyr)
 library(webshot)
 library(V8)
+library(dashboardthemes)
+library(waiter)
 
 #library(rintrojs)
 
@@ -45,8 +47,9 @@ jsCode <- '
 
 ui <- dashboardPagePlus(
   
-  
-  header = dashboardHeaderPlus(
+  use_waiter(),
+  waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
+  header = dashboardHeader(
     # tags$li(actionBttn("homePage", "Home",
     #                    icon = icon("home"), 
     #                    style = "unite",
@@ -54,29 +57,34 @@ ui <- dashboardPagePlus(
     #                    size = "sm"),class= 'dropdown')
   ),
   
-  enable_preloader = TRUE,
-  collapse_sidebar = TRUE,
-  sidebar_background = "light",
-  skin = "green",
+  # enable_preloader = TRUE,
+  # collapse_sidebar = TRUE,
+  # sidebar_background = "light",
+  # skin = "green",
   
   use_cicerone(),
   
   sidebar = dashboardSidebar(
     header = singleton(tags$head(includeHTML(("google-analytics.html")))),
-    collapsed = TRUE,
     
     div(
       id = "tabs1",
       sidebarMenu(
         id = "tabs",
         menuItem("Home", tabName = "hometab", icon = icon("home")),
-        menuItem("Gene list", tabName = "exploretab", icon = icon("search"))
+        menuItem("Gene list", tabName = "exploretab", icon = icon("search")),
+        menuItem("How to use CilioGenics", tabName = "howtab", icon = icon("question-circle")),
+        menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
+        menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
+        menuItem("About us", tabName = "abouttab", icon = icon("address-card"))
       )
     )
   ),
   
   body = dashboardBody(
-    
+    shinyDashboardThemes(
+      theme = "blue_gradient"
+    ),
     useShinyjs(),
     extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
     tags$head(
@@ -140,7 +148,7 @@ ui <- dashboardPagePlus(
                          searchInput(
                            inputId = "geneName",
                            label = HTML("<h4><center>Search a gene name</center></h4>"),
-                           placeholder = "Type a name",
+                           placeholder = "Search genes by gene name, gene id or Ensembl gene id",
                            btnSearch = icon("search"),
                            btnReset = icon("remove"),
                            width = "40%",
@@ -260,6 +268,13 @@ ui <- dashboardPagePlus(
                   )
                 )
               )
+      ),
+      
+      tabItem("statstab"
+      ),
+      tabItem("citetab"
+      ),
+      tabItem("abouttab"
       )
     ),
     
@@ -403,7 +418,7 @@ ui <- dashboardPagePlus(
         uiOutput("clustertableui")
       )
     ),
-  
+    
     
     fluidRow(
       div(
