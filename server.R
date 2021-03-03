@@ -915,12 +915,12 @@ server <- function(input, output, session) {
     
     output$networkplot<-renderSimpleNetwork({
         simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
-                      opacity = 1, fontSize = 8)
+                      opacity = 3, fontSize = 12)
     })
     
     output$networkplot2<-renderSimpleNetwork({
         simpleNetwork(networkdata2(), height = "200px", width = "200px", zoom = TRUE,
-                      opacity = 1, fontSize = 8, charge = -10)
+                      opacity = 3, fontSize = 12, charge = -10)
     })
     
     output$pro_int<-renderReactable({
