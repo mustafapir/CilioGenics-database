@@ -82,9 +82,11 @@ ui <- dashboardPagePlus(
   ),
   
   body = dashboardBody(
-    shinyDashboardThemes(
-      theme = "blue_gradient"
-    ),
+    # shinyDashboardThemes(
+    #   theme = "blue_gradient"
+    # ),
+    
+    customTheme,
     useShinyjs(),
     extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
     tags$head(
@@ -207,10 +209,10 @@ ui <- dashboardPagePlus(
                       br(), br(),
                       title = "Gene table",
                       id = "tab1",
-                      withSpinner(reactableOutput("generaltable2"), color = "#10c891"),
+                      withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
                       br(), br(),
                       div(title = "Gene order by categories",
-                          withSpinner(reactableOutput("generaltable3"), color = "#10c891"))
+                          withSpinner(reactableOutput("generaltable3"), type = 8, color = "#10c891"))
                       #textOutput("ot")
                     ),
                     
@@ -229,11 +231,11 @@ ui <- dashboardPagePlus(
                       fluidRow(
                         column(
                           width = 9,
-                          withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), color = "#10c891")
+                          withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
                         ),
                         column(
                           width = 3,
-                          withSpinner(reactableOutput("hclusternumbertable"), color = "#10c891")
+                          withSpinner(reactableOutput("hclusternumbertable"), type = 8, color = "#10c891")
                         )
                       )
                       
@@ -255,11 +257,11 @@ ui <- dashboardPagePlus(
                       fluidRow(
                         column(
                           width = 9,
-                          withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), color = "#10c891")
+                          withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
                         ),
                         column(
                           width = 3,
-                          withSpinner(reactableOutput("schclusternumbertable"), color = "#10c891")
+                          withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891")
                         )
                       )
                       

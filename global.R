@@ -34,11 +34,11 @@ species<-fread("./data/species_app.txt")
 species<-species[,-1]
 
 species<-species[which(species$X1 %in% colnames(nscores2[,2:73])),]
-anot<-data.frame(Class = species[,2], organisms = rep(c("Ciliary", "Nonciliary"), c(44,28)))
+anot<-data.frame(Class = species[,2], Organisms = rep(c("Ciliary", "Nonciliary"), c(44,28)))
 row.names(anot)<-species$X1
 colnames(anot)[1]<-"Class"
 
-my_colour = list(organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"), 
+my_colour = list(Organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"), 
                  Class = c(Animals = "firebrick3", Fungi = "dodgerblue3", Protists = "darkgrey", Plants = "chartreuse", Other = "ghostwhite", Bacteria = "gray0"))
 gene_synonyms2<-fread("./data/gene_synonyms2.csv")
 

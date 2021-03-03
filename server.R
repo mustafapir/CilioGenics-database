@@ -1005,7 +1005,7 @@ server <- function(input, output, session) {
             #     
             #     withSpinner(reactableOutput("pro_int2"), color = "#10c891")
             # }
-            withSpinner(reactableOutput("pro_int"), color = "#10c891")
+            withSpinner(reactableOutput("pro_int"), type = 8, color = "#10c891")
         )
     })
     
@@ -1110,7 +1110,7 @@ server <- function(input, output, session) {
                 textOutput("textForPro")
             }
             else {
-                withSpinner(simpleNetworkOutput("networkplot"), color = "#10c891")
+                withSpinner(simpleNetworkOutput("networkplot"), type = 8, color = "#10c891")
             }
         )
     })
@@ -1154,7 +1154,7 @@ server <- function(input, output, session) {
                         )
                     ),
                     #tableOutput("xxx"),
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), color = "#10c891")
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891")
                 )
             )
         )
@@ -1183,7 +1183,7 @@ server <- function(input, output, session) {
                 solidHeader = TRUE,
                 status = "success",
                 width = 12,
-                withSpinner(reactableOutput("hclustertable"), color = "#10c891")
+                withSpinner(reactableOutput("hclustertable"), type = 8, color = "#10c891")
             )
             
         )
@@ -1342,18 +1342,18 @@ server <- function(input, output, session) {
         hmap2 <- isolate(r_scgeneheatmap())
         if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
             mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
-                               tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                               tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
                 add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
                 add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                                tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-                add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+                add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
             
             mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
-                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
                 add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
                 add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                                tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-                add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+                add_col_annotation(annotation=anot_sc, "Paired", side="top", size = 0.1)
         }
         
         if(r_scgeneradio() == "clusterradbut"){
@@ -1408,7 +1408,7 @@ server <- function(input, output, session) {
                         )
                     ),
                     #tableOutput("xxx"),
-                    withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), color = "#10c891")
+                    withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891")
                 )
             )
         )
@@ -1475,7 +1475,7 @@ server <- function(input, output, session) {
                 solidHeader = TRUE,
                 status = "success",
                 width = 12,
-                withSpinner(reactableOutput("scclustertable"), color = "#10c891")
+                withSpinner(reactableOutput("scclustertable"), type = 8, color = "#10c891")
             )
             
         )
@@ -1525,7 +1525,7 @@ server <- function(input, output, session) {
     
     scheatmapclusternumberR<-reactive({
         main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
-                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
             add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
             add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
@@ -1534,7 +1534,7 @@ server <- function(input, output, session) {
     
     scheatmapgenenumberR<-reactive({
         main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'), 
-                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
+                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
             add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
