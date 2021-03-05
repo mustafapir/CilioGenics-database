@@ -4,9 +4,9 @@ library(pheatmap)
 webshot::install_phantomjs
 source("functions.R")
 options(reactable.theme = reactableTheme(
-    # backgroundColor = "hsla(233, 9%, 19%, 0)",
-    # inputStyle = list(backgroundColor = "hsla(233, 9%, 25%, 0.5)")
-    #     borderColor = "SteelBlue",
+     # backgroundColor = "hsl(271, 100%, 10%)",
+     # inputStyle = list(backgroundColor = "hsla(233, 9%, 25%, 0.5)"),
+     #     borderColor = "SteelBlue"
     #     
 ))
 
@@ -861,7 +861,7 @@ server <- function(input, output, session) {
                                    size = "sm"),
                         actionBttn("generalPage", "General Information",
                                    icon = icon("info"), 
-                                   color = "success",
+                                   color = "info",
                                    style = "unite",
                                    size = "sm"),
                         actionBttn("proteinPage", "Protein interactions",
@@ -1356,7 +1356,7 @@ server <- function(input, output, session) {
                 add_col_annotation(annotation=anot_sc, "Paired", side="top", size = 0.1)
         }
         
-        if(r_scgeneradio() == "clusterradbut"){
+        if(r_scgeneradio() == "clusterradbut1"){
             mmap
         }
         else {  
@@ -1388,9 +1388,9 @@ server <- function(input, output, session) {
                                 inputId = "scclusterradio",
                                 label = "Genes to display:", 
                                 choiceNames = c("Cluster", genename()), 
-                                choiceValues = c("clusterradbut", "generadbut"),
+                                choiceValues = c("clusterradbut1", "generadbut1"),
                                 direction = "vertical",
-                                selected = "clusterradbut"
+                                selected = "clusterradbut1"
                             ),
                             size = "xm",
                             icon = icon("gear", class = "opt"), 
@@ -1415,7 +1415,7 @@ server <- function(input, output, session) {
     })
     
     reactiveDownload2<-reactive({
-        if (r_scgeneradio() == "clusterradbut"){
+        if (r_scgeneradio() == "clusterradbut1"){
             filename = paste0("cluster_", r_scclusternumber(), "_heatmap.png")
         }
         else {filename = paste0(genename(), "_heatmap.png")}
@@ -1541,8 +1541,9 @@ server <- function(input, output, session) {
             add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
     })
     
+    
     output$scheatmapclusternumber<-renderIheatmap({
-        if (input$clusternumber3 == "None"){
+        if (input$clusternumber3 == "All"){
             scheatmapclusternumberR()
         }
         else {
@@ -1553,17 +1554,19 @@ server <- function(input, output, session) {
     genelistforpicker<-reactive({
         a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
         #a<-a[1]
+        a<-sort(a)
         a
     })
     
     output$pickeroutput<-renderUI({
-        
         pickerInput(
             inputId = "clusternumber3",
             label = "Select a gene to explore", 
             choices = list(
-                "Gene name" = c("None", genelistforpicker())
-            )
+                "Gene name" = c("All", genelistforpicker())
+            ),
+            selected = "All",
+            options=pickerOptions(liveSearch=T)
         )
     })
     waiter_hide()

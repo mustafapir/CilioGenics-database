@@ -83,7 +83,7 @@ ui <- dashboardPagePlus(
   
   body = dashboardBody(
     # shinyDashboardThemes(
-    #   theme = "blue_gradient"
+    #   theme = "grey_dark"
     # ),
     
     customTheme,
@@ -251,7 +251,8 @@ ui <- dashboardPagePlus(
                           "Ciliary cells specific clusters" = 5,
                           "Neurons specific cluster" = 7,
                           "Low specificity" = c(1:4,6,8:20)
-                        )
+                        ),
+                        selected = 5
                       ),
                       uiOutput("pickeroutput"),
                       fluidRow(
@@ -331,7 +332,7 @@ ui <- dashboardPagePlus(
             label = "Select the source of interaction: ",
             choices = c("Biogrid" = "Biogrid", "Intact" = "Intact", "Wormbase" = "Wormbase"),
             selected = c("Biogrid", "Intact", "Wormbase"),
-            justified = TRUE, status = "success",
+            justified = TRUE, status = "info",
             checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon")),
             direction = "vertical",
             individual = TRUE
