@@ -435,20 +435,30 @@ server <- function(input, output, session) {
         session$sendCustomMessage("close_drop2", "")
     })
     
-    # observeEvent({
-    #     req(input$clusterPage, inputclusternamenumber())
-    #     if (length(inputcluster()[,1]) == 500){
-    #     showModal(modalDialog(
-    #         h3("Multiple Results"),
-    #         h4("There are more than 500 genes in this cluster. Only first 500 genes are shown on the heatmap. To see the full map, refer to Cluster tab of gene list page"),
-    #         easyClose = TRUE,
-    #         footer = tagList(
-    #             actionButton(inputId = "close", label = "Close", icon = icon("close"))
-    #         )
-    #     )
-    #     )
-    #     }
-    # })
+    observeEvent(input$clusterPage, {
+        req(input$clusterPage, inputclusternamenumber())
+        if (length(inputcluster()[,1]) == 500){
+        showModal(modalDialog(
+            h3("Multiple Results"),
+            h4("There are more than 500 genes in this cluster. Only first 500 genes are shown on the heatmap. To see the full map, refer to \"Clusters\" tab of gene list page"),
+            easyClose = TRUE,
+            footer = tagList(
+                actionButton(inputId = "open", label = "I'm lazy. You take me there", icon = icon("star")),
+                actionButton(inputId = "close", label = "Close", icon = icon("close"))
+            )
+        )
+        )
+        }
+    })
+    
+    observeEvent(input$open, {
+        
+        updateTabItems(session, "tabs", "exploretab")
+        updateTabsetPanel(session, "exploredt", selected = "tab2")
+        updatePickerInput(session, "clusternumber", selected = inputclusternamenumber())
+        removeModal()
+        js$setcookie(sessionid)
+    })
     
     #clnum<-reactiveVal(0)
     

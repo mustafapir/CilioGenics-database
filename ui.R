@@ -202,13 +202,14 @@ ui <- dashboardPagePlus(
                   id = "exptab",
                   tabBox(
                     id = "exploredt",
-                    width = 12,
-                    title = "Explore the genes",
+                     width = 12,
+                     title = "Explore the genes",
                     
                     tabPanel(
                       br(), br(),
                       title = "Gene table",
                       id = "tab1",
+                      value = "tab1",
                       withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
                       br(), br(),
                       div(title = "Gene order by categories",
@@ -218,6 +219,7 @@ ui <- dashboardPagePlus(
                     
                     tabPanel(
                       id = "tab2",
+                      value = "tab2",
                       title = "Clusters",
                       pickerInput(
                         inputId = "clusternumber",
