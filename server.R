@@ -721,10 +721,11 @@ server <- function(input, output, session) {
         hmap2 <- isolate(inputclusterGene())
         mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'), 
                            tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
+            #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
             add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
-            add_col_annotation(annotation=anot, side="top", size = 0.1)
+            add_col_annotation(annotation=anot, side="top", size = 0.1) %>%
+            modify_layout(list(margin = list(l = 80)))
         
         mmap2<-main_heatmap(inputclusterGene(), layout = list(paper_bgcolor='transparent'), 
                             tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
@@ -733,7 +734,7 @@ server <- function(input, output, session) {
                            tickvals = c(1:length(colnames(inputcluster()))))%>%
             add_col_annotation(annotation=anot, side="top", size = 0.1)
         
-        if(inputclustergname() == "clusterradbut"){
+        if(input$hmapradio == "clusterradbut"){
             mmap
         }
         else {  
@@ -1254,10 +1255,11 @@ server <- function(input, output, session) {
     heatmapclusternumberR<-reactive({
         main_heatmap(inputclusternumber(), layout = list(paper_bgcolor='transparent'),
                      tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-            add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+            #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
             add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(inputclusternumber()))))%>%
-            add_col_annotation(annotation=anot, side="top", size = 0.1)
+            add_col_annotation(annotation=anot, side="top", size = 0.1) %>%
+            modify_layout(list(margin = list(l = 80)))
     })
     
     output$heatmapclusternumber<-renderIheatmap({
@@ -1336,11 +1338,11 @@ server <- function(input, output, session) {
     observeEvent(input$scclusterradio, {
         session$sendCustomMessage("close_drop1", "")
     })
-    
+
     observeEvent(input$scdownloadbttn, {
         session$sendCustomMessage("close_drop1", "")
     })
-    
+
     observeEvent(input$scclusterheatmap, {
         session$sendCustomMessage("close_drop2", "")
     })
@@ -1353,20 +1355,21 @@ server <- function(input, output, session) {
         if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
             mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
                                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-                add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
+                #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
                 add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                                tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-                add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
+                add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1) %>%
+                modify_layout(list(margin = list(l = 80)))
             
             mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
                                 tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
                 add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
                 add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                                tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-                add_col_annotation(annotation=anot_sc, "Paired", side="top", size = 0.1)
+                add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
         }
         
-        if(r_scgeneradio() == "clusterradbut1"){
+        if(input$scclusterradio == "clusterradbut1"){
             mmap
         }
         else {  
@@ -1405,7 +1408,7 @@ server <- function(input, output, session) {
                             size = "xm",
                             icon = icon("gear", class = "opt"), 
                             up = TRUE,
-                            inputId = "ddownid"
+                            inputId = "ddownid1"
                         )
                     ),
                     div(
@@ -1536,19 +1539,21 @@ server <- function(input, output, session) {
     scheatmapclusternumberR<-reactive({
         main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
                      tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-            add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+            #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
             add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
-            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+            modify_layout(list(margin = list(l = 80)))
     })
     
     scheatmapgenenumberR<-reactive({
         main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'), 
                      tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-            add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+            #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
             add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                            tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
-            add_col_annotation(annotation=anot_sc, side="top", size = 0.1)
+            add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+            modify_layout(list(margin = list(l = 80)))
     })
     
     
