@@ -624,7 +624,7 @@ server <- function(input, output, session) {
                               "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[7],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[7], "</td>", "</tr>")
                 }
             }
-            else {c<-""}
+            else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
         }
         else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
         c
