@@ -546,10 +546,90 @@ server <- function(input, output, session) {
     omim_link<-reactive({
         a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
         if (length(a) > 1){
-            a<-paste0(a, collapse = "|\n")
+            #a<-paste0(a, collapse = "|\n")
+            a<-a[1]
         }
         paste0("https://www.omim.org/entry/", a)
     })
+    
+  
+    omim_disease_x<-reactive({
+        if(genename() %in% omim$Gene_name){
+            a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
+            if (a %in% names(lst)){
+                phe<-lst[[a]]$phe
+                mim<-lst[[a]]$mim
+                b<-paste0("https://www.omim.org/entry/", mim)
+                if (length(lst[[a]]$mim)==1){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b,"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe, "</td>", "</tr>")
+                }
+                else if (length(lst[[a]]$mim)==2){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>")
+                }
+                else if (length(lst[[a]]$mim)==3){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>")
+                }
+                else if (length(lst[[a]]$mim)==4){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>")
+                }
+                else if (length(lst[[a]]$mim)==5){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",)
+                }
+                else if (length(lst[[a]]$mim)==6){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>")
+                }
+                else if (length(lst[[a]]$mim)==7){
+                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>",
+                              
+                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[7],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[7], "</td>", "</tr>")
+                }
+            }
+            else {c<-""}
+        }
+        else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
+        c
+    })
+    
     
     networkdata<-reactive({
         
@@ -963,6 +1043,8 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
             
+            omim_disease_x(),
+            
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "CilioGenics score:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscore(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Probability of being ciliary gene:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscorestate(), "</td>", "</tr>",
@@ -1358,7 +1440,7 @@ server <- function(input, output, session) {
                 #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
                 add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
                                tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-                add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1) %>%
+                add_col_annotation(annotation = anot_sc, colors = "Paired", side="top", size = 0.1) %>%
                 modify_layout(list(margin = list(l = 80)))
             
             mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 

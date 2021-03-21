@@ -140,3 +140,8 @@ omim<-fread("./data/mim2gene.txt", skip = 4) %>%
   filter(`MIM Entry Type (see FAQ 1.3 at https://omim.org/help/faq)` == "gene") %>%
   filter(`Approved Gene Symbol (HGNC)` != "")
 colnames(omim)[c(1,4)]<-c("omim_id","Gene_name")
+
+
+lst<-readRDS("./data/lst.RDS")
+lst[sapply(lst, is.null)] <- NULL
+
