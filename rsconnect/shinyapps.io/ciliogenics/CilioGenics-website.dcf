@@ -1,0 +1,12 @@
+name: CilioGenics-website
+title: CilioGenics-website
+username:
+account: ciliogenics
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3849435
+bundleId: 4392571
+url: https://ciliogenics.shinyapps.io/CilioGenics-website/
+when: 1616657000.59144
+asMultiple: FALSE
+asStatic: FALSE

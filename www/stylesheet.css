@@ -22,7 +22,8 @@
 
 .content {
   margin-top: 50px;
-  padding-top: 35px; 
+  padding-top: 35px;
+  overflow: hidden;
 }
 
 
