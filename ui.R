@@ -45,11 +45,12 @@ jsCode <- '
   }
 '
 
+
 ui <- dashboardPagePlus(
   
   use_waiter(),
   waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
-  header = dashboardHeader(
+  header = dashboardHeaderPlus(
     # tags$li(actionBttn("homePage", "Home",
     #                    icon = icon("home"), 
     #                    style = "unite",

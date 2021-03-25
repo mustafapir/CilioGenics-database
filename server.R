@@ -930,7 +930,7 @@ server <- function(input, output, session) {
                                    size = "sm")
                     )
                 ),
-                top = "50px",
+                top = "70px",
                 left = 0,
                 right = 0,
                 fixed = TRUE,
@@ -1522,8 +1522,7 @@ server <- function(input, output, session) {
             reactiveDownload2() 
         },
         content = function(file){
-            #save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
-          save_html(output$scclusterui, file)
+            save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
         },
         contentType = "image/png"
     )
