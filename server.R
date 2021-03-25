@@ -952,7 +952,7 @@ server <- function(input, output, session) {
                                    size = "sm"),
                         actionBttn("generalPage", "General Information",
                                    icon = icon("info"), 
-                                   color = "info",
+                                   color = "success",
                                    style = "unite",
                                    size = "sm"),
                         actionBttn("proteinPage", "Protein interactions",
@@ -1522,7 +1522,8 @@ server <- function(input, output, session) {
             reactiveDownload2() 
         },
         content = function(file){
-            save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
+            #save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
+          save_html(output$scclusterui, file)
         },
         contentType = "image/png"
     )
