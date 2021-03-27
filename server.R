@@ -1,7 +1,7 @@
 library(shiny)
 library(webshot)
 library(pheatmap)
-webshot::install_phantomjs
+webshot::install_phantomjs()
 source("functions.R")
 options(reactable.theme = reactableTheme(
      # backgroundColor = "hsl(271, 100%, 10%)",
@@ -563,32 +563,32 @@ server <- function(input, output, session) {
     #   out
     # })
     
-    # annotationFile<-reactive({
-    #   suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
-    # })
-    # 
-    # goAnnotName<-reactive({
-    #   if (!is.na(annotationFile()$GO)){
-    #   paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
-    #   }
-    #   else {
-    #     paste("There is no GO annotation information")
-    #   }
-    # })
-    # 
-    # goAnnotLink<-reactive({
-    #   paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
-    # })
-    # 
-    # goAnnotAll<-reactive({
-    #   if (!is.na(annotationFile()$GO)) {
-    #     paste(goAnnotLink(), collapse = " | ")
-    #   }
-    #   else {
-    #     paste("There is no GO annotation information")
-    #   }
-    # })
-    # 
+    annotationFile<-reactive({
+      suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
+    })
+    
+    goAnnotName<-reactive({
+      if (!is.na(annotationFile()$GO)){
+      paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
+      }
+      else {
+        paste("There is no GO annotation information")
+      }
+    })
+    
+    goAnnotLink<-reactive({
+      paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
+    })
+    
+    goAnnotAll<-reactive({
+      if (!is.na(annotationFile()$GO)) {
+        paste(goAnnotLink(), collapse = " | ")
+      }
+      else {
+        paste("There is no GO annotation information")
+      }
+    })
+    
   
     OMIMName<-reactive({
       a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
@@ -1100,7 +1100,7 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genesynonyms(), "</td>", "</tr>",
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Go terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", #goAnnotAll(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Go terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", goAnnotAll(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
             

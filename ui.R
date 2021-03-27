@@ -1,6 +1,7 @@
 library(shiny)
 library(shinydashboardPlus)
 library(shinydashboard)
+library(Homo.sapiens)
 library(shinyjs)
 library(shinyWidgets)
 #library(formattable)
@@ -16,7 +17,7 @@ library(webshot)
 library(V8)
 library(dashboardthemes)
 library(waiter)
-#library(Homo.sapiens)
+
 
 #library(rintrojs)
 
