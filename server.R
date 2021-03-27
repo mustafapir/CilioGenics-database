@@ -1,6 +1,7 @@
 library(shiny)
 library(webshot)
 library(pheatmap)
+library(GOfuncR)
 webshot::install_phantomjs
 source("functions.R")
 options(reactable.theme = reactableTheme(
@@ -552,7 +553,57 @@ server <- function(input, output, session) {
         paste0("https://www.omim.org/entry/", a)
     })
     
+    annotationFile<-reactive({
+      out<-tryCatch({
+        get_anno_categories(genename(), silent = TRUE)
+      },
+      error = function(cond){
+        x<-paste("There is no GO annotation information")
+        return(NA)
+      })
+      out
+    })
+    
+    goAnnotName<-reactive({
+      paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$go_id)
+    })
+    
+    goAnnotLink<-reactive({
+      paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$name)
+    })
+    
+    goAnnotAll<-reactive({
+      if (!is.na(annotationFile())) {
+        paste(goAnnotLink(), collapse = " | ")
+      }
+      else {
+        paste("There is no GO annotation information")
+      }
+    })
+    
   
+    OMIMName<-reactive({
+      a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
+      mim<-lst[[a]]$mim
+      paste0("https://www.omim.org/entry/", mim)
+    })
+    
+    OMIMLink<-reactive({
+      a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
+      phe<-lst[[a]]$phe
+      paste("<a href=",OMIMName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe)
+    })
+    
+    OMIMAll<-reactive({
+      if (length(as.character(omim$omim_id[which(omim$Gene_name == genename())])) != 0){
+        paste(OMIMLink(), collapse = " | ")
+      }
+      else {
+        paste("No disease information")
+      }
+    })
+    
+    
     omim_disease_x<-reactive({
         if(genename() %in% omim$Gene_name){
             a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
@@ -1041,9 +1092,11 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genesynonyms(), "</td>", "</tr>",
             
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Go terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", goAnnotAll(), "</td>", "</tr>",
+            
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
             
-            omim_disease_x(),
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", OMIMAll(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "CilioGenics score:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscore(), "</td>", "</tr>",
             

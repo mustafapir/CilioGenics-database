@@ -296,8 +296,7 @@ ui <- dashboardPagePlus(
           status = "success",
           #background = "purple",
           width = 6,
-          htmlOutput("textgeneid")
-          
+          withSpinner(htmlOutput("textgeneid"), type = 8, color = "#10c891")
         ),
         
         boxPlus(
@@ -305,7 +304,7 @@ ui <- dashboardPagePlus(
           solidHeader = TRUE,
           status = "success",
           width = 6,
-          uiOutput("bargeneinfo"),
+          withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891"),
           uiOutput("bargeneinfo1"),
           uiOutput("bargeneinfo2"),
           uiOutput("bargeneinfo3"),
