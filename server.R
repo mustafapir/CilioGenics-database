@@ -563,32 +563,32 @@ server <- function(input, output, session) {
     #   out
     # })
     
-    annotationFile<-reactive({
-      suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
-    })
-    
-    goAnnotName<-reactive({
-      if (!is.na(annotationFile()$GO)){
-      paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
-      }
-      else {
-        paste("There is no GO annotation information")
-      }
-    })
-    
-    goAnnotLink<-reactive({
-      paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
-    })
-    
-    goAnnotAll<-reactive({
-      if (!is.na(annotationFile()$GO)) {
-        paste(goAnnotLink(), collapse = " | ")
-      }
-      else {
-        paste("There is no GO annotation information")
-      }
-    })
-    
+    # annotationFile<-reactive({
+    #   suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
+    # })
+    # 
+    # goAnnotName<-reactive({
+    #   if (!is.na(annotationFile()$GO)){
+    #   paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
+    #   }
+    #   else {
+    #     paste("There is no GO annotation information")
+    #   }
+    # })
+    # 
+    # goAnnotLink<-reactive({
+    #   paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
+    # })
+    # 
+    # goAnnotAll<-reactive({
+    #   if (!is.na(annotationFile()$GO)) {
+    #     paste(goAnnotLink(), collapse = " | ")
+    #   }
+    #   else {
+    #     paste("There is no GO annotation information")
+    #   }
+    # })
+    # 
   
     OMIMName<-reactive({
       a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
