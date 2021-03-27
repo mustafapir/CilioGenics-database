@@ -16,6 +16,7 @@ library(webshot)
 library(V8)
 library(dashboardthemes)
 library(waiter)
+library(Homo.sapiens)
 
 #library(rintrojs)
 

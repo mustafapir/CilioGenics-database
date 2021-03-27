@@ -1,7 +1,6 @@
 library(shiny)
 library(webshot)
 library(pheatmap)
-library(GOfuncR)
 webshot::install_phantomjs()
 source("functions.R")
 options(reactable.theme = reactableTheme(
@@ -553,27 +552,36 @@ server <- function(input, output, session) {
         paste0("https://www.omim.org/entry/", a)
     })
     
+    # annotationFile<-reactive({
+    #   out<-tryCatch({
+    #     get_anno_categories(genename(), silent = TRUE)
+    #   },
+    #   error = function(cond){
+    #     x<-paste("There is no GO annotation information")
+    #     return(NA)
+    #   })
+    #   out
+    # })
+    
     annotationFile<-reactive({
-      out<-tryCatch({
-        get_anno_categories(genename(), silent = TRUE)
-      },
-      error = function(cond){
-        x<-paste("There is no GO annotation information")
-        return(NA)
-      })
-      out
+      suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
     })
     
     goAnnotName<-reactive({
-      paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$go_id)
+      if (!is.na(annotationFile()$GO)){
+      paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
+      }
+      else {
+        paste("There is no GO annotation information")
+      }
     })
     
     goAnnotLink<-reactive({
-      paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$name)
+      paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
     })
     
     goAnnotAll<-reactive({
-      if (!is.na(annotationFile())) {
+      if (!is.na(annotationFile()$GO)) {
         paste(goAnnotLink(), collapse = " | ")
       }
       else {
