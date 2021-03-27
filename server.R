@@ -2,7 +2,7 @@ library(shiny)
 library(webshot)
 library(pheatmap)
 library(GOfuncR)
-webshot::install_phantomjs
+webshot::install_phantomjs()
 source("functions.R")
 options(reactable.theme = reactableTheme(
      # backgroundColor = "hsl(271, 100%, 10%)",
