@@ -1100,7 +1100,7 @@ server <- function(input, output, session) {
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genesynonyms(), "</td>", "</tr>",
             
-            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Go terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", goAnnotAll(), "</td>", "</tr>",
+            "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "GO terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", goAnnotAll(), "</td>", "</tr>",
             
             "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
             
