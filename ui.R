@@ -307,7 +307,7 @@ ui <- dashboardPagePlus(
           status = "success",
           width = 6,
           withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891"),
-          uiOutput("bargeneinfo1"),
+          withSpinner(uiOutput("bargeneinfo1"), type = 8, color = "#10c891"),
           uiOutput("bargeneinfo2"),
           uiOutput("bargeneinfo3"),
           uiOutput("bargeneinfo4"),
