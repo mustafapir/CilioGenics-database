@@ -145,18 +145,4 @@ colnames(omim)[c(1,4)]<-c("omim_id","Gene_name")
 lst<-readRDS("./data/lst.RDS")
 lst[sapply(lst, is.null)] <- NULL
 
-
-pub_mat<-matrix(nrow = 12269, ncol = 55)
-pub_mat[,1]<-unique(publications$Gene_name)
-pub_mat<-as.data.frame(pub_mat)
-pub_mat<-pub_mat[-1,]
-colnames(pub_mat)[2:55]<-unique(publications$Publication)
-
-for (i in 2:55){
-  a<-publications$Gene_name[publications$Publication %in% colnames(pub_mat)[i]]
-  pub_mat[pub_mat[[1]] %in% a, i]<-1
-  pub_mat[!(pub_mat[[1]] %in% a), i]<-0
-  pub_mat[,i]<-as.numeric(pub_mat[,i])
-}
-rownames(pub_mat)<-pub_mat[,1]
-
+pub_mat<-readRDS("./data/pub_mat.RDS")
