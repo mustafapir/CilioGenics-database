@@ -378,7 +378,9 @@ ui <- dashboardPagePlus(
             title = "List of publications",
             solidHeader = TRUE,
             status = "success",
-            uiOutput("pubui")
+            uiOutput("pubui"),
+            br(), br(), br(), br(),
+            iheatmaprOutput("pubheatmap")
           )
         )
       )
