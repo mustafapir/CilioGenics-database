@@ -612,82 +612,82 @@ server <- function(input, output, session) {
     })
     
     
-    omim_disease_x<-reactive({
-        if(genename() %in% omim$Gene_name){
-            a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
-            if (a %in% names(lst)){
-                phe<-lst[[a]]$phe
-                mim<-lst[[a]]$mim
-                b<-paste0("https://www.omim.org/entry/", mim)
-                if (length(lst[[a]]$mim)==1){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b,"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe, "</td>", "</tr>")
-                }
-                else if (length(lst[[a]]$mim)==2){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>")
-                }
-                else if (length(lst[[a]]$mim)==3){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>")
-                }
-                else if (length(lst[[a]]$mim)==4){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>")
-                }
-                else if (length(lst[[a]]$mim)==5){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",)
-                }
-                else if (length(lst[[a]]$mim)==6){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>")
-                }
-                else if (length(lst[[a]]$mim)==7){
-                    c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>",
-                              
-                              "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[7],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[7], "</td>", "</tr>")
-                }
-            }
-            else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
-        }
-        else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
-        c
-    })
+    # omim_disease_x<-reactive({
+    #     if(genename() %in% omim$Gene_name){
+    #         a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
+    #         if (a %in% names(lst)){
+    #             phe<-lst[[a]]$phe
+    #             mim<-lst[[a]]$mim
+    #             b<-paste0("https://www.omim.org/entry/", mim)
+    #             if (length(lst[[a]]$mim)==1){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b,"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe, "</td>", "</tr>")
+    #             }
+    #             else if (length(lst[[a]]$mim)==2){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>")
+    #             }
+    #             else if (length(lst[[a]]$mim)==3){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>")
+    #             }
+    #             else if (length(lst[[a]]$mim)==4){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>")
+    #             }
+    #             else if (length(lst[[a]]$mim)==5){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",)
+    #             }
+    #             else if (length(lst[[a]]$mim)==6){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>")
+    #             }
+    #             else if (length(lst[[a]]$mim)==7){
+    #                 c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[1],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[1], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[2],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[2], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[3],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[3], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[4],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[4], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[5],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[5], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[6],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[6], "</td>", "</tr>",
+    #                           
+    #                           "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", b[7],"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe[7], "</td>", "</tr>")
+    #             }
+    #         }
+    #         else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
+    #     }
+    #     else {c<-paste("<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "No disease information", "</td>", "</tr>")}
+    #     c
+    # })
     
     
     networkdata<-reactive({
@@ -976,7 +976,7 @@ server <- function(input, output, session) {
                                    style = "unite",
                                    size = "sm"),
                         
-                        actionBttn("clusterPage", "Clusters",
+                        actionBttn("clusterPage", "Phylogenetic Analysis",
                                    icon = img(src = "tree.png", height = "20px"), 
                                    color = "success",
                                    style = "unite",
@@ -1032,7 +1032,7 @@ server <- function(input, output, session) {
                                    style = "unite",
                                    size = "sm"),
                         
-                        actionBttn("clusterPage", "Clusters",
+                        actionBttn("clusterPage", "Phylogenetic Analysis",
                                    icon = img(src = "tree.png", height = "20px"), 
                                    color = "success",
                                    style = "unite",

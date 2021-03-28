@@ -223,7 +223,7 @@ ui <- dashboardPagePlus(
                     tabPanel(
                       id = "tab2",
                       value = "tab2",
-                      title = "Clusters",
+                      title = "Phylogenetic Analysis",
                       pickerInput(
                         inputId = "clusternumber",
                         label = "Select cluster number to explore", 
