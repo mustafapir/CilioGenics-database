@@ -373,14 +373,15 @@ ui <- dashboardPagePlus(
         id = "pub",
         column(
           width = 12,
+          align = "center",
           boxPlus(
             width = 12,
             title = "List of publications",
             solidHeader = TRUE,
             status = "success",
-            uiOutput("pubui"),
-            br(), br(), br(), br(),
-            iheatmaprOutput("pubheatmap")
+            br(),
+            iheatmaprOutput("pubheatmap"),
+            uiOutput("pubui")
           )
         )
       )
