@@ -976,7 +976,7 @@ server <- function(input, output, session) {
                                    color = "success",
                                    style = "unite",
                                    size = "sm"),
-                        br(),
+                        br(),br(),
                         actionBttn("clusterPage", "Phylogenetic Analysis",
                                    icon = img(src = "tree.png", height = "20px"), 
                                    color = "success",
