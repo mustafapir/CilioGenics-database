@@ -1451,7 +1451,7 @@ server <- function(input, output, session) {
     
     output$pubheatmap<-renderIheatmap({
       main_heatmap(as.matrix(pub_mat[pub_mat$V1 == genename(),-1]),
-                   layout = list(width = 1200, height = 240, paper_bgcolor='transparent'), show_colorbar = FALSE,
+                   layout = list(width = 1000, height = 220, paper_bgcolor='transparent'), show_colorbar = FALSE,
                    tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Publication: ")) %>%
         add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
         add_col_labels(size = 5,font = list(family = c("open_sansregular"), size = 12), textangle=270, side = "top",
