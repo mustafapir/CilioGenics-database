@@ -13,7 +13,8 @@ options(reactable.theme = reactableTheme(
 GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
 
 server <- function(input, output, session) { 
-    
+  onevent("mouseenter", "sidebarCollapsed", shinyjs::removeCssClass(selector = "body", class = "sidebar-collapse"))
+  onevent("mouseleave", "sidebarCollapsed", shinyjs::addCssClass(selector = "body", class = "sidebar-collapse"))
     js$getcookie()
     observeEvent("", {
         
