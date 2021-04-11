@@ -11,19 +11,21 @@ library(networkD3)
 library(iheatmapr)
 library(cicerone)
 library(data.table)
-library(shinyBS)
+#library(shinyBS)
 library(dplyr)
 library(webshot)
 library(V8)
 library(dashboardthemes)
 library(waiter)
+library(circlize)
+library(ComplexHeatmap)
 
 
 #library(rintrojs)
 
 source("global.R")
 source("functions.R")
-webshot::install_phantomjs()
+#webshot::install_phantomjs()
 
 #addResourcePath("js", "www")
 
@@ -48,11 +50,11 @@ jsCode <- '
 '
 
 
-ui <- dashboardPagePlus(
-  
-  use_waiter(),
-  waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
-  header = dashboardHeaderPlus(
+ui <- shinydashboardPlus::dashboardPage(
+  #md = TRUE,
+  #skin = "blue",
+  #skin = "midnight",
+  header = shinydashboardPlus::dashboardHeader(
     # tags$li(actionBttn("homePage", "Home",
     #                    icon = icon("home"), 
     #                    style = "unite",
@@ -65,8 +67,7 @@ ui <- dashboardPagePlus(
   # sidebar_background = "light",
   # skin = "green",
   
-  use_cicerone(),
-  
+  options = list(sidebarExpandOnHover = TRUE),
   sidebar = dashboardSidebar(
     header = singleton(tags$head(includeHTML(("google-analytics.html")))),
     
@@ -88,7 +89,9 @@ ui <- dashboardPagePlus(
     # shinyDashboardThemes(
     #   theme = "grey_dark"
     # ),
-    
+    use_waiter(),
+    waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
+    use_cicerone(),
     customTheme,
     useShinyjs(),
     extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
@@ -292,7 +295,7 @@ ui <- dashboardPagePlus(
         br(), br(),
         
         id = "general_info",
-        boxPlus(
+        box(
           title = "Gene info",
           solidHeader = TRUE,
           status = "success",
@@ -301,7 +304,7 @@ ui <- dashboardPagePlus(
           withSpinner(htmlOutput("textgeneid"), type = 8, color = "#10c891")
         ),
         
-        boxPlus(
+        box(
           title = "Rankings in Each Category (Lower is Better)",
           solidHeader = TRUE,
           status = "success",
@@ -374,13 +377,15 @@ ui <- dashboardPagePlus(
         column(
           width = 12,
           align = "center",
-          boxPlus(
+          box(
             width = 12,
             title = "List of publications",
             solidHeader = TRUE,
             status = "success",
-            br(),
-            iheatmaprOutput("pubheatmap"),
+            br(),br(),br(),
+            plotOutput("pubheatmap"),
+            #iheatmaprOutput("pubheatmap"),
+            br(),br(), br(),br(), br(),
             uiOutput("pubui")
           )
         )
@@ -393,14 +398,14 @@ ui <- dashboardPagePlus(
         id = "single_cell",
         column(
           width = 12,
-          boxPlus(
+          box(
             width = 12,
             title = "Single Cell Plot",
             solidHeader = TRUE,
             status = "success",
             plotOutput("scHeatmap", height = "1200px")
           ),
-          boxPlus(
+          box(
             width = 12,
             solidHeader = TRUE,
             status = "success",

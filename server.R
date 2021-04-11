@@ -1,7 +1,6 @@
 library(shiny)
 library(webshot)
-library(pheatmap)
-webshot::install_phantomjs()
+#webshot::install_phantomjs()
 source("functions.R")
 options(reactable.theme = reactableTheme(
      # backgroundColor = "hsl(271, 100%, 10%)",
@@ -13,8 +12,8 @@ options(reactable.theme = reactableTheme(
 GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
 
 server <- function(input, output, session) { 
-  onevent("mouseenter", "sidebarCollapsed", shinyjs::removeCssClass(selector = "body", class = "sidebar-collapse"))
-  onevent("mouseleave", "sidebarCollapsed", shinyjs::addCssClass(selector = "body", class = "sidebar-collapse"))
+  # onevent("mouseenter", "sidebarCollapsed", shinyjs::removeCssClass(selector = "body", class = "sidebar-collapse"))
+  # onevent("mouseleave", "sidebarCollapsed", shinyjs::addCssClass(selector = "body", class = "sidebar-collapse"))
     js$getcookie()
     observeEvent("", {
         
@@ -1152,7 +1151,7 @@ server <- function(input, output, session) {
     
     
     output$protable<-renderUI({
-        boxPlus(
+        box(
             width = 12,
             title = paste("Genes interacting with ", genename(), "gene"),
             solidHeader = TRUE,
@@ -1257,7 +1256,7 @@ server <- function(input, output, session) {
     
     output$pro_box1 <- renderUI({
         
-        boxPlus(
+        box(
             title = paste0("Protein interaction network for ", genename(), " gene"),
             width = 12,
             solidHeader = TRUE,
@@ -1277,7 +1276,7 @@ server <- function(input, output, session) {
             column(
                 id = "colcolcol",
                 width = 9,
-                boxPlus(
+                box(
                     width = 12,
                     solidHeader = TRUE,
                     status = "success",
@@ -1334,7 +1333,7 @@ server <- function(input, output, session) {
     output$clustertableui<-renderUI({
         column(
             width = 3,
-            boxPlus(
+            box(
                 title = paste("Genes in cluster", inputclusternamenumber()),
                 solidHeader = TRUE,
                 status = "success",
@@ -1450,17 +1449,51 @@ server <- function(input, output, session) {
     })
     
     
-    output$pubheatmap<-renderIheatmap({
-      main_heatmap(as.matrix(pub_mat[pub_mat$V1 == genename(),-1]),
-                   layout = list(width = 1000, height = 220, paper_bgcolor='transparent'), show_colorbar = FALSE,
-                   tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Publication: ")) %>%
-        add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-        add_col_labels(size = 5,font = list(family = c("open_sansregular"), size = 12), textangle=270, side = "top",
-                       tickvals = c(1:length(colnames(pub_mat[,2:55]))))
-      
-    })
+    # output$pubheatmap<-renderIheatmap({
+    #   main_heatmap(as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1])),
+    #                layout = list(width = 1000, height = 800, paper_bgcolor='transparent'), show_colorbar = FALSE,
+    #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Publication: ")) %>%
+    #     add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+    #     add_col_labels(size = 5,font = list(family = c("open_sansregular"), size = 12), textangle=270, side = "bottom",
+    #                    tickvals = c(1:length(colnames(pub_mat[,2:55]))))
+    #   
+    # })
+    # 
+    # output$pubheatmap<-renderPlotly({
+    #   heatmaply(as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1])), grid_color = "black", seriate = "none",
+    #             column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE, 
+    #             colors = c("azure","blue4")) %>% layout(height = 600, width = 1000, xaxis = list(side ="top"))
+    #   
+    # })
+    # 
+    # output$pubheatmap<-renderPlot({
+    #   
+    #   pheatmap(as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1])),
+    #            cluster_cols = FALSE, cluster_rows = FALSE, fontsize = 12, annotation_colors = C("white","blue4"),
+    #            gaps_row = 2)
+    # })
+    #   
+    #   
+    #   pheatmap(mm, cluster_cols = FALSE, cluster_rows = FALSE, show_rownames = TRUE, fontsize = 12, scale = "row", angle_col = 315, gaps_row = 51,
+    #            annotation_row = annot1, annotation_names_row = FALSE,
+    #            annotation_col = annotcol, annotation_names_col = FALSE,
+    #            annotation_colors = ann_color
+    #            #height = 1200
+    #            
+    #   )
     
+    # m_pubheatmap<-reactive({
+    #   as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1]))
+    # })
     
+      output$pubheatmap<-renderPlot({
+        req(genename())
+           Heatmap(as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1])),
+              rect_gp = gpar(col = "white", lwd = 2), row_split = c("", rep(" ", 11)), row_gap = unit(5, "mm"),
+              cluster_row_slices = FALSE, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun,
+              height = unit(8, "cm"), show_heatmap_legend = FALSE, column_names_side = "top", row_names_side = "left",
+              heatmap_height = unit(1.5, "npc"))
+      })
     # ***************************************************
     
     # Single cell cluster heatmap
@@ -1543,7 +1576,7 @@ server <- function(input, output, session) {
             column(
                 id = "scclusterheatmap",
                 width = 9,
-                boxPlus(
+                box(
                     width = 12,
                     solidHeader = TRUE,
                     status = "success",
@@ -1638,7 +1671,7 @@ server <- function(input, output, session) {
     output$scclustertableui<-renderUI({
         column(
             width = 3,
-            boxPlus(
+            box(
                 title = paste("Genes in cluster", r_scclusternumber()),
                 solidHeader = TRUE,
                 status = "success",

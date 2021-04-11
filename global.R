@@ -4,6 +4,7 @@ library(dplyr)
 library(readxl)
 library(tidyr)
 library(RColorBrewer)
+library(circlize)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
@@ -146,3 +147,31 @@ lst<-readRDS("./data/lst.RDS")
 lst[sapply(lst, is.null)] <- NULL
 
 pub_mat<-readRDS("./data/pub_mat.RDS")
+pub_mat2<-pub_mat
+pub_mat2$all<-rowSums(pub_mat2[,-1])
+pub_mat2<-pub_mat2[order(-pub_mat2$all),]
+pub_mat3<-pub_mat2[1:11,]
+pub_mat3<-pub_mat3[,-56]
+
+col_fun = colorRamp2(c(1, 0), c("blue4", "antiquewhite"))
+
+# pub_mat4<-melt(pub_mat3)
+# colnames(pub_mat4)<-c("Gene name", "Publication", "Value")
+# 
+# p<-ggplot(pub_mat4, aes(Publication, `Gene name`)) +
+#   geom_tile(aes(fill = Value), colour = "black") +
+#   scale_fill_gradient(low = "white",high = "steelblue")
+# 
+# pt<-p + theme_grey() + 
+#   labs(x = "", y = "") +
+#   scale_x_discrete(expand = c(0, 0)) +
+#   scale_y_discrete(expand = c(0, 0)) +
+#   theme(legend.position = "none")
+#                                              
+# 
+# ggplotly(pt)
+# 
+# library(heatmaply)
+# heatmaply(as.matrix(rbind(pub_mat[pub_mat$V1 == "ARL13B",-1], pub_mat3[,-1])), grid_color = "black", seriate = "none",
+#           column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE, 
+#           colors = c("azure","blue4"))
