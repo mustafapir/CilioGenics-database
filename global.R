@@ -175,3 +175,9 @@ col_fun = colorRamp2(c(1, 0), c("blue4", "antiquewhite"))
 # heatmaply(as.matrix(rbind(pub_mat[pub_mat$V1 == "ARL13B",-1], pub_mat3[,-1])), grid_color = "black", seriate = "none",
 #           column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE, 
 #           colors = c("azure","blue4"))
+
+
+cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 70px; position: fixed; width: 80%",
+                  "This website places cookies on your device to help us improve our service 
+      to you", HTML('<a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>'))
+

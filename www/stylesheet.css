@@ -11,17 +11,89 @@
 .sidebar {
   color: #FFF;
   position: fixed;
-  white-space: nowrap;
   overflow: visible;
+  white-space: normal;
 }
 
 .main-header {
-  position: fixed;
-  width:100%;
+   position: fixed;
 }
 
 .content {
-  margin-top: 50px;
-  padding-top: 35px;
+  padding-top: 100px;
 }
 
+.content-wrapper {
+   min-height: calc(100vh - 4.7em) !important;
+}
+
+.sidebar-menu > li {
+    white-space: normal;
+}
+
+.skin-blue-light .nav-tabs {
+    background: #44aaee38;
+}
+
+.btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
+    background-color: #44aaee1f;
+    background-image: none;
+    border-color: #269abc;
+}
+
+.box.box-solid.box-success>.box-header {
+    color: #ffffff;
+    background: #44aaeeb8;
+    background-color: #3f51b5bf;
+}
+
+.box.box-solid.box-success {
+    border: 1px solid rgb(255 255 255 / 20%);
+}
+
+.box.box-solid.box-success {
+    border-radius: 25px;
+}
+
+.box .box-header {
+    padding: 15px;
+    border-radius: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.box .box-header .box-title {
+    font-size: 20px;
+}
+
+.sidebar-menu>li>a {
+    padding: 12px 34px 12px 21px;
+    display: block;
+    border-radius: 0 15px 15px 0;
+}
+
+.progress {
+    height: 20px;
+    background: #c8c8c859;
+}
+
+.skin-blue-light .main-header .logo {
+    background-color: #00bcd400;
+    color: #fff;
+    border-bottom: 0 solid transparent;
+}
+
+.sw-dropdown-in {
+    position: relative;
+    padding: 0px 0px;
+    margin: 1px 8px;
+    background-color: #FFF;
+    z-index: 100;
+}
+
+.alert .close {
+    color: #3e2723 !important;
+    opacity: .2;
+}

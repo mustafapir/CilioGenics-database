@@ -1,6 +1,6 @@
 library(shiny)
-library(shinydashboardPlus)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(Homo.sapiens)
 library(shinyjs)
 library(shinyWidgets)
@@ -48,27 +48,40 @@ jsCode <- '
     Shiny.onInputChange("jscookie", "");
   }
 '
+# header = shinydashboardPlus::dashboardHeader(
+#   fixed = TRUE,
+#   disable = FALSE
+# )
+# header$children[[2]]$children <-  tags$a(href='http://mycompanyishere.com',
+#                                    tags$img(src='Logo_ciliogenics.png', height = "30%", width = "30%"))
 
+header <- dashboardHeader(fixed = TRUE, disable = FALSE)
+anchor <- tags$a(
+                 tags$img(src='Logo_browser_ciliogenics.png', height='50', width='50'),
+                 'CilioGenics')
+
+header$children[[2]]$children <- tags$div(
+  tags$head(tags$style(HTML(".name { background-color: transparent }"))),
+  anchor,
+  class = 'name')
 
 ui <- shinydashboardPlus::dashboardPage(
-  #md = TRUE,
-  #skin = "blue",
+  md = TRUE,
+  skin = "blue-light",
   #skin = "midnight",
-  header = shinydashboardPlus::dashboardHeader(
-    # tags$li(actionBttn("homePage", "Home",
-    #                    icon = icon("home"), 
-    #                    style = "unite",
-    #                    color = "default",
-    #                    size = "sm"),class= 'dropdown')
-  ),
-  
+  # header = shinydashboardPlus::dashboardHeader(
+  #   fixed = TRUE,
+  #   disable = FALSE
+  # ),
+  header,
   # enable_preloader = TRUE,
   # collapse_sidebar = TRUE,
   # sidebar_background = "light",
   # skin = "green",
-  
+  #header,
   options = list(sidebarExpandOnHover = TRUE),
   sidebar = dashboardSidebar(
+    minified = TRUE,
     header = singleton(tags$head(includeHTML(("google-analytics.html")))),
     
     div(
@@ -86,13 +99,15 @@ ui <- shinydashboardPlus::dashboardPage(
   ),
   
   body = dashboardBody(
+    
     # shinyDashboardThemes(
     #   theme = "grey_dark"
     # ),
     use_waiter(),
-    waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
+    #waiter_show_on_load(html = spin_3(), color = "#333e48", logo = ""),
+    waiter_show_on_load(html = tagList(spin_1(), "Loading ..."), color = "#3c8dbc"),
     use_cicerone(),
-    customTheme,
+    #customTheme,
     useShinyjs(),
     extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
     tags$head(
@@ -332,7 +347,7 @@ ui <- shinydashboardPlus::dashboardPage(
         
         id = "protein_interaction",
         column(
-          width = 3,
+          width = 6,
           
           checkboxGroupButtons(
             inputId = "proradio",
@@ -454,7 +469,26 @@ ui <- shinydashboardPlus::dashboardPage(
           )
         )
       )
-    )
+    ),
     
-  )
+    tags$footer(cookie_box)
+    # tags$footer(class = "main-footer", style = "margin-bottom: 0; bottom: 0; position: fixed; width: 10%", 
+    #             tags$img(src = "kaplanlab.png", height = "100%", width = "100%"))
+    
+  ),
+   
+  footer = tags$footer(class = "main-footer", shiny::tags$div(class = "pull-right hidden-xs",
+                                                              "By Mustafa S. Pir"),
+                       tags$a(href = "http://kaplanlab.com/", tags$img(src = "kaplanlab.png", 
+                                                                       style="display: inline-block; vertical-align: top; text-align: center", 
+                                                                       height = "7%", width = "7%")))
+  # footer = tags$footer(class = "main-footer", shiny::tags$div(class = "pull-right hidden-xs", 
+  #                                                             "KaplanLab, 2021"), "By Mustafa S. Pir", 
+  #                      HTML('<center><img src="kaplanlab.png" width="8%"></center>'))
+  
+  # footer = dashboardFooter(
+  #   left = "By Mustafa S. Pir",
+  #   right = "KaplanLab, 2021",
+  #   img(src='kaplanlab.png', align = "center")
+  # )
 )

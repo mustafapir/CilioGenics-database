@@ -562,11 +562,11 @@ server <- function(input, output, session) {
     #   })
     #   out
     # })
-    
+
     annotationFile<-reactive({
       suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
     })
-    
+
     goAnnotName<-reactive({
       if (!is.na(annotationFile()$GO)){
       paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
@@ -575,11 +575,11 @@ server <- function(input, output, session) {
         paste("There is no GO annotation information")
       }
     })
-    
+
     goAnnotLink<-reactive({
       paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
     })
-    
+
     goAnnotAll<-reactive({
       if (!is.na(annotationFile()$GO)) {
         paste(goAnnotLink(), collapse = " | ")
@@ -588,7 +588,7 @@ server <- function(input, output, session) {
         paste("There is no GO annotation information")
       }
     })
-    
+
   
     OMIMName<-reactive({
       a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
@@ -956,36 +956,36 @@ server <- function(input, output, session) {
                                    size = "sm"),
                         actionBttn("generalPage", "General Information",
                                    icon = icon("info"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm"),
                         actionBttn("proteinPage", "Protein interactions",
                                    icon = img(src = "network2.png", height = "20px"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm"),
                         
                         actionBttn("scPage", "Single Cell Analysis",
                                    icon = img(src = "tree.png", height = "20px"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm"),
                         
                         actionBttn("scclusterPage", "Single Cell Clusters",
                                    icon = img(src = "tree.png", height = "20px"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm"),
                         br(),
                         actionBttn("clusterPage", "Phylogenetic Analysis",
                                    icon = img(src = "tree.png", height = "20px"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm"),
                         
                         actionBttn("pubPage", "Publications",
                                    icon = icon("book"), 
-                                   color = "success",
+                                   color = "primary",
                                    style = "unite",
                                    size = "sm")
                     )
@@ -1283,6 +1283,7 @@ server <- function(input, output, session) {
                     title = paste("Cluster", inputclusternamenumber()),
                     height = "750px",
                     div(
+                        id = "button1",
                         style = "position: absolute; left: 0.5em; bottom: 0.5em;",
                         dropdown(
                             radioGroupButtons(
@@ -1300,7 +1301,8 @@ server <- function(input, output, session) {
                         )
                     ),
                     div(
-                        style = "position: absolute; left: 6em;bottom: 0.5em;",
+                        id = "button2",
+                        style = "position: absolute; left: 8em;bottom: 0.5em;",
                         dropdown(
                             downloadButton(outputId = "hmap1", label = "Download Plot"),
                             size = "xm",
@@ -1309,7 +1311,8 @@ server <- function(input, output, session) {
                         )
                     ),
                     #tableOutput("xxx"),
-                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891")
+                    withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),
+                    br(),br(),br()
                 )
             )
         )
@@ -1433,7 +1436,7 @@ server <- function(input, output, session) {
     # })
     output$scHeatmap<-renderPlot({
         
-        pheatmap(mm, cluster_cols = FALSE, cluster_rows = FALSE, show_rownames = TRUE, fontsize = 12, scale = "row", angle_col = 315, gaps_row = 51,
+        pheatmap(mm, cluster_cols = FALSE, cluster_rows = FALSE, show_rownames = TRUE, fontsize = 12, scale = "row", angle_col = "315", gaps_row = 51,
                  annotation_row = annot1, annotation_names_row = FALSE,
                  annotation_col = annotcol, annotation_names_col = FALSE,
                  annotation_colors = ann_color
@@ -1600,7 +1603,7 @@ server <- function(input, output, session) {
                         )
                     ),
                     div(
-                        style = "position: absolute; left: 6em;bottom: 0.5em;",
+                        style = "position: absolute; left: 8em;bottom: 0.5em;",
                         dropdown(
                             downloadButton(outputId = "scdownloadbttn", label = "Download Plot"),
                             size = "xm",
@@ -1609,7 +1612,8 @@ server <- function(input, output, session) {
                         )
                     ),
                     #tableOutput("xxx"),
-                    withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891")
+                    withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),
+                    br(),br(),br()
                 )
             )
         )
