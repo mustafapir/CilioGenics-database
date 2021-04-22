@@ -2,7 +2,32 @@
 library(cicerone)
 library(reactable)
 
+with_tooltip <- function(value, tooltip, ...) {
+  #span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+  #bsButton("q1", label = tooltip, icon = icon("question"), style = "info", size = "extra-small")
+  div(br(),br(),
+    tags$style(type = "text/css", "#q1 {vertical-align: top;}"),
+     #bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+     tippy(bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+           sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue"),
+     br(),
+     value
+     #tippy_this("tooltipbutton", sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", allowHTML = TRUE, theme = "light")
+  )
+}
 
+with_tooltip2 <- function(value, tooltip, ...) {
+  #span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+  #bsButton("q1", label = tooltip, icon = icon("question"), style = "info", size = "extra-small")
+  div(br(),
+      tags$style(type = "text/css", "#q1 {vertical-align: top;}"),
+      value,
+      #bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+      tippy(bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+            sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue")
+      #tippy_this("tooltipbutton", sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", allowHTML = TRUE, theme = "light")
+  )
+}
 
 guide <- Cicerone$
   new()$ 

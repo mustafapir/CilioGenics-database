@@ -43,6 +43,9 @@ server <- function(input, output, session) {
                     actionButton(inputId = "tour", label = "Introductory Tour", icon = icon("info-circle")),
                     actionButton(inputId = "close", label = "Close", icon = icon("close"))
                 )))
+           output$cookie_footer<-renderUI({
+             tags$footer(cookie_box)
+           })
         }
     })
     
@@ -124,6 +127,7 @@ server <- function(input, output, session) {
     observeEvent(input$generadio, {
         session$sendCustomMessage("geneName", input$generadio)
         #updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
+        click("generalPage")
         show("general_info")
         hide("protein_interaction")
         hide("protein_interaction1")
@@ -1170,28 +1174,41 @@ server <- function(input, output, session) {
         reactable(final_score_table, resizable = TRUE, filterable = TRUE,
                   searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
                   columns =list(
-                      Protein_interaction_score = colDef(name = "Protein interactions", 
+                      Gene_name = colDef(header = with_tooltip("Gene name", 
+                                                               "HGNC name of the genes"), 
                                                          format = colFormat(digits = 3)),
-                      Genetic_interaction_score = colDef(name = "Genetic interactions", 
+                      Protein_interaction_score = colDef(header = with_tooltip("Protein interactions", 
+                                                                               "Protein interaction scores"), 
                                                          format = colFormat(digits = 3)),
-                      Single_cell_score = colDef(name = "Single cell", 
+                      Genetic_interaction_score = colDef(header = with_tooltip("Genetic interactions", 
+                                                                               "Genetic interaction scores"), 
+                                                         format = colFormat(digits = 3)),
+                      Single_cell_score = colDef(header = with_tooltip("Single cell", 
+                                                                       "Single cell scores. Based on expression in ciliated cells"), 
                                                  format = colFormat(digits = 3)),
-                      Cluster_score = colDef(name = "Clusters", 
+                      Cluster_score = colDef(header = with_tooltip("Phylogenetic analysis", 
+                                                                   "Phylogenetic analysis scores. Based on presence in ciliary organisms"),
                                              format = colFormat(digits = 3)),
-                      Motif_score = colDef(name = "Motifs", 
+                      Motif_score = colDef(header = with_tooltip("Motifs", 
+                                                                 "Motif scores. Based on the presence of ciliary motifs on the gene (Refer to this)."), 
                                            format = colFormat(digits = 3)),
-                      Publication_score = colDef(name = "Publications", 
+                      Publication_score = colDef(header = with_tooltip("Publications", 
+                                                                       "Publication scores. Based on the publications that the gene is reported."), 
                                                  format = colFormat(digits = 3)),
-                      Protein_atlas_score = colDef(name = "Protein atlas", 
+                      Protein_atlas_score = colDef(header = with_tooltip("Protein atlas", 
+                                                                         "Protein atlas scores. Based on the presence of ciliary features in the gene reported in Protein Atlas"), 
                                                    format = colFormat(digits = 3)),
-                      Total_score = colDef(name = "Raw score", 
+                      Total_score = colDef(header = with_tooltip("Total raw scores", 
+                                                                 "Total unscaled raw scores"), 
                                            format = colFormat(digits = 3)),
-                      Norm_total_score = colDef(name = "Normalized score", 
+                      Norm_total_score = colDef(header = with_tooltip("Normalized score", 
+                                                                      "Total normalized scores"), 
                                                 format = colFormat(digits = 3)),
-                      Publication_score = colDef(name = "Publications", 
-                                                 format = colFormat(digits = 3)),
-                      Weighted_total_scores = colDef(name = "Weighted score", 
-                                                     format = colFormat(digits = 3))
+                      Weighted_total_scores = colDef(header = with_tooltip("Weighted score", 
+                                                                           "Total weighted scores. Weights are based on the success rate of finding ciliary genes."), 
+                                                     format = colFormat(digits = 3)),
+                      Seq = colDef(header = with_tooltip("Order", 
+                                                         "Order of the genes based on weighted scores"))
                       
                       
                   ),
@@ -1275,7 +1292,9 @@ server <- function(input, output, session) {
             style = "position: relative",
             column(
                 id = "colcolcol",
-                width = 9,
+                width = 10,
+                align = "center",
+                offset = 1,
                 box(
                     width = 12,
                     solidHeader = TRUE,
@@ -1335,7 +1354,9 @@ server <- function(input, output, session) {
     
     output$clustertableui<-renderUI({
         column(
-            width = 3,
+            width = 10,
+            offset = 1,
+            align = "center",
             box(
                 title = paste("Genes in cluster", inputclusternamenumber()),
                 solidHeader = TRUE,
@@ -1378,9 +1399,14 @@ server <- function(input, output, session) {
                   searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
                   highlight = TRUE,
                   columns = list(
-                      Score = colDef(name = "Score", 
-                                     format = colFormat(digits = 3)),
-                      Gene_name = colDef(name = "Gene name")
+                    Score = colDef(name = "Score", 
+                                   format = colFormat(digits = 3),
+                                   align = "left",
+                                   header = with_tooltip2("Score", "Single cell scores")),
+                    Gene_name = colDef(name = "Gene name",
+                                       header = with_tooltip2("Gene name", "HGNC gene name")),
+                    `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?")),
+                    CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
                   ),
                   rowStyle = list(cursor = "pointer"),
                   selection = "single",
@@ -1497,6 +1523,8 @@ server <- function(input, output, session) {
               height = unit(8, "cm"), show_heatmap_legend = FALSE, column_names_side = "top", row_names_side = "left",
               heatmap_height = unit(1.5, "npc"))
       })
+      
+      
     # ***************************************************
     
     # Single cell cluster heatmap
@@ -1577,8 +1605,10 @@ server <- function(input, output, session) {
         div(
             style = "position: relative",
             column(
+                align = "center",
                 id = "scclusterheatmap",
-                width = 9,
+                width = 10,
+                offset = 1,
                 box(
                     width = 12,
                     solidHeader = TRUE,
@@ -1664,8 +1694,13 @@ server <- function(input, output, session) {
                   highlight = TRUE,
                   columns = list(
                       Score = colDef(name = "Score", 
-                                     format = colFormat(digits = 3)),
-                      Gene_name = colDef(name = "Gene name")
+                                     format = colFormat(digits = 3),
+                                     align = "left",
+                                     header = with_tooltip2("Score", "Single cell scores")),
+                      Gene_name = colDef(name = "Gene name",
+                                         header = with_tooltip2("Gene name", "HGNC gene name")),
+                      `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?")),
+                      CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
                   ),
                   rowStyle = list(cursor = "pointer"),
                   selection = "single",
@@ -1674,7 +1709,9 @@ server <- function(input, output, session) {
     
     output$scclustertableui<-renderUI({
         column(
-            width = 3,
+            width = 10,
+            offset = 1,
+            align = "center",
             box(
                 title = paste("Genes in cluster", r_scclusternumber()),
                 solidHeader = TRUE,

@@ -11,7 +11,7 @@ library(networkD3)
 library(iheatmapr)
 library(cicerone)
 library(data.table)
-#library(shinyBS)
+library(shinyBS)
 library(dplyr)
 library(webshot)
 library(V8)
@@ -19,6 +19,8 @@ library(dashboardthemes)
 library(waiter)
 library(circlize)
 library(ComplexHeatmap)
+#library(shinyhelper)
+library(tippy)
 
 
 #library(rintrojs)
@@ -99,6 +101,7 @@ ui <- shinydashboardPlus::dashboardPage(
   ),
   
   body = dashboardBody(
+    
     
     # shinyDashboardThemes(
     #   theme = "grey_dark"
@@ -188,6 +191,7 @@ ui <- shinydashboardPlus::dashboardPage(
                            icon = icon("list"),
                            style = "minimal",
                            color = "success"),
+                         
                   )
                   
                 )
@@ -231,7 +235,13 @@ ui <- shinydashboardPlus::dashboardPage(
                       title = "Gene table",
                       id = "tab1",
                       value = "tab1",
+                      # helper(shiny::actionButton("go", "click me!"),
+                      #        icon = "exclamation",
+                      #        colour = "red",
+                      #        type = "markdown",
+                      #        content = "ClickHelp"),
                       withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
+                      
                       br(), br(),
                       div(title = "Gene order by categories",
                           withSpinner(reactableOutput("generaltable3"), type = 8, color = "#10c891"))
@@ -253,11 +263,11 @@ ui <- shinydashboardPlus::dashboardPage(
                       ),
                       fluidRow(
                         column(
-                          width = 9,
+                          width = 12,
                           withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
                         ),
                         column(
-                          width = 3,
+                          width = 12,
                           withSpinner(reactableOutput("hclusternumbertable"), type = 8, color = "#10c891")
                         )
                       )
@@ -280,11 +290,11 @@ ui <- shinydashboardPlus::dashboardPage(
                       uiOutput("pickeroutput"),
                       fluidRow(
                         column(
-                          width = 9,
+                          width = 12,
                           withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
                         ),
                         column(
-                          width = 3,
+                          width = 12,
                           withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891")
                         )
                       )
@@ -471,7 +481,8 @@ ui <- shinydashboardPlus::dashboardPage(
       )
     ),
     
-    tags$footer(cookie_box)
+    uiOutput("cookie_footer")
+    #tags$footer(cookie_box)
     # tags$footer(class = "main-footer", style = "margin-bottom: 0; bottom: 0; position: fixed; width: 10%", 
     #             tags$img(src = "kaplanlab.png", height = "100%", width = "100%"))
     
