@@ -152,6 +152,17 @@ pub_mat2$all<-rowSums(pub_mat2[,-1])
 pub_mat2<-pub_mat2[order(-pub_mat2$all),]
 pub_mat3<-pub_mat2[1:11,]
 pub_mat3<-pub_mat3[,-56]
+colnames(pub_mat2)[1]<-"Gene_name"
+colnames(pub_mat)[1]<-"Gene_name"
+
+temp_pub<-anti_join(final_seq_table, pub_mat2, by = "Gene_name")
+pub_mat4<-data.frame(Gene_name = temp_pub$Gene_name)
+pub_mat4[colnames(pub_mat)[-1]]<-0
+pub_mat<-rbind(pub_mat, pub_mat4)
+
+temp2<-anti_join(pub_mat, final_seq_table, by = "Gene_name")
+pub_mat<-anti_join(pub_mat, temp2, by = "Gene_name")
+rownames(pub_mat)<-pub_mat$Gene_name
 
 col_fun = colorRamp2(c(1, 0), c("blue4", "antiquewhite"))
 

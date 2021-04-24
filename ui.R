@@ -173,11 +173,11 @@ ui <- shinydashboardPlus::dashboardPage(
                          
                          searchInput(
                            inputId = "geneName",
-                           label = HTML("<h4><center>Search a gene name</center></h4>"),
+                           label = HTML("<h3><center>Gene Search</center></h3>"),
                            placeholder = "Search genes by gene name, gene id or Ensembl gene id",
                            btnSearch = icon("search"),
                            btnReset = icon("remove"),
-                           width = "40%",
+                           width = "600px",
                            value = NULL
                          ),
                          
@@ -225,82 +225,102 @@ ui <- shinydashboardPlus::dashboardPage(
               fluidRow(
                 div(
                   id = "exptab",
-                  tabBox(
-                    id = "exploredt",
-                     width = 12,
-                     title = "Explore the genes",
-                    
-                    tabPanel(
-                      br(), br(),
-                      title = "Gene table",
-                      id = "tab1",
-                      value = "tab1",
-                      # helper(shiny::actionButton("go", "click me!"),
-                      #        icon = "exclamation",
-                      #        colour = "red",
-                      #        type = "markdown",
-                      #        content = "ClickHelp"),
-                      withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
-                      
-                      br(), br(),
-                      div(title = "Gene order by categories",
-                          withSpinner(reactableOutput("generaltable3"), type = 8, color = "#10c891"))
-                      #textOutput("ot")
-                    ),
-                    
-                    tabPanel(
-                      id = "tab2",
-                      value = "tab2",
-                      title = "Phylogenetic Analysis",
-                      pickerInput(
-                        inputId = "clusternumber",
-                        label = "Select cluster number to explore", 
-                        choices = list(
-                          "Ciliary organisms specific clusters" = c(56,58),
-                          "Average conservation" = c(1,4,6,9,16,30),
-                          "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
-                        )
+                  column(
+                    width = 10,
+                    align = "center",
+                    offset = 1,
+                    tabBox(
+                      id = "exploredt",
+                       width = 12,
+                       title = "Explore the genes",
+                       
+                      tabPanel(
+                        br(), br(),
+                        title = "Gene table",
+                        id = "tab1",
+                        value = "tab1",
+                        # helper(shiny::actionButton("go", "click me!"),
+                        #        icon = "exclamation",
+                        #        colour = "red",
+                        #        type = "markdown",
+                        #        content = "ClickHelp"),
+                        withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
+                        
+                        br(), br(),
+                        div(title = "Gene order by categories",
+                            withSpinner(reactableOutput("generaltable3"), type = 8, color = "#10c891"))
+                        #textOutput("ot")
                       ),
-                      fluidRow(
-                        column(
-                          width = 12,
-                          withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
-                        ),
-                        column(
-                          width = 12,
-                          withSpinner(reactableOutput("hclusternumbertable"), type = 8, color = "#10c891")
-                        )
-                      )
                       
-                    ),
-                    
-                    tabPanel(
-                      id = "tab3",
-                      title = "Single cell clusters",
-                      pickerInput(
-                        inputId = "clusternumber2",
-                        label = "Select cluster number to explore", 
-                        choices = list(
-                          "Ciliary cells specific clusters" = 5,
-                          "Neurons specific cluster" = 7,
-                          "Low specificity" = c(1:4,6,8:20)
+                      tabPanel(
+                        id = "tab2",
+                        value = "tab2",
+                        title = "Phylogenetic Analysis",
+                        pickerInput(
+                          inputId = "clusternumber",
+                          label = "Select cluster number to explore", 
+                          choices = list(
+                            "Ciliary organisms specific clusters" = c(56,58),
+                            "Average conservation" = c(1,4,6,9,16,30),
+                            "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
+                          )
                         ),
-                        selected = 5
+                        fluidRow(
+                          column(
+                            width = 12,
+                            withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
+                          ),
+                          column(
+                            width = 12,
+                            withSpinner(reactableOutput("hclusternumbertable"), type = 8, color = "#10c891")
+                          )
+                        )
+                        
                       ),
-                      uiOutput("pickeroutput"),
-                      fluidRow(
-                        column(
-                          width = 12,
-                          withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
+                      
+                      tabPanel(
+                        id = "tab3",
+                        title = "Single cell clusters",
+                        fluidRow(
+                          column(
+                            width = 3,
+                            pickerInput(
+                              inputId = "clusternumber2",
+                              label = "Select cluster number to explore", 
+                              choices = list(
+                                "Ciliary cells specific clusters" = 5,
+                                "Neurons specific cluster" = 7,
+                                "Low specificity" = c(1:4,6,8:20)
+                              ),
+                              selected = 5
+                            )
+                          ),
+                          column(
+                            width = 3,
+                            uiOutput("pickeroutput")
+                          )
                         ),
-                        column(
-                          width = 12,
-                          withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891")
+                        fluidRow(
+                          column(
+                            width = 12,
+                            withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
+                          ),
+                          column(
+                            width = 12,
+                            withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891")
+                          )
+                        )
+                        
+                      ),
+                      tabPanel(
+                        id = "tab4",
+                        title = "Publications",
+                        fluidRow(
+                          withSpinner(iheatmaprOutput("pubgeneralheatmap", height = "1000px"), type = 8)
                         )
                       )
                       
                     )
-                    
                   )
                 )
               )
@@ -400,7 +420,8 @@ ui <- shinydashboardPlus::dashboardPage(
         br(), br(),
         id = "pub",
         column(
-          width = 12,
+          width = 10,
+          offset = 1,
           align = "center",
           box(
             width = 12,
@@ -460,26 +481,26 @@ ui <- shinydashboardPlus::dashboardPage(
     ),
     
     
-    fluidRow(
-      div(
-        
-        column(
-          width = 1,
-          id = "back_button",
-          tags$div(
-            title = "click to go back",
-            actionBttn(
-              inputId = "back",
-              label = "BACK", 
-              style = "material-flat",
-              color = "success",
-              icon = icon("arrow-left"),
-              size = "sm"
-            )
-          )
-        )
-      )
-    ),
+    # fluidRow(
+    #   div(
+    #     
+    #     column(
+    #       width = 1,
+    #       id = "back_button",
+    #       tags$div(
+    #         title = "click to go back",
+    #         actionBttn(
+    #           inputId = "back",
+    #           label = "BACK", 
+    #           style = "material-flat",
+    #           color = "success",
+    #           icon = icon("arrow-left"),
+    #           size = "sm"
+    #         )
+    #       )
+    #     )
+    #   )
+    # ),
     
     uiOutput("cookie_footer")
     #tags$footer(cookie_box)

@@ -63,7 +63,6 @@ server <- function(input, output, session) {
     })
     
     
-    
     observeEvent(input$geneName_search, { 
         session$sendCustomMessage("geneName", trimmedGname())
         if (genename() == ""){
@@ -943,6 +942,7 @@ server <- function(input, output, session) {
     #     ignoreNULL = TRUE
     #     )
     
+    
     output$buttonsui<-renderUI({
         if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
             absolutePanel(
@@ -969,11 +969,11 @@ server <- function(input, output, session) {
                                    style = "unite",
                                    size = "sm"),
                         
-                        actionBttn("scPage", "Single Cell Analysis",
-                                   icon = img(src = "tree.png", height = "20px"), 
-                                   color = "primary",
-                                   style = "unite",
-                                   size = "sm"),
+                        # actionBttn("scPage", "Single Cell Analysis",
+                        #            icon = img(src = "tree.png", height = "20px"), 
+                        #            color = "primary",
+                        #            style = "unite",
+                        #            size = "sm"),
                         
                         actionBttn("scclusterPage", "Single Cell Clusters",
                                    icon = img(src = "tree.png", height = "20px"), 
@@ -1025,11 +1025,11 @@ server <- function(input, output, session) {
                                    style = "unite",
                                    size = "sm"),
                         
-                        actionBttn("scPage", "Single Cell Analysis",
-                                   icon = img(src = "tree.png", height = "20px"), 
-                                   color = "success",
-                                   style = "unite",
-                                   size = "sm"),
+                        # actionBttn("scPage", "Single Cell Analysis",
+                        #            icon = img(src = "tree.png", height = "20px"), 
+                        #            color = "success",
+                        #            style = "unite",
+                        #            size = "sm"),
                         
                         actionBttn("scclusterPage", "Single Cell Clusters",
                                    icon = img(src = "tree.png", height = "20px"), 
@@ -1303,7 +1303,7 @@ server <- function(input, output, session) {
                     height = "750px",
                     div(
                         id = "button1",
-                        style = "position: absolute; left: 0.5em; bottom: 0.5em;",
+                        style = "position: absolute; left: 2em; bottom: 0.5em;",
                         dropdown(
                             radioGroupButtons(
                                 inputId = "hmapradio",
@@ -1517,11 +1517,22 @@ server <- function(input, output, session) {
     
       output$pubheatmap<-renderPlot({
         req(genename())
-           Heatmap(as.matrix(rbind(pub_mat[pub_mat$V1 == genename(),-1], pub_mat3[,-1])),
+           Heatmap(as.matrix(rbind(pub_mat[pub_mat$Gene_name == genename(),-1], pub_mat3[,-1])),
               rect_gp = gpar(col = "white", lwd = 2), row_split = c("", rep(" ", 11)), row_gap = unit(5, "mm"),
               cluster_row_slices = FALSE, cluster_rows = FALSE, cluster_columns = FALSE, col = col_fun,
               height = unit(8, "cm"), show_heatmap_legend = FALSE, column_names_side = "top", row_names_side = "left",
               heatmap_height = unit(1.5, "npc"))
+      })
+      
+      output$pubgeneralheatmap<-renderIheatmap({
+  
+        main_heatmap(as.matrix(pub_mat[,-1]), layout = list(paper_bgcolor='transparent'),
+                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+          #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+          add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+                         )%>%
+          #add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+          modify_layout(list(margin = list(l = 80)))
       })
       
       
@@ -1616,7 +1627,7 @@ server <- function(input, output, session) {
                     title = paste("Cluster", r_scclusternumber()),
                     height = "750px",
                     div(
-                        style = "position: absolute; left: 0.5em; bottom: 0.5em;",
+                        style = "position: absolute; left: 2em; bottom: 0.5em;",
                         dropdown(
                             radioGroupButtons(
                                 inputId = "scclusterradio",

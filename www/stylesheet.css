@@ -102,6 +102,15 @@
   background-color: #6f7dc8;
 }
 
+.btn, .input-group-btn .btn {
+    text-transform: none;
+    padding: 8px 15px;
+}
+
+.form-group {
+    margin: 0 0 0 0;
+}
+
 
 /*.skin-blue-light .main-header .navbar {
     background-color: #6f7dc8;
