@@ -1524,16 +1524,77 @@ server <- function(input, output, session) {
               heatmap_height = unit(1.5, "npc"))
       })
       
-      output$pubgeneralheatmap<-renderIheatmap({
-  
-        main_heatmap(as.matrix(pub_mat[,-1]), layout = list(paper_bgcolor='transparent'),
-                     tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-          #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
-          add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
-                         )%>%
-          #add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
-          modify_layout(list(margin = list(l = 80)))
+      pubheatmapx<-reactive({
+        req(input$pubgene)
+        if(input$pubgene == "All"){
+          x<-main_heatmap(as.matrix(pub_genes[,-1]), layout = list(paper_bgcolor='transparent'),
+                          tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+            #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+            add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90,
+            )%>%
+            #add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+            modify_layout(list(margin = list(l = 80)))
+        }
+        else {
+          x<-main_heatmap(as.matrix(pubgenelist_mat()), layout = list(paper_bgcolor='transparent'),
+                          tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+            add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90)%>%
+            modify_layout(list(margin = list(b = 200)))
+        }
+        x
       })
+
+
+
+      output$pubgeneralheatmap<-renderIheatmap({
+        pubheatmapx()
+      })
+
+
+      output$pubgeneralheatmapUi<-renderUI({
+        req(input$pubgene)
+        if(input$pubgene == "All"){
+          withSpinner(iheatmaprOutput("pubgeneralheatmap", height = "1000px"), type = 8)
+        }
+        else {
+          withSpinner(iheatmaprOutput("pubgeneralheatmap"), type = 8)
+        }
+      })
+      
+      
+      # pubheatmapx<-reactive({
+      #   req(input$pubgene)
+      #   if(input$pubgene == "All"){
+      #     main_heatmap(as.matrix(pub_genes[,-1]), layout = list(paper_bgcolor='transparent'),
+      #                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+      #       #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+      #       add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      #       )%>%
+      #       #add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+      #       modify_layout(list(margin = list(l = 80, b = 200)))
+      #   }
+      #   else if(input$pubgene == ""){
+      #     main_heatmap(as.matrix(pub_genes[,-1]), layout = list(paper_bgcolor='transparent'),
+      #                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+      #       #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+      #       add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      #       )%>%
+      #       #add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+      #       modify_layout(list(margin = list(l = 80, b = 200)))
+      #   }
+      #   else {
+      #     main_heatmap(as.matrix(pubgenelist_mat()), layout = list(paper_bgcolor='transparent'),
+      #                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+      #       add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90)%>%
+      #       modify_layout(list(margin = list(b = 200)))
+      #   }
+      # })
+      # 
+      # 
+      # output$pubgeneralheatmap<-renderIheatmap({
+      #   input$pubgene
+      #   pubheatmapx()
+      # })
       
       
     # ***************************************************
@@ -1801,6 +1862,9 @@ server <- function(input, output, session) {
         if (input$clusternumber3 == "All"){
             scheatmapclusternumberR()
         }
+        else if(input$clusternumber3 == ""){
+            scheatmapclusternumberR()
+        }
         else {
             scheatmapgenenumberR()
         }
@@ -1823,6 +1887,28 @@ server <- function(input, output, session) {
             selected = "All",
             options=pickerOptions(liveSearch=T)
         )
+    })
+    
+    # pubgenelist<-reactive({
+    #   pub_mat$Gene_name[which(apply(pub_mat[,-1],1,sum) != 0)]
+    # })
+    
+    pubgenelist_mat<-reactive({
+      if(input$pubgene != "All"){
+        pub_genes[pub_genes$Gene_name == input$pubgene,-1]
+      }
+    })
+    
+    output$pubpickeroutput<-renderUI({
+      pickerInput(
+        inputId = "pubgene",
+        label = "Select a gene",
+        choices = list(
+          "Gene name" = c("All", pub_genes$Gene_name)
+        ),
+        selected = "All",
+        options=pickerOptions(liveSearch=T)
+      )
     })
     waiter_hide()
 }

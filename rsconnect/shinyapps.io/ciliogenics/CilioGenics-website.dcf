@@ -5,9 +5,9 @@ account: ciliogenics
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3849435
-bundleId: 4509989
+bundleId: 4539681
 url: https://ciliogenics.shinyapps.io/CilioGenics-website/
-when: 1619188833.0586
-lastSyncTime: 1619188833.0586
+when: 1619787248.46534
+lastSyncTime: 1619787248.46545
 asMultiple: FALSE
 asStatic: FALSE

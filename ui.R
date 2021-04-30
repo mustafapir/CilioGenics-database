@@ -316,7 +316,22 @@ ui <- shinydashboardPlus::dashboardPage(
                         id = "tab4",
                         title = "Publications",
                         fluidRow(
-                          withSpinner(iheatmaprOutput("pubgeneralheatmap", height = "1000px"), type = 8)
+                          column(
+                            width = 3,
+                            # pickerInput(
+                            #   inputId = "pubgene",
+                            #   label = "Select a gene",
+                            #   choices = list(
+                            #     "Gene name" = c("All", pub_genes$Gene_name)
+                            #   ),
+                            #   selected = "All",
+                            #   options=pickerOptions(liveSearch=T)
+                            # )
+                            uiOutput("pubpickeroutput")
+                          )
+                        ),
+                        fluidRow(
+                          uiOutput("pubgeneralheatmapUi")
                         )
                       )
                       

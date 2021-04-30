@@ -187,6 +187,7 @@ col_fun = colorRamp2(c(1, 0), c("blue4", "antiquewhite"))
 #           column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE, 
 #           colors = c("azure","blue4"))
 
+pub_genes<-pub_mat[which(apply(pub_mat[,-1],1,sum) != 0),]
 
 cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 70px; position: fixed; width: 80%",
                   "This website places cookies on your device to help us improve our service 
