@@ -44,7 +44,7 @@ jsCode <- '
     }
   }
   shinyjs.setcookie = function(params) {
-    Cookies.set("id", escape(params));  
+    Cookies.set("id", escape(params));
     Shiny.onInputChange("jscookie", params);
   }
   shinyjs.rmcookie = function(params) {
@@ -87,7 +87,7 @@ ui <- shinydashboardPlus::dashboardPage(
         includeHTML(("google-analytics.html"))
         )
       ),
-    
+
     div(
       id = "tabs1",
       sidebarMenu(
@@ -101,7 +101,7 @@ ui <- shinydashboardPlus::dashboardPage(
         )
       )
     ),
-  
+
   ## Body ----
   body = dashboardBody(
     use_waiter(),
@@ -129,7 +129,7 @@ ui <- shinydashboardPlus::dashboardPage(
       Shiny.setInputValue('hmapEvent', value);
       });
                   "),
-      
+
       tags$script("
       Shiny.addCustomMessageHandler('close_drop1', function(x) {
       $('html').click();
@@ -139,15 +139,10 @@ ui <- shinydashboardPlus::dashboardPage(
       $('html').click();
                   });")
     ),
-    
+
     ### Menu ----
-    div(
-      id = "buttonscicerone",
-      uiOutput("buttonsui"), #br(), br(),
-      uiOutput("space")
-      ),
-    br(), br(),
     
+
     ### Tabs ----
     tabItems(
       tabItem(
@@ -165,7 +160,7 @@ ui <- shinydashboardPlus::dashboardPage(
               12,
               tags$script(src = "enter_button.js"),
               align = "center",
-              br(), br(),
+              br(), br(), br(), br(),
               HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
               br(), br(),
               searchInput(
@@ -191,8 +186,118 @@ ui <- shinydashboardPlus::dashboardPage(
                 )
               )
             )
+          ),
+        div(
+          id = "buttonscicerone",
+          uiOutput("buttonsui"), #br(), br(),
+          uiOutput("space")
+        ),
+        br(), br(),
+        fluidRow(
+          div(
+            br(), br(),
+            id = "general_info",
+            box(
+              title = "Gene info",
+              solidHeader = TRUE,
+              status = "success",
+              width = 6,
+              withSpinner(htmlOutput("textgeneid"), type = 8, color = "#10c891")
+            ),
+            
+            box(
+              title = "Rankings in Each Category (Lower is Better)",
+              solidHeader = TRUE,
+              status = "success",
+              width = 6,
+              withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
+            )
           )
         ),
+        
+        #### Protein interactions ----
+        fluidRow(
+          div(
+            style="margin-left:15px",
+            br(),
+            id = "protein_interaction",
+            column(
+              width = 6,
+              checkboxGroupButtons(
+                inputId = "proradio",
+                label = "Select the source of interaction: ",
+                choices = c("Biogrid" = "Biogrid", "Intact" = "Intact", "Wormbase" = "Wormbase"),
+                selected = c("Biogrid", "Intact", "Wormbase"),
+                justified = TRUE, status = "info",
+                checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon")),
+                direction = "vertical",
+                individual = TRUE
+              )
+            ),
+            br()
+          )
+        ),
+        
+        fluidRow(
+          div(
+            id = "protein_interaction1",
+            column(
+              width = 6,
+              uiOutput("pro_box1")
+            ),
+            column(
+              width = 6,
+              uiOutput("protable")
+            )
+          )
+        ),
+        
+        #### Phylogenetic analysis ----
+        fluidRow(
+          div(
+            br(), br(),
+            id = "cluster_page",
+            uiOutput("clusterui"),
+            uiOutput("clustertableui")
+          )
+        ),
+        
+        #### Single cell ----
+        fluidRow(
+          div(
+            br(), br(),
+            id = "sc_cluster_page",
+            uiOutput("scclusterui"),
+            uiOutput("scclustertableui")
+          )
+        ),
+        
+        #### Publications ----
+        fluidRow(
+          div(
+            br(), br(),
+            id = "pub",
+            column(
+              width = 10,
+              offset = 1,
+              align = "center",
+              box(
+                width = 12,
+                title = "List of publications",
+                solidHeader = TRUE,
+                status = "success",
+                br(),br(),br(),
+                plotOutput("pubheatmap"),
+                br(),br(), br(),br(), br(),
+                uiOutput("pubui")
+              )
+            )
+          )
+        ),
+        
+        ### Cookie ----
+        uiOutput("cookie_footer")
+    ),
       tabItem(
         "exploretab",
         fluidRow(
@@ -212,7 +317,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   id = "tab1",
                   value = "tab1",
                   withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891"),
-                  br(), br(),
+                  br(), br()
                   ),
                 tabPanel(
                   id = "tab2",
@@ -220,7 +325,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   title = "Phylogenetic Analysis",
                   pickerInput(
                     inputId = "clusternumber",
-                    label = "Select cluster number to explore", 
+                    label = "Select cluster number to explore",
                     choices = list(
                       "Ciliary organisms specific clusters" = c(56,58),
                       "Average conservation" = c(1,4,6,9,16,30),
@@ -246,7 +351,7 @@ ui <- shinydashboardPlus::dashboardPage(
                       width = 3,
                       pickerInput(
                         inputId = "clusternumber2",
-                        label = "Select cluster number to explore", 
+                        label = "Select cluster number to explore",
                         choices = list(
                           "Ciliary cells specific clusters" = 5,
                           "Neurons specific cluster" = 7,
@@ -301,139 +406,23 @@ ui <- shinydashboardPlus::dashboardPage(
       tabItem(
         "abouttab"
         )
-    ),
-    
-    ### Gene details items ----
-    
-    #### General info ----
-    fluidRow(
-      div(
-        br(), br(),
-        id = "general_info",
-        box(
-          title = "Gene info",
-          solidHeader = TRUE,
-          status = "success",
-          width = 6,
-          withSpinner(htmlOutput("textgeneid"), type = 8, color = "#10c891")
-          ),
-        
-        box(
-          title = "Rankings in Each Category (Lower is Better)",
-          solidHeader = TRUE,
-          status = "success",
-          width = 6,
-          withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891"),
-          withSpinner(uiOutput("bargeneinfo1"), type = 8, color = "#10c891"),
-          uiOutput("bargeneinfo2"),
-          uiOutput("bargeneinfo3"),
-          uiOutput("bargeneinfo4"),
-          uiOutput("bargeneinfo5"),
-          uiOutput("bargeneinfo6"),
-          uiOutput("bargeneinfo7")
-          )
-        )
-      ),
-    
-    #### Protein interactions ----
-    fluidRow(
-      div(
-        style="margin-left:15px",
-        br(),
-        id = "protein_interaction",
-        column(
-          width = 6,
-          checkboxGroupButtons(
-            inputId = "proradio",
-            label = "Select the source of interaction: ",
-            choices = c("Biogrid" = "Biogrid", "Intact" = "Intact", "Wormbase" = "Wormbase"),
-            selected = c("Biogrid", "Intact", "Wormbase"),
-            justified = TRUE, status = "info",
-            checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon")),
-            direction = "vertical",
-            individual = TRUE
-            )
-          ),
-        br()
-        )
-      ),
-    
-    fluidRow(
-      div(
-        id = "protein_interaction1",
-        column(
-          width = 6,
-          uiOutput("pro_box1")
-        ),
-        column(
-          width = 6,
-          uiOutput("protable")
-        )
-      )
-    ),
-    
-    #### Phylogenetic analysis ----
-    fluidRow(
-      div(
-        br(), br(),
-        id = "cluster_page",
-        uiOutput("clusterui"),
-        uiOutput("clustertableui")
-        )
-      ),
-    
-    #### Single cell ----
-    fluidRow(
-      div(
-        br(), br(),
-        id = "sc_cluster_page",
-        uiOutput("scclusterui"),
-        uiOutput("scclustertableui")
-        )
-      ),
-    
-    #### Publications ----
-    fluidRow(
-      div(
-        br(), br(),
-        id = "pub",
-        column(
-          width = 10,
-          offset = 1,
-          align = "center",
-          box(
-            width = 12,
-            title = "List of publications",
-            solidHeader = TRUE,
-            status = "success",
-            br(),br(),br(),
-            plotOutput("pubheatmap"),
-            br(),br(), br(),br(), br(),
-            uiOutput("pubui")
-            )
-          )
-        )
-      ),
-    
-    ### Cookie ----
-    uiOutput("cookie_footer")
+    )
   ),
-    
-    ## Footer ----
-    footer = tags$footer(
-      class = "main-footer", 
-      shiny::tags$div(
-        class = "pull-right hidden-xs",
-        "By Mustafa S. Pir"),
-      tags$a(
-        href = "http://kaplanlab.com/", 
-        tags$img(
-          src = "kaplanlab.png",
-          style="display: inline-block; vertical-align: top; text-align: center",
-          height = "7%",
-          width = "7%"
-          )
-        )
+  ## Footer ----
+  footer = tags$footer(
+    class = "main-footer",
+    shiny::tags$div(
+      class = "pull-right hidden-xs",
+      "By Mustafa S. Pir"),
+    tags$a(
+      href = "http://kaplanlab.com/",
+      tags$img(
+        src = "kaplanlab.png",
+        style="display: inline-block; vertical-align: top; text-align: center",
+        height = "7%",
+        width = "7%"
       )
+    )
+  )
 )
 

@@ -7,11 +7,11 @@ source("functions.R")
 # Server ----
 server <- function(input, output, session){
   js$getcookie()
-  
+
   # Show modal
   observeEvent(input$jscookie,{
     if (!is.null(input$jscookie) && input$jscookie != "" && input$jscookie == sessionid) {
-      
+
     }
     else {
       showModal(
@@ -29,30 +29,30 @@ server <- function(input, output, session){
       })
       }
     })
-  
+
   # Show tour guide
   observeEvent(input$tour, {
     removeModal()
     guide$init()$start()
     js$setcookie(sessionid)
   })
-  
+
   # Remove modal
   observeEvent(input$close,{
     removeModal()
     js$setcookie(sessionid)
   })
-  
+
   observeEvent(input$generadio,{
     removeModal()
   })
-  
+
   ## Gene name operations ----
   trimmedGname<-reactive({
     trimmed<-trimws(input$geneName)
     trimmed
   })
-  
+
   genename<-reactive({
     if (toupper(trimmedGname()) %in% ens$`Gene stable ID`){
       gname<-ens$`Gene name`[which(ens$`Gene stable ID` %in% toupper(trimmedGname()))]
@@ -61,8 +61,8 @@ server <- function(input, output, session){
       gname<-homsap$Symbol[which(homsap$GeneID %in% trimmedGname())]
     }
     else {
-      if (!(toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_name)) && 
-          (toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_synonyms)) && 
+      if (!(toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_name)) &&
+          (toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_synonyms)) &&
           length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) == 1) {
         gname<-gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))]
       }
@@ -73,13 +73,13 @@ server <- function(input, output, session){
     }
     gname
   })
-  
+
   # List of genes having same synonym gene names
   geneoption<-reactive({
     c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))])
   })
-  
-  # Show only landing page 
+
+  # Show only landing page
   observeEvent("", {
     show("landing_page")
     hide("protein_interaction")
@@ -92,7 +92,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("general_info")
   }, once = TRUE)
-  
+
   observeEvent(input$geneName_search, {
     session$sendCustomMessage("geneName", trimmedGname())
     if (genename() == ""){
@@ -134,7 +134,7 @@ server <- function(input, output, session){
         showCloseButton = TRUE
         )
     }
-    
+
     else {
       show("general_info")
       hide("protein_interaction")
@@ -153,7 +153,7 @@ server <- function(input, output, session){
     ignoreInit = TRUE,
     ignoreNULL = TRUE
     )
-  
+
   observeEvent(input$generadio, {
     session$sendCustomMessage("geneName", input$generadio)
     click("generalPage")
@@ -170,7 +170,7 @@ server <- function(input, output, session){
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
-  
+
   observeEvent(input$ARL13B, {
     session$sendCustomMessage("geneName", "ARL13B")
     click("generalPage")
@@ -187,7 +187,7 @@ server <- function(input, output, session){
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
-  
+
   observeEvent(input$IFT74, {
     session$sendCustomMessage("geneName", "ENSG00000096872")
     click("generalPage")
@@ -204,7 +204,7 @@ server <- function(input, output, session){
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
-  
+
   observeEvent(input$BBS5, {
     session$sendCustomMessage("geneName", "129880")
     click("generalPage")
@@ -221,11 +221,11 @@ server <- function(input, output, session){
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
-  
+
   # observeEvent(trimmedGname(), {
   #   updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
   # })
-  
+
   observeEvent(input$homePage, {
     show("landing_page")
     hide("general_info")
@@ -240,7 +240,7 @@ server <- function(input, output, session){
     hide("back_button")
     updateTabItems(session, "tabs", "hometab")
   })
-  
+
   observeEvent(input$generalPage, {
     show("general_info")
     hide("protein_interaction")
@@ -250,7 +250,7 @@ server <- function(input, output, session){
     hide("cluster_page")
     hide("sc_cluster_page")
   })
-  
+
   observeEvent(input$proteinPage, {
     show("protein_interaction")
     show("protein_interaction1")
@@ -261,7 +261,7 @@ server <- function(input, output, session){
     hide("cluster_page")
     hide("sc_cluster_page")
   })
-  
+
   observeEvent(input$clusterPage, {
     show("cluster_page")
     hide("general_info")
@@ -272,7 +272,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("single_cell")
   })
-  
+
   observeEvent(input$scclusterPage, {
     show("sc_cluster_page")
     hide("general_info")
@@ -283,7 +283,7 @@ server <- function(input, output, session){
     hide("cluster_page")
     hide("single_cell")
   })
-  
+
   observeEvent(input$pubPage, {
     show("pub")
     hide("general_info")
@@ -294,61 +294,63 @@ server <- function(input, output, session){
     hide("cluster_page")
     hide("sc_cluster_page")
   })
-  
-  observeEvent(input$hometab, {
-    show("landing_page")
-    hide("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("buttonsui")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("pub")
-    hide("single_cell")
-    hide("back_button")
-    
-  })
-  
-  observeEvent(input$tabs == "exploretab", {
-    show("exploretab")
-    hide("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("buttonsui")
-    hide("pub")
-    hide("single_cell")
-    show("exptab")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("back_button")
-    updateReactable("hclusternumbertable", selected = NA)
-  })
-  
+
+  # observeEvent(input$hometab, {
+  #   show("landing_page")
+  #   hide("general_info")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("buttonsui")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  #   hide("pub")
+  #   hide("single_cell")
+  #   hide("back_button")
+  # 
+  # })
+
+  # observeEvent(input$tabs == "exploretab", {
+  #   show("exploretab")
+  #   hide("general_info")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("buttonsui")
+  #   hide("pub")
+  #   hide("single_cell")
+  #   show("exptab")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  #   hide("back_button")
+  #   updateReactable("hclusternumbertable", selected = NA)
+  # })
+
   observeEvent(input$tabs == "hometab", {
-    show("landing_page")
-    hide("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("buttonsui")
-    hide("pub")
-    hide("single_cell")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("back_button")
-    click("geneName_reset")
+    show("hometab")
+    # show("landing_page")
+    # hide("general_info")
+    # hide("protein_interaction")
+    # hide("protein_interaction1")
+    # hide("buttonsui")
+    # hide("pub")
+    # hide("single_cell")
+    # hide("cluster_page")
+    # hide("sc_cluster_page")
+    # hide("back_button")
+    #click("geneName_reset")
     updateReactable("hclusternumbertable", selected = NA)
   })
-  
+
   observeEvent(input$explore, {
     updateTabItems(session, "tabs", "exploretab")
   })
-  
+
   ## Gene select from table ----
   # Behaviour when selecting gene from table
   observeEvent(genenumber(), {
     if (length(genenumber() != "") != 0){
       if (genenumber() != ""){
         session$sendCustomMessage("geneName", genenumber())
+        updateTabItems(session, "tabs", selected = "hometab")
         hide("exptab")
         show("buttonsui")
         show("general_info")
@@ -356,17 +358,16 @@ server <- function(input, output, session){
         hide("protein_interaction1")
         hide("landing_page")
         click("generalPage")
-        updateTabItems(session, "tabs", selected = character(0))
       }
     }
   },
   ignoreInit = TRUE,
   ignoreNULL = TRUE)
-  
+
   genenumber2<-reactive({
     final_seq_table$Gene_name[selected2()]
   })
-  
+
   observeEvent(genenumber2(), {
     if (length(genenumber2() != "") != 0){
       if (genenumber2() != ""){
@@ -385,11 +386,11 @@ server <- function(input, output, session){
   },
   ignoreInit = TRUE,
   ignoreNULL = TRUE)
-  
+
   genenumbercluster<-reactive({
     inputclustertable()[[1]][selected3()]
   })
-  
+
   observeEvent(selected3(), {
     if (length(genenumbercluster() != "") != 0){
       if (genenumbercluster() != ""){
@@ -406,11 +407,11 @@ server <- function(input, output, session){
   },
   ignoreInit = TRUE,
   ignoreNULL = TRUE)
-  
+
   genenumbergeneralcluster<-reactive({
     inputclusternumbertable()[[1]][selected4()]
   })
-  
+
   observeEvent(genenumbergeneralcluster(), {
     if (length(genenumbergeneralcluster() != "") != 0){
       if (genenumbergeneralcluster() != ""){
@@ -429,8 +430,8 @@ server <- function(input, output, session){
   },
   ignoreInit = TRUE,
   ignoreNULL = TRUE)
-  
-  
+
+
   # Modal for phylogeny page ----
   observeEvent(input$clusterPage, {
     req(input$clusterPage, inputclusternamenumber())
@@ -448,7 +449,7 @@ server <- function(input, output, session){
       )
     }
   })
-  
+
   observeEvent(input$open, {
     updateTabItems(session, "tabs", "exploretab")
     updateTabsetPanel(session, "exploredt", selected = "tab2")
@@ -456,25 +457,25 @@ server <- function(input, output, session){
     removeModal()
     js$setcookie(sessionid)
   })
-  
+
   # df5<-eventReactive(input$scPage, {
   #   df4
   # })
-  
+
   # observeEvent(input$hmapradio, {
   #   session$sendCustomMessage("close_drop1", "")
   # })
-  # 
+  #
   # observeEvent(input$hmap1, {
   #   session$sendCustomMessage("close_drop1", "")
   # })
-  # 
+  #
   # observeEvent(input$colcolcol, {
   #   session$sendCustomMessage("close_drop2", "")
   # })
-  
+
   # General tab ----
-  
+
   ### Menu ----
   output$buttonsui<-renderUI({
     if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
@@ -487,33 +488,33 @@ server <- function(input, output, session){
             offset = 1,
             br(),
             actionBttn("homePage", "Home",
-                       icon = icon("home"), 
+                       icon = icon("home"),
                        style = "unite",
                        color = "default",
                        size = "sm"),
             actionBttn("generalPage", "General Information",
-                       icon = icon("info"), 
+                       icon = icon("info"),
                        color = "primary",
                        style = "unite",
                        size = "sm"),
             actionBttn("proteinPage", "Protein interactions",
-                       icon = img(src = "network2.png", height = "20px"), 
+                       icon = img(src = "network2.png", height = "20px"),
                        color = "primary",
                        style = "unite",
                        size = "sm"),
             actionBttn("scclusterPage", "Single Cell Clusters",
-                       icon = img(src = "tree.png", height = "20px"), 
+                       icon = img(src = "tree.png", height = "20px"),
                        color = "primary",
                        style = "unite",
                        size = "sm"),
             br(),
             actionBttn("clusterPage", "Phylogenetic Analysis",
-                       icon = img(src = "tree.png", height = "20px"), 
+                       icon = img(src = "tree.png", height = "20px"),
                        color = "primary",
                        style = "unite",
                        size = "sm"),
             actionBttn("pubPage", "Publications",
-                       icon = icon("book"), 
+                       icon = icon("book"),
                        color = "primary",
                        style = "unite",
                        size = "sm")
@@ -535,32 +536,32 @@ server <- function(input, output, session){
             align = "center",
             br(),
             actionBttn("homePage", "Home",
-                       icon = icon("home"), 
+                       icon = icon("home"),
                        style = "unite",
                        color = "default",
                        size = "sm"),
             actionBttn("generalPage", "General Information",
-                       icon = icon("info"), 
+                       icon = icon("info"),
                        color = "success",
                        style = "unite",
                        size = "sm"),
             actionBttn("proteinPage", "Protein interactions",
-                       icon = img(src = "network2.png", height = "20px"), 
+                       icon = img(src = "network2.png", height = "20px"),
                        color = "success",
                        style = "unite",
                        size = "sm"),
             actionBttn("scclusterPage", "Single Cell Clusters",
-                       icon = img(src = "tree.png", height = "20px"), 
+                       icon = img(src = "tree.png", height = "20px"),
                        color = "success",
                        style = "unite",
                        size = "sm"),
             actionBttn("clusterPage", "Phylogenetic Analysis",
-                       icon = img(src = "tree.png", height = "20px"), 
+                       icon = img(src = "tree.png", height = "20px"),
                        color = "success",
                        style = "unite",
                        size = "sm"),
             actionBttn("pubPage", "Publications",
-                       icon = icon("book"), 
+                       icon = icon("book"),
                        color = "success",
                        style = "unite",
                        size = "sm")
@@ -571,13 +572,13 @@ server <- function(input, output, session){
         right = 0,
         fixed = FALSE,
         style = "z-index: 10;"
-      ) 
+      )
     }
   })
-  
+
   output$space<-renderUI({
     if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
-      
+
     }
     else {
       br()
@@ -585,17 +586,17 @@ server <- function(input, output, session){
       br()
     }
   })
-  
+
   ### General page ----
   #### Gene info ----
   geneid<-reactive({
     homsap$GeneID[which(homsap$Symbol == genename())]
   })
-  
+
   genedescription<-reactive({
     homsap$description[which(homsap$Symbol == genename())]
   })
-  
+
   genesynonyms<-reactive({
     a<-homsap2$Synonyms[which(homsap2$Symbol == genename())]
     if (length(a) > 1){
@@ -603,7 +604,7 @@ server <- function(input, output, session){
     }
     a
   })
-  
+
   geneensembl<-reactive({
     a<-ens$`Gene stable ID`[which(ens$`Gene name` == genename())]
     if (length(a) > 1){
@@ -611,7 +612,7 @@ server <- function(input, output, session){
     }
     a
   })
-  
+
   omim_link<-reactive({
     a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
     if (length(a) > 1){
@@ -619,11 +620,11 @@ server <- function(input, output, session){
     }
     paste0("https://www.omim.org/entry/", a)
   })
-  
+
   annotationFile<-reactive({
     suppressMessages(AnnotationDbi::select(Homo.sapiens, keys=genename(), columns=c("SYMBOL","GO","TERM"), keytype="SYMBOL"))
   })
-  
+
   goAnnotName<-reactive({
     if (!is.na(annotationFile()$GO)){
       paste0("https://www.ebi.ac.uk/QuickGO/term/", annotationFile()$GO)
@@ -632,11 +633,11 @@ server <- function(input, output, session){
       paste("There is no GO annotation information")
     }
   })
-  
+
   goAnnotLink<-reactive({
     paste("<a href=",goAnnotName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", annotationFile()$TERM)
   })
-  
+
   goAnnotAll<-reactive({
     if (!is.na(annotationFile()$GO)) {
       paste(goAnnotLink(), collapse = " | ")
@@ -651,13 +652,13 @@ server <- function(input, output, session){
     mim<-lst[[a]]$mim
     paste0("https://www.omim.org/entry/", mim)
   })
-  
+
   OMIMLink<-reactive({
     a<-as.character(omim$omim_id[which(omim$Gene_name == genename())])
     phe<-lst[[a]]$phe
     paste("<a href=",OMIMName(), "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", phe)
   })
-  
+
   OMIMAll<-reactive({
     if (length(as.character(omim$omim_id[which(omim$Gene_name == genename())])) != 0){
       paste(OMIMLink(), collapse = " | ")
@@ -666,9 +667,9 @@ server <- function(input, output, session){
       paste("No disease information")
     }
   })
-  
+
   inputscore<-reactive({
-    
+
     if (length(final_score_table$Weighted_total_scores[which(final_score_table$Gene_name == genename())]) == 0){
       paste("There is no score for",genename(), "gene.")
     }
@@ -676,7 +677,7 @@ server <- function(input, output, session){
       as.numeric(format(round(final_score_table$Weighted_total_scores[which(final_score_table$Gene_name == genename())], 3), nsmall = 3))
     }
   })
-  
+
   inputscorestate<-reactive({
     if (!is.character(inputscore())){
       if (inputscore() >= 0.5){
@@ -689,116 +690,90 @@ server <- function(input, output, session){
     }
     else {dashboardLabel("Low Probability", status = "danger")}
   })
-  
+
   inputseq<-reactive({
     final_score_table$Seq[which(final_score_table$Gene_name == genename())]
   })
-  
+
   inputseq1<-reactive({
     final_seq_table$Protein_interaction_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq2<-reactive({
     final_seq_table$Genetic_interaction_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq3<-reactive({
     final_seq_table$Single_cell_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq4<-reactive({
     final_seq_table$Cluster_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq5<-reactive({
     final_seq_table$Motif_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq6<-reactive({
     final_seq_table$Publication_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   inputseq7<-reactive({
     final_seq_table$Protein_atlas_score[which(final_seq_table$Gene_name == genename())]
   })
-  
+
   output$textgeneid<-renderText({
-    
+
     paste(
-      "<table style=\"font-size:17px\">", 
-      
+      "<table style=\"font-size:17px\">", "<col style=\"width: 20%;\"/>", "<col style=\"width: 80%;\"/>",
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene name:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genename(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Gene description:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genedescription(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "NCBI gene ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", "<a href=", paste0("https://www.ncbi.nlm.nih.gov/gene/",geneid()),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", geneid(),  "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Ensembl ID:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "</b>", "<a href=", paste0("https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=",geneensembl()),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", geneensembl(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Synonyms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", genesynonyms(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "GO terms:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", goAnnotAll(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", omim_link(),"target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", omim_link(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "OMIM Disease:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", OMIMAll(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "CilioGenics score:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscore(), "</td>", "</tr>",
-      
+
       "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "<b>", "Probability of being ciliary gene:", "</td>", "<td style=\"padding:0 0 10px 15px;\">", inputscorestate(), "</td>", "</tr>",
-      
+
       "<table>")
   })
-  
+
   output$bargeneinfo<-renderUI({
     req(input$geneName)
-    genebar("pb", inputseq(), "Overall percentile", 1165, 1930)
+    tagList(
+      genebar("pb", inputseq(), "Overall percentile", 1165, 1930),
+      genebar("pb1", inputseq1(), "Protein interaction", 2194, 8438),
+      genebar("pb2", inputseq2(), "Genetic interaction", 285, 317),
+      genebar("pb3", inputseq3(), "Single cell", 1868, 2923),
+      genebar("pb4", inputseq4(), "Cluster", 4845, 7759),
+      genebar("pb5", inputseq5(), "Motif", 702, 1878),
+      genebar("pb6", inputseq6(), "Publication", 7302, 11690),
+      genebar("pb7", inputseq7(), "Protein Atlas", 651, 1016)
+    )
   })
-  
-  output$bargeneinfo1<-renderUI({
-    req(input$geneName)
-    genebar("pb1", inputseq1(), "Protein interaction", 2194, 8438)
-  })
-  
-  output$bargeneinfo2<-renderUI({
-    req(input$geneName)
-    genebar("pb2", inputseq2(), "Genetic interaction", 285, 317)
-  })
-  
-  output$bargeneinfo3<-renderUI({
-    req(input$geneName)
-    genebar("pb3", inputseq3(), "Single cell", 1868, 2923)
-  })
-  
-  output$bargeneinfo4<-renderUI({
-    req(input$geneName)
-    genebar("pb4", inputseq4(), "Cluster", 4845, 7759)
-  })
-  
-  output$bargeneinfo5<-renderUI({
-    req(input$geneName)
-    genebar("pb5", inputseq5(), "Motif", 702, 1878)
-  })
-  
-  output$bargeneinfo6<-renderUI({
-    req(input$geneName)
-    genebar("pb6", inputseq6(), "Publication", 7302, 11690)
-  })
-  
-  output$bargeneinfo7<-renderUI({
-    req(input$geneName)
-    genebar("pb7", inputseq7(), "Protein Atlas", 651, 1016)
-  })
-  
+
   ### Protein interaction page ----
   networkdata<-reactive({
-    
+
     a<-biogrid %>% filter(toupper(Gene_name_A) == toupper(genename()))
     b<-intact %>% filter(toupper(Gene_name_A) == toupper(genename()))
     c<-wbP %>% filter(toupper(Gene_name_A) == toupper(genename()))
     zz<-data.frame(rbind(a, b, c))
     colnames(zz)<-c("Interactor A", "Interactor B", "Source")
-    
+
     if (length(zz[[1]]) > 0){
       zz$`Gold standard` <- "NO"
       zz$`Gold standard`[which(zz[[2]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
@@ -807,26 +782,26 @@ server <- function(input, output, session){
     }
     zz[which(zz$Source %in% input$proradio),]
   })
-  
+
   networkdata2<-reactive({
-    
+
     a<-data.frame(rbind(biogrid, intact, wbP))
     colnames(a)<-c("Interactor A", "Interactor B", "Source")
     b<-a[which(a[[1]] %in% networkdata()[[2]]),]
     data.frame(rbind(networkdata(), b))
-    
+
   })
-  
+
   output$networkplot<-renderSimpleNetwork({
     simpleNetwork(networkdata(), height = "200px", width = "200px", zoom = TRUE,
                   opacity = 3, fontSize = 12)
   })
-  
+
   output$pro_int<-renderReactable({
     reactable(networkdata(), resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE)
   })
-  
+
   output$protable<-renderUI({
     box(
       width = 12,
@@ -836,7 +811,7 @@ server <- function(input, output, session){
       withSpinner(reactableOutput("pro_int"), type = 8, color = "#10c891")
     )
   })
-  
+
   output$pro_box1 <- renderUI({
     box(
       title = paste0("Protein interaction network for ", genename(), " gene"),
@@ -851,11 +826,11 @@ server <- function(input, output, session){
       }
     )
   })
-  
+
   output$textForPro<-renderText({
     paste("There is no protein interaction for", genename(), "gene")
   })
-  
+
   ### Publication page ----
   pubdata<-reactive({
     a<-data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
@@ -863,7 +838,7 @@ server <- function(input, output, session){
     b$Link <- paste0("<a href='",b$Link,"' target='_blank'>",b$Link,"</a>")
     b
   })
-  
+
   output$pubtable<-renderReactable({
     reactable(pubdata(), resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
@@ -873,11 +848,11 @@ server <- function(input, output, session){
               )
     )
   })
-  
+
   output$puberror<-renderText({
     paste("There is no publication data for", genename(), "gene")
   })
-  
+
   output$pubui<-renderUI({
     if (length(unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))])) > 0){
       reactableOutput("pubtable")
@@ -886,7 +861,7 @@ server <- function(input, output, session){
       h4(textOutput("puberror"))
     }
   })
-  
+
   output$pubheatmap<-renderPlot({
     req(genename())
     Heatmap(as.matrix(rbind(pub_mat[pub_mat$Gene_name == genename(),-1], pub_mat3[,-1])),
@@ -895,7 +870,7 @@ server <- function(input, output, session){
             height = unit(8, "cm"), show_heatmap_legend = FALSE, column_names_side = "top", row_names_side = "left",
             heatmap_height = unit(1.5, "npc"))
   })
-  
+
   ### Phylogeny page ----
   inputcluster<-reactive({
     a<-as.matrix(nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]),2:73])
@@ -905,20 +880,20 @@ server <- function(input, output, session){
     }
     a
   })
-  
+
   inputclusterGene<-reactive({
     a<-as.matrix(nscores2[which(nscores2$Gene_name == toupper(genename())),2:73])
     a<-rbind(a,a)
     rownames(a)<-c(nscores2$Gene_name[which(nscores2$Gene_name == toupper(genename()))],"")
     a
   })
-  
+
   inputclusternamenumber<-reactive({
     nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]
   })
-  
+
   inputclustertable<-reactive({
-    
+
     df<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]),1], stringsAsFactors = FALSE)
     df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
     df$`Gold standard` <- "NO"
@@ -927,9 +902,9 @@ server <- function(input, output, session){
     df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
     df
   })
-  
+
   inputclusternumbertable<-reactive({
-    
+
     a<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == input$clusternumber),1])
     a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
     a$`Gold standard` <- "NO"
@@ -938,50 +913,50 @@ server <- function(input, output, session){
     a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
     a
   })
-  
+
   selected3 <- reactive(getReactableState("hclustertable", "selected"))
-  
+
   genenumbercluster<-reactive({
     inputclustertable()[[1]][selected3()]
   })
-  
+
   inputclustergname<-reactive({
     input$hmapradio
   })
-  
+
   reactiveHeatmap1<-reactive({
     req(input$geneName)
     inputclustergname()
     hmap <- isolate(inputcluster())
     hmap2 <- isolate(inputclusterGene())
-    mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'), 
+    mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'),
                        tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
       #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
-      add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90,
                      tickvals = c(1:length(colnames(inputcluster()))))%>%
       add_col_annotation(annotation=anot, side="top", size = 0.1) %>%
       modify_layout(list(margin = list(l = 80)))
-    
-    mmap2<-main_heatmap(inputclusterGene(), layout = list(paper_bgcolor='transparent'), 
+
+    mmap2<-main_heatmap(inputclusterGene(), layout = list(paper_bgcolor='transparent'),
                         tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
       add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-      add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
                      tickvals = c(1:length(colnames(inputcluster()))))%>%
       add_col_annotation(annotation=anot, side="top", size = 0.1)
-    
+
     if(input$hmapradio == "clusterradbut"){
       mmap
     }
-    else {  
+    else {
       mmap2
     }
   })
-  
+
   output$heatmapcluster<-renderIheatmap({
     input$clusterPage
     reactiveHeatmap1()
   })
-  
+
   output$clusterui<-renderUI({
     div(
       style = "position: relative",
@@ -1002,14 +977,14 @@ server <- function(input, output, session){
             dropdown(
               radioGroupButtons(
                 inputId = "hmapradio",
-                label = "Genes to display:", 
-                choiceNames = c("Cluster", genename()), 
+                label = "Genes to display:",
+                choiceNames = c("Cluster", genename()),
                 choiceValues = c("clusterradbut", "generadbut"),
                 direction = "vertical",
                 selected = "clusterradbut"
               ),
               size = "xm",
-              icon = icon("gear", class = "opt"), 
+              icon = icon("gear", class = "opt"),
               up = TRUE,
               inputId = "ddownid"
             )
@@ -1020,7 +995,7 @@ server <- function(input, output, session){
             dropdown(
               downloadButton(outputId = "hmap1", label = "Download Plot"),
               size = "xm",
-              icon = icon("download", class = "opt"), 
+              icon = icon("download", class = "opt"),
               up = TRUE
             )
           ),
@@ -1030,13 +1005,13 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   output$hclustertable<-renderReactable({
     reactable(inputclustertable(), resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
               highlight = TRUE,
               columns = list(
-                Score = colDef(name = "Score", 
+                Score = colDef(name = "Score",
                                format = colFormat(digits = 3),
                                align = "left",
                                header = with_tooltip2("Score", "Single cell scores")),
@@ -1064,7 +1039,7 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   reactiveDownload1<-reactive({
     if (inputclustergname() == "clusterradbut"){
       filename = paste0("cluster_", inputclusternamenumber(), "_heatmap.png")
@@ -1072,86 +1047,86 @@ server <- function(input, output, session){
     else {filename = paste0(genename(), "_heatmap.png")}
     filename
   })
-  
+
   output$hmap1<-downloadHandler(
     filename = function() {
-      reactiveDownload1() 
+      reactiveDownload1()
     },
     content = function(file){
       save_iheatmap(reactiveHeatmap1(), file, vwidth=2000,vheight=1000)
     },
     contentType = "image/png"
   )
-  
+
   ### Single cell page ----
   r_scmainheatmap<-reactive({
     a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
     rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
     a
   })
-  
+
   r_scgeneheatmap<-reactive({
     a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(genename())),2:28])
     a<-rbind(a,a)
     rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(genename()))],"")
     a
   })
-  
+
   r_sctwoheatmap<-reactive({
     req(input$geneName)
     r_scgeneradio()
     hmap <- isolate(r_scmainheatmap())
     hmap2 <- isolate(r_scgeneheatmap())
     if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
-      mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'), 
+      mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'),
                          tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
         #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
-        add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+        add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90,
                        tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
         add_col_annotation(annotation = anot_sc, colors = "Paired", side="top", size = 0.1) %>%
         modify_layout(list(margin = list(l = 80)))
-      
-      mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'), 
+
+      mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'),
                           tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
         add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-        add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+        add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
                        tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
         add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
     }
-    
+
     if(input$scclusterradio == "clusterradbut1"){
       mmap
     }
-    else {  
+    else {
       mmap2
     }
   })
-  
+
   r_scclusternumber<-reactive({
     celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]
   })
-  
+
   r_scgeneradio<-reactive({
     input$scclusterradio
   })
-  
+
   observeEvent(input$scclusterradio, {
     session$sendCustomMessage("close_drop1", "")
   })
-  
+
   observeEvent(input$scdownloadbttn, {
     session$sendCustomMessage("close_drop1", "")
   })
-  
+
   observeEvent(input$scclusterheatmap, {
     session$sendCustomMessage("close_drop2", "")
   })
-  
+
   output$scheatmapcluster<-renderIheatmap({
     input$scclusterPage
     r_sctwoheatmap()
   })
-  
+
   output$scclusterui<-renderUI({
     div(
       style = "position: relative",
@@ -1171,14 +1146,14 @@ server <- function(input, output, session){
             dropdown(
               radioGroupButtons(
                 inputId = "scclusterradio",
-                label = "Genes to display:", 
-                choiceNames = c("Cluster", genename()), 
+                label = "Genes to display:",
+                choiceNames = c("Cluster", genename()),
                 choiceValues = c("clusterradbut1", "generadbut1"),
                 direction = "vertical",
                 selected = "clusterradbut1"
               ),
               size = "xm",
-              icon = icon("gear", class = "opt"), 
+              icon = icon("gear", class = "opt"),
               up = TRUE,
               inputId = "ddownid1"
             )
@@ -1188,7 +1163,7 @@ server <- function(input, output, session){
             dropdown(
               downloadButton(outputId = "scdownloadbttn", label = "Download Plot"),
               size = "xm",
-              icon = icon("download", class = "opt"), 
+              icon = icon("download", class = "opt"),
               up = TRUE
             )
           ),
@@ -1199,7 +1174,7 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   reactiveDownload2<-reactive({
     if (r_scgeneradio() == "clusterradbut1"){
       filename = paste0("cluster_", r_scclusternumber(), "_heatmap.png")
@@ -1207,20 +1182,20 @@ server <- function(input, output, session){
     else {filename = paste0(genename(), "_heatmap.png")}
     filename
   })
-  
+
   output$scdownloadbttn<-downloadHandler(
     filename = function() {
-      reactiveDownload2() 
+      reactiveDownload2()
     },
     content = function(file){
       save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
     },
     contentType = "image/png"
   )
-  
+
   # Table
   r_scclustertable<-reactive({
-    
+
     df<-data.frame(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),29], stringsAsFactors = FALSE)
     colnames(df)<-"Gene_name"
     df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
@@ -1230,14 +1205,14 @@ server <- function(input, output, session){
     df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
     df
   })
-  
-  
+
+
   output$scclustertable<-renderReactable({
     reactable(r_scclustertable(), resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
               highlight = TRUE,
               columns = list(
-                Score = colDef(name = "Score", 
+                Score = colDef(name = "Score",
                                format = colFormat(digits = 3),
                                align = "left",
                                header = with_tooltip2("Score", "Single cell scores")),
@@ -1250,7 +1225,7 @@ server <- function(input, output, session){
               selection = "single",
               onClick = "select")
   })
-  
+
   output$scclustertableui<-renderUI({
     column(
       width = 10,
@@ -1265,59 +1240,59 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   # Explore gene tab ----
   ### General score ----
   genenumber<-reactive({
     final_score_table$Gene_name[selected()]
   })
-  
+
   genenumber2<-reactive({
     final_seq_table$Gene_name[selected2()]
   })
-  
+
   selected <- reactive(getReactableState("generaltable2", "selected"))
   selected2 <- reactive(getReactableState("generaltable3", "selected"))
-  
+
   output$generaltable2<-renderReactable({
-    
+
     reactable(final_score_table, resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
               columns =list(
-                Gene_name = colDef(header = with_tooltip("Gene name", 
-                                                         "HGNC name of the genes"), 
+                Gene_name = colDef(header = with_tooltip("Gene name",
+                                                         "HGNC name of the genes"),
                                    format = colFormat(digits = 3)),
-                Protein_interaction_score = colDef(header = with_tooltip("Protein interactions", 
-                                                                         "Protein interaction scores"), 
+                Protein_interaction_score = colDef(header = with_tooltip("Protein interactions",
+                                                                         "Protein interaction scores"),
                                                    format = colFormat(digits = 3)),
-                Genetic_interaction_score = colDef(header = with_tooltip("Genetic interactions", 
-                                                                         "Genetic interaction scores"), 
+                Genetic_interaction_score = colDef(header = with_tooltip("Genetic interactions",
+                                                                         "Genetic interaction scores"),
                                                    format = colFormat(digits = 3)),
-                Single_cell_score = colDef(header = with_tooltip("Single cell", 
-                                                                 "Single cell scores. Based on expression in ciliated cells"), 
+                Single_cell_score = colDef(header = with_tooltip("Single cell",
+                                                                 "Single cell scores. Based on expression in ciliated cells"),
                                            format = colFormat(digits = 3)),
-                Cluster_score = colDef(header = with_tooltip("Phylogenetic analysis", 
+                Cluster_score = colDef(header = with_tooltip("Phylogenetic analysis",
                                                              "Phylogenetic analysis scores. Based on presence in ciliary organisms"),
                                        format = colFormat(digits = 3)),
-                Motif_score = colDef(header = with_tooltip("Motifs", 
-                                                           "Motif scores. Based on the presence of ciliary motifs on the gene (Refer to this)."), 
+                Motif_score = colDef(header = with_tooltip("Motifs",
+                                                           "Motif scores. Based on the presence of ciliary motifs on the gene (Refer to this)."),
                                      format = colFormat(digits = 3)),
-                Publication_score = colDef(header = with_tooltip("Publications", 
-                                                                 "Publication scores. Based on the publications that the gene is reported."), 
+                Publication_score = colDef(header = with_tooltip("Publications",
+                                                                 "Publication scores. Based on the publications that the gene is reported."),
                                            format = colFormat(digits = 3)),
-                Protein_atlas_score = colDef(header = with_tooltip("Protein atlas", 
-                                                                   "Protein atlas scores. Based on the presence of ciliary features in the gene reported in Protein Atlas"), 
+                Protein_atlas_score = colDef(header = with_tooltip("Protein atlas",
+                                                                   "Protein atlas scores. Based on the presence of ciliary features in the gene reported in Protein Atlas"),
                                              format = colFormat(digits = 3)),
-                Total_score = colDef(header = with_tooltip("Total raw scores", 
-                                                           "Total unscaled raw scores"), 
+                Total_score = colDef(header = with_tooltip("Total raw scores",
+                                                           "Total unscaled raw scores"),
                                      format = colFormat(digits = 3)),
-                Norm_total_score = colDef(header = with_tooltip("Normalized score", 
-                                                                "Total normalized scores"), 
+                Norm_total_score = colDef(header = with_tooltip("Normalized score",
+                                                                "Total normalized scores"),
                                           format = colFormat(digits = 3)),
-                Weighted_total_scores = colDef(header = with_tooltip("Weighted score", 
-                                                                     "Total weighted scores. Weights are based on the success rate of finding ciliary genes."), 
+                Weighted_total_scores = colDef(header = with_tooltip("Weighted score",
+                                                                     "Total weighted scores. Weights are based on the success rate of finding ciliary genes."),
                                                format = colFormat(digits = 3)),
-                Seq = colDef(header = with_tooltip("Order", 
+                Seq = colDef(header = with_tooltip("Order",
                                                    "Order of the genes based on weighted scores"))
               ),
               rowStyle = list(cursor = "pointer"),
@@ -1326,13 +1301,17 @@ server <- function(input, output, session){
     )
   })
   
+  # observeEvent(selected(),{
+  #   updateTabItems(inputId = "tabs", selected = "hometab")
+  # })
+
   ### Phylogeny section ----
   inputclusternumber<-reactive({
         a<-as.matrix(nscores2[which(nscores2$cluster_number == input$clusternumber),2:73])
         rownames(a)<-nscores2$Gene_name[which(nscores2$cluster_number == input$clusternumber)]
         a
     })
-  
+
   inputclusternumbertable<-reactive({
     a<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == input$clusternumber),1])
     a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
@@ -1342,7 +1321,7 @@ server <- function(input, output, session){
     a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
     a
   })
-  
+
   output$hclusternumbertable<-renderReactable({
     reactable(inputclusternumbertable(), resizable = TRUE, filterable = TRUE,
               columns = list(Score = colDef(format = colFormat(digits = 3)),
@@ -1353,33 +1332,33 @@ server <- function(input, output, session){
               selection = "single",
               onClick = "select")
   })
-  
+
   selected4 <- reactive(getReactableState("hclusternumbertable", "selected"))
-  
+
   genenumbergeneralcluster<-reactive({
     inputclusternumbertable()[[1]][selected4()]
   })
-  
+
   heatmapclusternumberR<-reactive({
     main_heatmap(inputclusternumber(), layout = list(paper_bgcolor='transparent'),
                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
-      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90,
                      tickvals = c(1:length(colnames(inputclusternumber()))))%>%
       add_col_annotation(annotation=anot, side="top", size = 0.1) %>%
       modify_layout(list(margin = list(l = 80)))
   })
-  
+
   output$heatmapclusternumber<-renderIheatmap({
     heatmapclusternumberR()
   })
-  
+
   ### Single cell
   r_scclusternumber2<-reactive({
     a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
     rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
     a
   })
-  
+
   r_scgenenumber<-reactive({
     b<-celegans_sc[which(celegans_sc$tree == input$clusternumber2),]
     a<-as.matrix(b[which(b$Human_gene_name == toupper(input$clusternumber3)),2:28])
@@ -1387,7 +1366,7 @@ server <- function(input, output, session){
     rownames(a)<-c(b$Human_gene_name[which(b$Human_gene_name == toupper(input$clusternumber3))],"")
     a
   })
-  
+
   r_scclusternumbertable<-reactive({
     a<-data.frame(celegans_sc[which(celegans_sc$tree == input$clusternumber2),29])
     colnames(a)<-"Gene_name"
@@ -1398,7 +1377,7 @@ server <- function(input, output, session){
     a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
     a
   })
-  
+
   output$schclusternumbertable<-renderReactable({
     reactable(r_scclusternumbertable(), resizable = TRUE, filterable = TRUE,
               columns = list(Score = colDef(format = colFormat(digits = 3)),
@@ -1409,27 +1388,27 @@ server <- function(input, output, session){
               selection = "single",
               onClick = "select")
   })
-  
+
   scheatmapclusternumberR<-reactive({
     main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
       #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
-      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90,
                      tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
       add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
       modify_layout(list(margin = list(l = 80)))
   })
-  
+
   scheatmapgenenumberR<-reactive({
-    main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'), 
+    main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'),
                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
       #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-      add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90, 
+      add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
                      tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
       add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
       modify_layout(list(margin = list(l = 80)))
   })
-  
+
   output$scheatmapclusternumber<-renderIheatmap({
     if (input$clusternumber3 == "All"){
       scheatmapclusternumberR()
@@ -1441,17 +1420,17 @@ server <- function(input, output, session){
       scheatmapgenenumberR()
     }
   })
-  
+
   genelistforpicker<-reactive({
     a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
     a<-sort(a)
     a
   })
-  
+
   output$pickeroutput<-renderUI({
     pickerInput(
       inputId = "clusternumber3",
-      label = "Select a gene to explore", 
+      label = "Select a gene to explore",
       choices = list(
         "Gene name" = c("All", genelistforpicker())
       ),
@@ -1459,7 +1438,7 @@ server <- function(input, output, session){
       options=pickerOptions(liveSearch=T)
     )
   })
-  
+
   ### Publications ----
   pubheatmapx<-reactive({
     req(input$pubgene)
@@ -1467,15 +1446,15 @@ server <- function(input, output, session){
                  tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
       add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90)%>%
       modify_layout(list(margin = list(b = 200)))
-    
+
   })
-  
+
   output$pubgeneralheatmap<-renderIheatmap({
     pubheatmapx()
   })
-  
+
   output$selectgene<-renderText("Please select a gene to visualize associated publications!")
-  
+
   output$pubgeneralheatmapUi<-renderUI({
     req(input$pubgene)
     if(input$pubgene == ""){
@@ -1485,13 +1464,13 @@ server <- function(input, output, session){
       withSpinner(iheatmaprOutput("pubgeneralheatmap"), type = 8)
     }
   })
-  
+
   pubgenelist_mat<-reactive({
     if(input$pubgene != "All"){
       pub_genes[pub_genes$Gene_name == input$pubgene,-1]
     }
   })
-  
+
   output$pubpickeroutput<-renderUI({
     fluidRow(
       id = "pubpicker",
@@ -1516,9 +1495,8 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   # Others ----
-  
+
   waiter_hide()
 }
-  
