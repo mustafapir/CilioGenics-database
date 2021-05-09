@@ -24,6 +24,7 @@ library(circlize)
 library(ComplexHeatmap)
 #library(shinyhelper)
 library(tippy)
+library(Seurat)
 
 
 # Sourcing global data and functions ----
@@ -55,7 +56,7 @@ jsCode <- '
 
 # Header functions ----
 
-header <- dashboardHeader(fixed = TRUE, disable = FALSE,
+header <- dashboardHeader(fixed = TRUE, disable = TRUE,
                           dropdownBlock(headerText = "Please cite as following:", id = "drop", title = "How to Cite",
                                         icon = icon("sliders"), badgeStatus = "primary",
                                         type = "messages"))
@@ -118,7 +119,6 @@ ui <- shinydashboardPlus::dashboardPage(
       tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "/favicon-16x16.png"),
       tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
       includeCSS("www/stylesheet.css"),
-      tags$script(src = "enter_button.js"),
       tags$script("
       Shiny.addCustomMessageHandler('geneName', function(value) {
       Shiny.setInputValue('geneName', value);
@@ -148,19 +148,13 @@ ui <- shinydashboardPlus::dashboardPage(
       tabItem(
         "hometab",
         fluidRow(
-          tags$head(
-            tags$script(src = "enter_button.js")
-            ),
           div(
             id = "landing_page",
-            tags$head(
-              tags$script(src = "enter_button.js")
-              ),
             column(
               12,
               tags$script(src = "enter_button.js"),
               align = "center",
-              br(), br(), br(), br(),
+              br(), br(), br(), br(), br(), br(), br(),
               HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
               br(), br(),
               searchInput(
@@ -188,11 +182,30 @@ ui <- shinydashboardPlus::dashboardPage(
             )
           ),
         div(
+          id = "searchui",
+          column(
+            width = 12,
+            tags$script(src = "enter_button2.js"),
+            align = "center",
+            style = "background-color: #00bcd4; border-radius: 15px;",#6f7dc8
+            br(),
+            searchInput(
+              inputId = "geneName2",
+              #label = HTML("<h3><center>Gene Search</center></h3>"),
+              placeholder = "Search genes by gene name, gene id or Ensembl gene id",
+              btnSearch = icon("search"),
+              btnReset = icon("remove"),
+              width = "400px",
+              value = NULL
+            )
+          )
+        ),
+        div(
           id = "buttonscicerone",
           uiOutput("buttonsui"), #br(), br(),
           uiOutput("space")
         ),
-        br(), br(),
+        br(), br(),br(),br(),br(), br(), br(),
         fluidRow(
           div(
             br(), br(),
@@ -298,6 +311,7 @@ ui <- shinydashboardPlus::dashboardPage(
         ### Cookie ----
         uiOutput("cookie_footer")
     ),
+    ### Explore tab ----
       tabItem(
         "exploretab",
         fluidRow(
@@ -307,6 +321,7 @@ ui <- shinydashboardPlus::dashboardPage(
               width = 10,
               align = "center",
               offset = 1,
+              br(),br(),br(),br(),
               tabBox(
                 id = "exploredt",
                 width = 12,
@@ -350,6 +365,47 @@ ui <- shinydashboardPlus::dashboardPage(
                     column(
                       width = 3,
                       pickerInput(
+                        inputId = "scsource",
+                        label = "Select source of scRNA-seq data",
+                        choices = list(
+                          "Carraro et al(2021) - Lung",
+                          "Reyfman et al(2018)"
+                        ),
+                        selected = NULL,
+                        multiple = TRUE,
+                        options = pickerOptions(maxOptions = 1)
+                      )
+                    ),
+                    uiOutput("tippy1"),
+                    column(
+                      width = 3,
+                      uiOutput("scgeneinput") %>% withSpinner(type = 8)
+                    ),
+                    uiOutput("tippy2"),
+                    column(
+                      width = 3,
+                      uiOutput("sccelltypeinput") %>% withSpinner(type = 8)
+                    ),
+                    uiOutput("tippy3")
+                  ),
+                  fluidRow(
+                    column(
+                      width = 4,
+                      plotOutput("scumapgeneral")
+                    ),
+                    column(
+                      width = 4,
+                      plotOutput("scmapgene") %>% withSpinner(type = 8)
+                    ),
+                    column(
+                      width = 4,
+                      reactableOutput("scmaptable")
+                    )
+                  ),
+                  fluidRow(
+                    column(
+                      width = 3,
+                      pickerInput(
                         inputId = "clusternumber2",
                         label = "Select cluster number to explore",
                         choices = list(
@@ -372,7 +428,7 @@ ui <- shinydashboardPlus::dashboardPage(
                       ),
                     column(
                       width = 12,
-                      withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891")
+                      withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891"),
                       )
                     )
                   ),

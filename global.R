@@ -5,6 +5,13 @@ library(readxl)
 library(tidyr)
 library(RColorBrewer)
 library(circlize)
+library(Seurat)
+
+lung<-readRDS("./data/lung_orig.RDS")
+#lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
+lung_idents<-Idents(object = lung)
+cell_types_lung<-levels(lung_idents)
+markers<-readRDS("./data/markers.RDS")
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")

@@ -91,6 +91,7 @@ server <- function(input, output, session){
     hide("cluster_page")
     hide("sc_cluster_page")
     hide("general_info")
+    hide("searchui")
   }, once = TRUE)
 
   observeEvent(input$geneName_search, {
@@ -147,12 +148,62 @@ server <- function(input, output, session){
       hide("single_cell")
       show("back_button")
       click("generalPage")
+      show("searchui")
       updateTabItems(session, "tabs", selected = character(0))
       }
     },
     ignoreInit = TRUE,
     ignoreNULL = TRUE
     )
+  
+  # observeEvent(input$geneName2_search, {
+  #   session$sendCustomMessage("geneName", input$geneName2)
+  # })
+  
+  observeEvent(input$geneName2_search, {
+    if (input$geneName2 == ""){
+      sendSweetAlert(
+        session = session,
+        title = "WARNING!",
+        text = "Please first write a gene name, gene id or Ensembl id",
+        type = "warning",
+        showCloseButton = TRUE
+      )
+    }
+    else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) > 1){
+      showModal(
+        modalDialog(
+          h3("Multiple Results"),
+          radioGroupButtons(
+            "generadio",
+            h4("It appears there are multiple genes corresponding to the input. Please select one: "),
+            geneoption(),
+            selected = character(0)
+          ),
+          easyClose = TRUE,
+          footer = tagList(
+            actionButton(
+              inputId = "close",
+              label = "Close",
+              icon = icon("close")
+            )
+          )
+        )
+      )
+    }
+    else if (!(toupper(input$geneName2) %in% toupper(gene_synonyms2$Gene_name))){
+      sendSweetAlert(
+        session = session,
+        title = "ERROR!",
+        text = "Please check the gene name and try again",
+        type = "error",
+        showCloseButton = TRUE
+      )
+    }
+    else {
+      session$sendCustomMessage("geneName", input$geneName2)
+    }
+  })
 
   observeEvent(input$generadio, {
     session$sendCustomMessage("geneName", input$generadio)
@@ -166,7 +217,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("pub")
     hide("single_cell")
-    show("back_button")
+    show("searchui")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -183,7 +234,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("pub")
     hide("single_cell")
-    show("back_button")
+    show("searchui")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -200,7 +251,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("pub")
     hide("single_cell")
-    show("back_button")
+    show("searchui")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -217,7 +268,7 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("pub")
     hide("single_cell")
-    show("back_button")
+    show("searchui")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -237,7 +288,8 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("single_cell")
     click("geneName_reset")
-    hide("back_button")
+    click("geneName2_reset")
+    hide("searchui")
     updateTabItems(session, "tabs", "hometab")
   })
 
@@ -358,6 +410,7 @@ server <- function(input, output, session){
         hide("protein_interaction1")
         hide("landing_page")
         click("generalPage")
+        show("searchui")
       }
     }
   },
@@ -378,7 +431,7 @@ server <- function(input, output, session){
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("landing_page")
-        show("back_button")
+        show("searchui")
         click("generalPage")
         updateTabItems(session, "tabs", selected = character(0))
       }
@@ -422,7 +475,7 @@ server <- function(input, output, session){
         hide("protein_interaction")
         hide("protein_interaction1")
         hide("landing_page")
-        show("back_button")
+        show("searchui")
         click("generalPage")
         updateTabItems(session, "tabs", selected = character(0))
       }
@@ -523,7 +576,7 @@ server <- function(input, output, session){
         top = "70px",
         left = 0,
         right = 0,
-        fixed = TRUE,
+        fixed = FALSE,
         style = "z-index: 10;"
       )
     }
@@ -1352,7 +1405,7 @@ server <- function(input, output, session){
     heatmapclusternumberR()
   })
 
-  ### Single cell
+  ### Single cell ----
   r_scclusternumber2<-reactive({
     a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
     rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
@@ -1438,6 +1491,115 @@ server <- function(input, output, session){
       options=pickerOptions(liveSearch=T)
     )
   })
+  
+  #### Single cell maps ----
+  
+  output$scumapgeneral<-renderPlot({
+    req(input$scsource)
+    if (input$scsource == "Carraro et al(2021) - Lung"){
+      DimPlot(object = lung, reduction = "umap")
+    }
+  })
+  
+  output$scgeneinput<-renderUI({
+    req(input$scsource)
+    if (input$scsource == "Carraro et al(2021) - Lung"){
+      pickerInput(
+        inputId = "scgene",
+        label = "Select a gene",
+        choices = rownames(lung),
+        selected = NULL,
+        multiple = TRUE,
+        options = pickerOptions(maxOptions = 1,
+                                liveSearch = TRUE)
+      )
+    }
+  })
+  
+  output$scmapgene<-renderPlot({
+    req(input$scgene)
+    FeaturePlot(object = lung, features = input$scgene)
+  })
+  
+  output$sccelltypeinput<-renderUI({
+    req(input$scsource)
+    if (input$scsource == "Carraro et al(2021) - Lung"){
+      pickerInput(
+        inputId = "sccelltypes",
+        label = "Select cluster to get gene list",
+        choices = c(levels(lung)),
+        selected = NULL,
+        multiple = TRUE,
+        options = pickerOptions(maxOptions = 1)
+      )
+    }
+  })
+  
+  diff_list<-reactive({
+    a<-levels(lung)
+    i<-which(a == input$sccelltypes)
+    markers[[i]]
+  })
+  
+  output$sometext<-renderText({
+    
+    a<-levels(lung)
+    i<-which(a == input$sccelltypes)
+    paste("i is:", i)
+  })
+  
+  output$scmaptable<-renderReactable({
+    req(input$sccelltypes)
+    reactable(
+      diff_list(), resizable = TRUE, filterable = TRUE,
+      searchable = TRUE, defaultPageSize = 5, showPageSizeOptions = TRUE,
+      highlight = TRUE
+    )
+  })
+  
+  # output$scmaptable<-renderDT({
+  #   #req(input$sccelltypes)
+  #   as.data.table(diff_list())
+  # })
+  
+  # tippy
+  
+  output$tippy1<-renderUI({
+    column(
+      width = 1,
+      br(),br(),
+      tippy(
+        bsButton("tooltipbuttonpub", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+        "<span style='font-size:15px;'>Select a source to visualize the cells!<span>",
+        placement = "top", animation = "scale", arrow = TRUE, theme = "blue"
+      )
+    )
+  })
+  output$tippy2<-renderUI({
+    req(input$scsource)
+    column(
+      width = 1,
+      br(),br(),
+      tippy(
+        bsButton("tooltipbuttonpub", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+        "<span style='font-size:15px;'>Select a gene to display its expression across cells.<span>",
+        placement = "top", animation = "scale", arrow = TRUE, theme = "blue"
+      )
+    )
+  })
+  output$tippy3<-renderUI({
+    req(input$scsource)
+    column(
+      width = 1,
+      br(),br(),
+      tippy(
+        bsButton("tooltipbuttonpub", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+        "<span style='font-size:15px;'>Select a group to list genes differentially expressed in that group.<span>",
+        placement = "top", animation = "scale", arrow = TRUE, theme = "blue"
+      )
+    )
+  })
+
 
   ### Publications ----
   pubheatmapx<-reactive({
@@ -1495,7 +1657,6 @@ server <- function(input, output, session){
       )
     )
   })
-
   # Others ----
 
   waiter_hide()
