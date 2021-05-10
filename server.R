@@ -141,6 +141,7 @@ server <- function(input, output, session){
       hide("protein_interaction")
       hide("protein_interaction1")
       hide("landing_page")
+      hide("toggleui2")
       show("buttonsui")
       hide("cluster_page")
       hide("sc_cluster_page")
@@ -212,6 +213,7 @@ server <- function(input, output, session){
     hide("protein_interaction")
     hide("protein_interaction1")
     hide("landing_page")
+    hide("toggleui2")
     show("buttonsui")
     hide("cluster_page")
     hide("sc_cluster_page")
@@ -229,6 +231,7 @@ server <- function(input, output, session){
     hide("protein_interaction")
     hide("protein_interaction1")
     hide("landing_page")
+    hide("toggleui2")
     show("buttonsui")
     hide("cluster_page")
     hide("sc_cluster_page")
@@ -246,6 +249,7 @@ server <- function(input, output, session){
     hide("protein_interaction")
     hide("protein_interaction1")
     hide("landing_page")
+    hide("toggleui2")
     show("buttonsui")
     hide("cluster_page")
     hide("sc_cluster_page")
@@ -263,6 +267,7 @@ server <- function(input, output, session){
     hide("protein_interaction")
     hide("protein_interaction1")
     hide("landing_page")
+    hide("toggleui2")
     show("buttonsui")
     hide("cluster_page")
     hide("sc_cluster_page")
@@ -279,6 +284,7 @@ server <- function(input, output, session){
 
   observeEvent(input$homePage, {
     show("landing_page")
+    show("toggleui2")
     hide("general_info")
     hide("protein_interaction")
     hide("protein_interaction1")
@@ -1516,6 +1522,28 @@ server <- function(input, output, session){
     }
   })
   
+  # output$scgeneinput<-renderUI({
+  #   req(input$scsource)
+  #   if (input$scsource == "Carraro et al(2021) - Lung"){
+  #     autocomplete_input(
+  #       id = "scgene",
+  #       label = "Select a gene",
+  #       options = rownames(lung),
+  #       max_options = 50
+  #     )
+  #   }
+  # })
+  
+  # observeEvent(input$scsource, {
+  #   update_autocomplete_input(
+  #     session,
+  #     "scgene",
+  #     options = rownames(lung)
+  #   )
+  # })
+  
+  #updateSelectizeInput(session, "scgene", choices = rownames(lung), server = TRUE)
+  
   output$scmapgene<-renderPlot({
     req(input$scgene)
     FeaturePlot(object = lung, features = input$scgene)
@@ -1657,6 +1685,19 @@ server <- function(input, output, session){
       )
     )
   })
+  
+  observeEvent(input$toggleSidebar, {
+    shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")
+  })
+  
+  observeEvent(input$toggleSidebar1, {
+    shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")
+  })
+  
+  observeEvent(input$toggleSidebar2, {
+    shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")
+  })
+  
   # Others ----
 
   waiter_hide()

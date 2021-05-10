@@ -25,6 +25,7 @@ library(ComplexHeatmap)
 #library(shinyhelper)
 library(tippy)
 library(Seurat)
+#library(dqshiny)
 
 
 # Sourcing global data and functions ----
@@ -147,6 +148,14 @@ ui <- shinydashboardPlus::dashboardPage(
     tabItems(
       tabItem(
         "hometab",
+        div(
+          id = "toggleui2",
+          column(
+            width = 1,
+            #style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+            actionButton("toggleSidebar2", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+          )
+        ),
         fluidRow(
           div(
             id = "landing_page",
@@ -184,10 +193,16 @@ ui <- shinydashboardPlus::dashboardPage(
         div(
           id = "searchui",
           column(
-            width = 12,
+            width = 1,
+            style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+            actionButton("toggleSidebar", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+          ),
+          column(
+            width = 11,
+            offset = -1,
             tags$script(src = "enter_button2.js"),
             align = "center",
-            style = "background-color: #00bcd4; border-radius: 15px;",#6f7dc8
+            style = "background-color: #00bcd4; border-radius: 0 15px 15px 0;",#6f7dc8
             br(),
             searchInput(
               inputId = "geneName2",
@@ -314,6 +329,19 @@ ui <- shinydashboardPlus::dashboardPage(
     ### Explore tab ----
       tabItem(
         "exploretab",
+        div(
+          id = "toggleui",
+          column(
+            width = 1,
+            style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+            actionButton("toggleSidebar1", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+          ),
+          column(
+            width = 11,
+            align = "center",
+            style = "background-color: #00bcd4; border-radius: 0 15px 15px 0; padding-top: 60px; padding-bottom: 12px;"#6f7dc8
+          )
+        ),
         fluidRow(
           div(
             id = "exptab",
@@ -391,7 +419,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   fluidRow(
                     column(
                       width = 4,
-                      plotOutput("scumapgeneral")
+                      plotOutput("scumapgeneral") %>% withSpinner(type = 8)
                     ),
                     column(
                       width = 4,
