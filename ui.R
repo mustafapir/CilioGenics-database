@@ -61,16 +61,16 @@ header <- dashboardHeader(fixed = TRUE, disable = FALSE,
                           dropdownBlock(headerText = "Please cite as following:", id = "drop", title = "How to Cite",
                                         icon = icon("sliders"), badgeStatus = "primary",
                                         type = "messages"))
-anchor <- tags$a(
-  tags$img(
-    src='Logo_browser_ciliogenics.png', height='50', width='50'),
-  'CilioGenics')
+# anchor <- tags$a(
+#   tags$img(
+#     src='Logo_browser_ciliogenics.png', height='50', width='50'),
+#   'CilioGenics')
 
 header$children[[2]]$children <- tags$div(
   tags$head(
     tags$style(
       HTML(".name { background-color: transparent }"))),
-  anchor,
+  #anchor,
   class = 'name')
 
 
