@@ -638,7 +638,7 @@ server <- function(input, output, session){
           column(
             width = 12,
             align = "center",
-            br(),br(),br(),
+            br(),br(),
             actionBttn("homePage", "Home",
                        icon = icon("home"),
                        style = "unite",
