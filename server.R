@@ -92,6 +92,10 @@ server <- function(input, output, session){
     hide("sc_cluster_page")
     hide("general_info")
     hide("searchui")
+    hide("searchUI")
+    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+      js$hidehead('none')
+    }
   }, once = TRUE)
 
   observeEvent(input$geneName_search, {
@@ -150,6 +154,7 @@ server <- function(input, output, session){
       show("back_button")
       click("generalPage")
       show("searchui")
+      show("searchUI")
       updateTabItems(session, "tabs", selected = character(0))
       }
     },
@@ -220,6 +225,7 @@ server <- function(input, output, session){
     hide("pub")
     hide("single_cell")
     show("searchui")
+    show("searchUI")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -238,6 +244,7 @@ server <- function(input, output, session){
     hide("pub")
     hide("single_cell")
     show("searchui")
+    show("searchUI")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -256,6 +263,7 @@ server <- function(input, output, session){
     hide("pub")
     hide("single_cell")
     show("searchui")
+    show("searchUI")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -274,6 +282,7 @@ server <- function(input, output, session){
     hide("pub")
     hide("single_cell")
     show("searchui")
+    show("searchUI")
     click("generalPage")
     updateTabItems(session, "tabs", selected = character(0))
   })
@@ -296,6 +305,7 @@ server <- function(input, output, session){
     click("geneName_reset")
     click("geneName2_reset")
     hide("searchui")
+    hide("searchUI")
     updateTabItems(session, "tabs", "hometab")
   })
 
@@ -417,6 +427,7 @@ server <- function(input, output, session){
         hide("landing_page")
         click("generalPage")
         show("searchui")
+        show("searchUI")
       }
     }
   },
@@ -438,6 +449,7 @@ server <- function(input, output, session){
         hide("protein_interaction1")
         hide("landing_page")
         show("searchui")
+        show("searchUI")
         click("generalPage")
         updateTabItems(session, "tabs", selected = character(0))
       }
@@ -482,6 +494,7 @@ server <- function(input, output, session){
         hide("protein_interaction1")
         hide("landing_page")
         show("searchui")
+        show("searchUI")
         click("generalPage")
         updateTabItems(session, "tabs", selected = character(0))
       }
@@ -535,7 +548,39 @@ server <- function(input, output, session){
 
   # General tab ----
 
+  output$searchUI<-renderUI({
+    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+      div(
+        id = "searchui",
+        column(
+          width = 1,
+          style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+          actionButton("toggleSidebar", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+        ),
+        column(
+          width = 11,
+          offset = -1,
+          tags$script(src = "enter_button2.js"),
+          align = "center",
+          style = "background-color: #00bcd4; border-radius: 0 15px 15px 0;",#6f7dc8
+          br(),
+          searchInput(
+            inputId = "geneName2",
+            #label = HTML("<h3><center>Gene Search</center></h3>"),
+            placeholder = "Search genes by gene name, gene id or Ensembl gene id",
+            btnSearch = icon("search"),
+            btnReset = icon("remove"),
+            width = "400px",
+            value = NULL
+          )
+        )
+      )
+    }
+    else {}
+  })
+  
   ### Menu ----
+  
   output$buttonsui<-renderUI({
     if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
       absolutePanel(
@@ -1301,6 +1346,26 @@ server <- function(input, output, session){
   })
 
   # Explore gene tab ----
+  
+  output$toggle<-renderUI({
+    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+      div(
+        id = "toggleui",
+        column(
+          width = 1,
+          style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+          actionButton("toggleSidebar1", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+        ),
+        column(
+          width = 11,
+          align = "center",
+          style = "background-color: #00bcd4; border-radius: 0 15px 15px 0; padding-top: 60px; padding-bottom: 12px;"#6f7dc8
+        )
+      )
+    }
+    else {}
+  })
+  
   ### General score ----
   genenumber<-reactive({
     final_score_table$Gene_name[selected()]

@@ -57,7 +57,7 @@ jsCode <- '
 
 # Header functions ----
 
-header <- dashboardHeader(fixed = TRUE, disable = TRUE,
+header <- dashboardHeader(fixed = TRUE, disable = FALSE,
                           dropdownBlock(headerText = "Please cite as following:", id = "drop", title = "How to Cite",
                                         icon = icon("sliders"), badgeStatus = "primary",
                                         type = "messages"))
@@ -80,7 +80,7 @@ ui <- shinydashboardPlus::dashboardPage(
   md = TRUE,
   skin = "blue-light",
   header,
-  options = list(sidebarExpandOnHover = TRUE),
+  options = list(sidebarExpandOnHover = FALSE),
   ## Sidebar ----
   sidebar = dashboardSidebar(
     minified = TRUE,
@@ -111,6 +111,9 @@ ui <- shinydashboardPlus::dashboardPage(
     use_cicerone(),
     useShinyjs(),
     extendShinyjs(text = jsCode, functions = c("getcookie", "setcookie", "rmcookie")),
+    extendShinyjs(text = "shinyjs.hidehead = function(parm){
+                                    $('header').css('display', parm);
+                                }", functions = "hidehead"),
     ### Tags$head ----
     tags$head(
       tags$script(src = "js-cookie.js"),
@@ -190,31 +193,7 @@ ui <- shinydashboardPlus::dashboardPage(
               )
             )
           ),
-        div(
-          id = "searchui",
-          column(
-            width = 1,
-            style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
-            actionButton("toggleSidebar", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
-          ),
-          column(
-            width = 11,
-            offset = -1,
-            tags$script(src = "enter_button2.js"),
-            align = "center",
-            style = "background-color: #00bcd4; border-radius: 0 15px 15px 0;",#6f7dc8
-            br(),
-            searchInput(
-              inputId = "geneName2",
-              #label = HTML("<h3><center>Gene Search</center></h3>"),
-              placeholder = "Search genes by gene name, gene id or Ensembl gene id",
-              btnSearch = icon("search"),
-              btnReset = icon("remove"),
-              width = "400px",
-              value = NULL
-            )
-          )
-        ),
+        uiOutput("searchUI"),
         div(
           id = "buttonscicerone",
           uiOutput("buttonsui"), #br(), br(),
@@ -329,19 +308,7 @@ ui <- shinydashboardPlus::dashboardPage(
     ### Explore tab ----
       tabItem(
         "exploretab",
-        div(
-          id = "toggleui",
-          column(
-            width = 1,
-            style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
-            actionButton("toggleSidebar1", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
-          ),
-          column(
-            width = 11,
-            align = "center",
-            style = "background-color: #00bcd4; border-radius: 0 15px 15px 0; padding-top: 60px; padding-bottom: 12px;"#6f7dc8
-          )
-        ),
+        uiOutput("toggle"),
         fluidRow(
           div(
             id = "exptab",
