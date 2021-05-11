@@ -89,6 +89,19 @@ ui <- shinydashboardPlus::dashboardPage(
         includeHTML(("google-analytics.html"))
         )
       ),
+    div(
+      id = "logo",
+      tags$a(
+        tags$img(
+          src='Logo_browser_ciliogenics.png', height='50', width='50'),
+      ),
+      style = "display: inline-block; padding-left: 10px;"
+    ),
+    div(
+      id = "logo-text",
+      h3('CilioGenics'),
+      style = "display: inline-block; color: #00bcd4; padding-bottom: 20px;"
+    ),
 
     div(
       id = "tabs1",
