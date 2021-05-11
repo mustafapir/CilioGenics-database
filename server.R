@@ -549,7 +549,7 @@ server <- function(input, output, session){
   # General tab ----
 
   output$searchUI<-renderUI({
-    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+    if (!input$isMobile){
       div(
         id = "searchui",
         column(
@@ -582,7 +582,7 @@ server <- function(input, output, session){
   ### Menu ----
   
   output$buttonsui<-renderUI({
-    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+    if (!input$isMobile){
       absolutePanel(
         div(
           id = "tabButtons",

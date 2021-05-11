@@ -222,4 +222,11 @@ orange_pal <- function(x){
 # 
 # )
 
-
+mobileDetect <- function(inputId, value = 0) {
+  tagList(
+    singleton(tags$head(tags$script(src = "mobile.js"))),
+    tags$input(id = inputId,
+               class = "mobile-element",
+               type = "hidden")
+  )
+}

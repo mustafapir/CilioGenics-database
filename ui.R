@@ -93,14 +93,14 @@ ui <- shinydashboardPlus::dashboardPage(
       id = "logo",
       tags$a(
         tags$img(
-          src='Logo_browser_ciliogenics.png', height='50', width='50'),
+          src='Logo_browser_ciliogenics.png', height='40', width='40'),
       ),
       style = "display: inline-block; padding-left: 10px;"
     ),
     div(
       id = "logo-text",
-      h3('CilioGenics'),
-      style = "display: inline-block; color: #00bcd4; padding-bottom: 20px;"
+      h4('CilioGenics'),
+      style = "display: inline-block; color: #00bcd4; padding-bottom: 10px;"
     ),
 
     div(
@@ -127,6 +127,7 @@ ui <- shinydashboardPlus::dashboardPage(
     extendShinyjs(text = "shinyjs.hidehead = function(parm){
                                     $('header').css('display', parm);
                                 }", functions = "hidehead"),
+    mobileDetect('isMobile'),
     ### Tags$head ----
     tags$head(
       tags$script(src = "js-cookie.js"),
@@ -164,14 +165,14 @@ ui <- shinydashboardPlus::dashboardPage(
     tabItems(
       tabItem(
         "hometab",
-        div(
-          id = "toggleui2",
-          column(
-            width = 1,
-            #style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
-            actionButton("toggleSidebar2", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
-          )
-        ),
+        # div(
+        #   id = "toggleui2",
+        #   column(
+        #     width = 1,
+        #     #style = "background-color: #00bcd4; border-radius: 15px 0 0 15px;",
+        #     actionButton("toggleSidebar2", icon("th"), style = "padding-top: 20px; padding-bottom: 12px;")
+        #   )
+        # ),
         fluidRow(
           div(
             id = "landing_page",
