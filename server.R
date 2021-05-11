@@ -93,7 +93,7 @@ server <- function(input, output, session){
     hide("general_info")
     hide("searchui")
     hide("searchUI")
-    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+    if (!input$isMobile){
       js$hidehead('none')
     }
   }, once = TRUE)
@@ -681,7 +681,7 @@ server <- function(input, output, session){
   })
 
   output$space<-renderUI({
-    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+    if (!input$isMobile){
 
     }
     else {
@@ -1348,7 +1348,7 @@ server <- function(input, output, session){
   # Explore gene tab ----
   
   output$toggle<-renderUI({
-    if (session$clientData$pixelratio == 1 || session$clientData$pixelratio == 2){
+    if (!input$isMobile){
       div(
         id = "toggleui",
         column(
