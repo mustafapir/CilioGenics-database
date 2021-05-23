@@ -1156,8 +1156,11 @@ server <- function(input, output, session){
     filename = function() {
       reactiveDownload1()
     },
-    content = function(file){
-      save_iheatmap(reactiveHeatmap1(), file, vwidth=2000,vheight=1000)
+    content = function(file) {
+      withProgress(message = 'Downloading, please wait!', {
+          save_iheatmap(reactiveHeatmap1(), file, vwidth=1200,vheight=600)
+        }
+      )
     },
     contentType = "image/png"
   )
@@ -1291,8 +1294,17 @@ server <- function(input, output, session){
     filename = function() {
       reactiveDownload2()
     },
-    content = function(file){
-      save_iheatmap(r_sctwoheatmap(), file, vwidth=2000,vheight=1000)
+    content = function(file) {
+      shiny::withProgress(
+        message = "Downloading heatmap",
+        value = 0,
+        {
+          shiny::incProgress(2/10)
+          Sys.sleep(1)
+          shiny::incProgress(4/10)
+          save_iheatmap(r_sctwoheatmap(), file, vwidth=1200,vheight=600)
+        }
+      )
     },
     contentType = "image/png"
   )
@@ -1492,18 +1504,11 @@ server <- function(input, output, session){
         message = "Downloading heatmap",
         value = 0,
         {
-          shiny::incProgress(1/10)
-          Sys.sleep(8)
           shiny::incProgress(2/10)
-          Sys.sleep(9)
-          shiny::incProgress(2/10)
-          Sys.sleep(8)
-          shiny::incProgress(1/10)
-          Sys.sleep(10)
-          shiny::incProgress(2/10)
-          Sys.sleep(9)
-          shiny::incProgress(2/10)
+          Sys.sleep(1)
+          shiny::incProgress(5/10)
           save_iheatmap(heatmapclusternumberR(), file, vwidth=1200,vheight=600)
+          shiny::incProgress(3/10)
         }
       )
     },
