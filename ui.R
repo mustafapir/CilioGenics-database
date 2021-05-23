@@ -16,7 +16,7 @@ library(cicerone)
 library(data.table)
 library(shinyBS)
 library(dplyr)
-library(webshot)
+#library(webshot)
 library(V8)
 library(dashboardthemes)
 library(waiter)
@@ -356,27 +356,26 @@ ui <- shinydashboardPlus::dashboardPage(
                       "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
                     )
                   ),
-                  withSpinner(uiOutput("phylogenyUI"), type = 8),
-                  # fluidRow(
-                  #   column(
-                  #     width = 12,
-                  #     withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
-                  #     ),
-                  #   column(
-                  #     width = 12,
-                  #     align = "left",
-                  #     div(
-                  #       id = "button3",
-                  #       style = "left: 10ex;",
-                  #       #dropdown(
-                  #         downloadButton(outputId = "hmap3", label = "Download")
-                  #       #   size = "xm",
-                  #       #   icon = icon("download", class = "opt"),
-                  #       #   up = TRUE
-                  #       # )
-                  #     )
-                  #   )
-                  # ),
+                  fluidRow(
+                    column(
+                      width = 12,
+                      withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
+                      ),
+                    column(
+                      width = 12,
+                      align = "left",
+                      div(
+                        id = "button3",
+                        style = "left: 10ex;",
+                        #dropdown(
+                          downloadButton(outputId = "hmap3", label = "Download")
+                        #   size = "xm",
+                        #   icon = icon("download", class = "opt"),
+                        #   up = TRUE
+                        # )
+                      )
+                    )
+                  ),
                   br(),br(),
                   fluidRow(
                     column(

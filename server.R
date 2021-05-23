@@ -1,6 +1,6 @@
 
 library(shiny)
-library(webshot)
+#library(webshot)
 
 source("functions.R")
 
@@ -1493,15 +1493,15 @@ server <- function(input, output, session){
         value = 0,
         {
           shiny::incProgress(1/10)
-          Sys.sleep(4)
+          Sys.sleep(8)
           shiny::incProgress(2/10)
-          Sys.sleep(6)
+          Sys.sleep(9)
           shiny::incProgress(2/10)
           Sys.sleep(8)
           shiny::incProgress(1/10)
           Sys.sleep(10)
           shiny::incProgress(2/10)
-          Sys.sleep(8)
+          Sys.sleep(9)
           shiny::incProgress(2/10)
           save_iheatmap(heatmapclusternumberR(), file, vwidth=1200,vheight=600)
         }
@@ -1509,31 +1509,6 @@ server <- function(input, output, session){
     },
     contentType = "image/png"
   )
-  
-  # Ui
-  
-  output$phylogenyUI<-renderUI({
-    fluidRow(
-      column(
-        width = 12,
-        iheatmaprOutput("heatmapclusternumber", height = "600px")
-      ),
-      column(
-        width = 12,
-        align = "left",
-        div(
-          id = "button3",
-          style = "left: 10ex;",
-          #dropdown(
-          downloadButton(outputId = "hmap3", label = "Download")
-          #   size = "xm",
-          #   icon = icon("download", class = "opt"),
-          #   up = TRUE
-          # )
-        )
-      )
-    )
-  })
 
   ### Single cell ----
   r_scclusternumber2<-reactive({
