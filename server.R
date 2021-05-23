@@ -1475,6 +1475,65 @@ server <- function(input, output, session){
   output$heatmapclusternumber<-renderIheatmap({
     heatmapclusternumberR()
   })
+  
+  reactiveDownload3<-reactive({
+    filename = paste0("cluster_", input$clusternumber, "_heatmap.png")
+  })
+  
+  output$hmap3<-downloadHandler(
+    filename = function() {
+      reactiveDownload3()
+    },
+    content = function(file) {
+      # showModal(modalDialog("Downloading heatmap", footer=NULL))
+      # on.exit(removeModal())
+      # save_iheatmap(heatmapclusternumberR(), file, vwidth=1200,vheight=600)
+      shiny::withProgress(
+        message = "Downloading heatmap",
+        value = 0,
+        {
+          shiny::incProgress(1/10)
+          Sys.sleep(4)
+          shiny::incProgress(2/10)
+          Sys.sleep(6)
+          shiny::incProgress(2/10)
+          Sys.sleep(8)
+          shiny::incProgress(1/10)
+          Sys.sleep(10)
+          shiny::incProgress(2/10)
+          Sys.sleep(8)
+          shiny::incProgress(2/10)
+          save_iheatmap(heatmapclusternumberR(), file, vwidth=1200,vheight=600)
+        }
+      )
+    },
+    contentType = "image/png"
+  )
+  
+  # Ui
+  
+  output$phylogenyUI<-renderUI({
+    fluidRow(
+      column(
+        width = 12,
+        iheatmaprOutput("heatmapclusternumber", height = "600px")
+      ),
+      column(
+        width = 12,
+        align = "left",
+        div(
+          id = "button3",
+          style = "left: 10ex;",
+          #dropdown(
+          downloadButton(outputId = "hmap3", label = "Download")
+          #   size = "xm",
+          #   icon = icon("download", class = "opt"),
+          #   up = TRUE
+          # )
+        )
+      )
+    )
+  })
 
   ### Single cell ----
   r_scclusternumber2<-reactive({
@@ -1544,7 +1603,8 @@ server <- function(input, output, session){
       scheatmapgenenumberR()
     }
   })
-
+  
+  
   genelistforpicker<-reactive({
     a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
     a<-sort(a)
@@ -1568,7 +1628,7 @@ server <- function(input, output, session){
   output$scumapgeneral<-renderPlot({
     req(input$scsource)
     if (input$scsource == "Carraro et al(2021) - Lung"){
-      DimPlot(object = lung, reduction = "umap")
+      DimPlot(object = lung, reduction = "umap", label = TRUE)
     }
   })
   
