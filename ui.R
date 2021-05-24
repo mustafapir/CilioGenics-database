@@ -107,8 +107,8 @@ ui <- shinydashboardPlus::dashboardPage(
       id = "tabs1",
       sidebarMenu(
         id = "tabs",
-        menuItem("Home", tabName = "hometab", icon = icon("home")),
-        menuItem("Gene list", tabName = "exploretab", icon = icon("search")),
+        menuItem("Gene search", tabName = "hometab", icon = icon("home")),
+        menuItem("Explore data", tabName = "exploretab", icon = icon("search")),
         menuItem("How to use CilioGenics", tabName = "howtab", icon = icon("question-circle")),
         menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
         menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
