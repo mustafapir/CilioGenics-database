@@ -26,6 +26,7 @@ library(ComplexHeatmap)
 library(tippy)
 library(Seurat)
 #library(dqshiny)
+library(highcharter)
 
 
 # Sourcing global data and functions ----
@@ -231,7 +232,8 @@ ui <- shinydashboardPlus::dashboardPage(
               solidHeader = TRUE,
               status = "success",
               width = 6,
-              withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
+              #withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
+              withSpinner(highchartOutput("polarscores", height = "550px"), type = 8)
             )
           )
         ),

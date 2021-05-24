@@ -6,6 +6,7 @@ library(tidyr)
 library(RColorBrewer)
 library(circlize)
 library(Seurat)
+source("functions.R")
 
 lung<-readRDS("./data/lung_orig.RDS")
 #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
@@ -199,4 +200,12 @@ pub_genes<-pub_mat[which(apply(pub_mat[,-1],1,sum) != 0),]
 cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 70px; position: fixed; width: 80%",
                   "This website places cookies on your device to help us improve our service 
       to you", HTML('<a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>'))
+
+
+df_n <- as.data.table(lapply(final_score_table[,2:8], min_max_norm))
+df_n1<-round(df_n, digits = 3)
+
+
+
+
 

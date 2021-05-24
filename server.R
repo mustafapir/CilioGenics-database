@@ -868,6 +868,38 @@ server <- function(input, output, session){
       genebar("pb7", inputseq7(), "Protein Atlas", 651, 1016)
     )
   })
+  
+  polartable<-reactive({
+    data.frame(cat = colnames(df_n1),
+               data = t(df_n1[which(final_score_table$Gene_name == genename()),]))
+  })
+  
+  hchart1<-reactive({
+    highchart() %>% 
+      hc_chart(polar = TRUE) %>% 
+      hc_title(text = "Scores in Categories") %>% 
+      hc_xAxis(categories = polartable()$cat,
+               #tickmarkPlacement = "on",
+               lineWidth = 0) %>% 
+      hc_yAxis(#gridLineInterpolation = "polygon",
+        lineWidth = 0,
+        min = 0,
+        max = 1) %>%
+      hc_series(
+        list(
+          name = "Score",
+          data = as.numeric(polartable()$data),
+          pointPlacement = "on",
+          colorByPoint = TRUE,
+          type = "column",
+          colors = ifelse(polartable()$data >= 0.75, "#27AE60", ifelse(polartable()$data <= 0.5, "#d35400","#3498DB"))
+        )
+      )
+  })
+  
+  output$polarscores<-renderHighchart({
+    hchart1()
+  })
 
   ### Protein interaction page ----
   networkdata<-reactive({
