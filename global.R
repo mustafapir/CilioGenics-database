@@ -8,6 +8,9 @@ library(circlize)
 library(Seurat)
 source("functions.R")
 
+#rmdfiles <- rmarkdown::render("about.Rmd")
+#sapply(rmdfiles, knitr::knit, quiet = T)
+
 lung<-readRDS("./data/lung_orig.RDS")
 #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
 lung_idents<-Idents(object = lung)
@@ -206,6 +209,23 @@ df_n <- as.data.table(lapply(final_score_table[,2:8], min_max_norm))
 df_n1<-round(df_n, digits = 3)
 
 
+# Pub chart
+xc<-publications %>% dplyr::count(Publication)
+xc$type<-"total"
+xc$cil<-"all"
+
+xc1<-publications
+xc1$cil<-"unknown"
+xc1$cil[which(xc1$Gene_name %in% ciliaryGenes1$Gene.Name)]<-"ciliary"
+xc2<-xc1 %>% count(Publication, cil)
+xc2<-xc2[xc2$cil == "ciliary",]
+xc2$type<-"ciliary"
+xc3<-rbind(xc,xc2)
+colnames(xc3)[2]<-"Number of genes"
 
 
+xc4<-publications %>% dplyr::add_count(Gene_name)
+xc4$`is cilliary`<-"No"
+xc4$`is cilliary`[xc4$Gene_name %in% ciliaryGenes1$Gene.Name]<-"Yes"
+xc4$`is unique`<-ifelse(xc4$n == 1, "Yes", "No")
 

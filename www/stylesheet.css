@@ -148,6 +148,11 @@
     margin: 0 0 0 0;
 }
 
+.navbar, .navbar.navbar-default {
+    background-color: #00bcd4;
+    border-radius: 10px;
+}
+
 
 /*.skin-blue-light .main-header .navbar {
     background-color: #6f7dc8;

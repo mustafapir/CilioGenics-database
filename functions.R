@@ -2,6 +2,14 @@
 library(cicerone)
 library(reactable)
 
+navbarPageWithInputs <- function(..., inputs) {
+  navbar <- navbarPage(...)
+  form <- tags$form(class = "navbar-form", id = "inpt", inputs)
+  navbar[[3]][[1]]$children[[1]] <- htmltools::tagAppendChild(
+    navbar[[3]][[1]]$children[[1]], form)
+  navbar
+}
+
 with_tooltip <- function(value, tooltip, ...) {
   div(br(),br(),
     tags$style(type = "text/css", "#q1 {vertical-align: top;}"),

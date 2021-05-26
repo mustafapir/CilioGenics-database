@@ -81,18 +81,20 @@ server <- function(input, output, session){
 
   # Show only landing page
   observeEvent("", {
-    show("landing_page")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("tabButtons")
-    hide("buttonsui")
-    hide("pub")
-    hide("single_cell")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("general_info")
-    hide("searchui")
-    hide("searchUI")
+    #show("landing_page")
+    # hide("protein_interaction")
+    # hide("protein_interaction1")
+    # hide("tabButtons")
+    # hide("buttonsui")
+    # hide("pub")
+    # hide("single_cell")
+    # hide("cluster_page")
+    # hide("sc_cluster_page")
+    # hide("general_info")
+    # hide("searchui")
+    # hide("searchUI")
+    hide("nvbr")
+    hide("inpt")
     if (!input$isMobile){
       js$hidehead('none')
     }
@@ -141,26 +143,31 @@ server <- function(input, output, session){
     }
 
     else {
-      show("general_info")
-      hide("protein_interaction")
-      hide("protein_interaction1")
-      hide("landing_page")
-      hide("toggleui2")
-      show("buttonsui")
-      hide("cluster_page")
-      hide("sc_cluster_page")
-      hide("pub")
-      hide("single_cell")
-      show("back_button")
-      click("generalPage")
-      show("searchui")
-      show("searchUI")
-      updateTabItems(session, "tabs", selected = character(0))
+      # show("general_info")
+      # hide("protein_interaction")
+      # hide("protein_interaction1")
+      # hide("landing_page")
+      # hide("toggleui2")
+      # show("buttonsui")
+      # hide("cluster_page")
+      # hide("sc_cluster_page")
+      # hide("pub")
+      # hide("single_cell")
+      # show("back_button")
+      # click("generalPage")
+      # show("searchui")
+      # show("searchUI")
+      show("nvbr")
+      show("inpt")
+      updateNavbarPage(inputId = "nvbr", selected = "General info")
+      #updateTabItems(session, "tabs", selected = character(0))
       }
     },
     ignoreInit = TRUE,
     ignoreNULL = TRUE
     )
+  
+  
   
   # observeEvent(input$geneName2_search, {
   #   session$sendCustomMessage("geneName", input$geneName2)
@@ -232,136 +239,145 @@ server <- function(input, output, session){
 
   observeEvent(input$ARL13B, {
     session$sendCustomMessage("geneName", "ARL13B")
-    click("generalPage")
-    show("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("landing_page")
-    hide("toggleui2")
-    show("buttonsui")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("pub")
-    hide("single_cell")
-    show("searchui")
-    show("searchUI")
-    click("generalPage")
-    updateTabItems(session, "tabs", selected = character(0))
+    # click("generalPage")
+    # show("general_info")
+    # hide("protein_interaction")
+    # hide("protein_interaction1")
+    # hide("landing_page")
+    # hide("toggleui2")
+    # show("buttonsui")
+    # hide("cluster_page")
+    # hide("sc_cluster_page")
+    # hide("pub")
+    # hide("single_cell")
+    # show("searchui")
+    # show("searchUI")
+    # click("generalPage")
+    # updateTabItems(session, "tabs", selected = character(0))
+    show("nvbr")
+    show("inpt")
+    updateNavbarPage(inputId = "nvbr", selected = "General info")
   })
 
   observeEvent(input$IFT74, {
     session$sendCustomMessage("geneName", "ENSG00000096872")
-    click("generalPage")
-    show("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("landing_page")
-    hide("toggleui2")
-    show("buttonsui")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("pub")
-    hide("single_cell")
-    show("searchui")
-    show("searchUI")
-    click("generalPage")
-    updateTabItems(session, "tabs", selected = character(0))
+    # click("generalPage")
+    # show("general_info")
+    # hide("protein_interaction")
+    # hide("protein_interaction1")
+    # hide("landing_page")
+    # hide("toggleui2")
+    # show("buttonsui")
+    # hide("cluster_page")
+    # hide("sc_cluster_page")
+    # hide("pub")
+    # hide("single_cell")
+    # show("searchui")
+    # show("searchUI")
+    # click("generalPage")
+    # updateTabItems(session, "tabs", selected = character(0))
+    show("nvbr")
+    show("inpt")
+    updateNavbarPage(inputId = "nvbr", selected = "General info")
   })
 
   observeEvent(input$BBS5, {
     session$sendCustomMessage("geneName", "129880")
-    click("generalPage")
-    show("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("landing_page")
-    hide("toggleui2")
-    show("buttonsui")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("pub")
-    hide("single_cell")
-    show("searchui")
-    show("searchUI")
-    click("generalPage")
-    updateTabItems(session, "tabs", selected = character(0))
+    # click("generalPage")
+    # show("general_info")
+    # hide("protein_interaction")
+    # hide("protein_interaction1")
+    # hide("landing_page")
+    # hide("toggleui2")
+    # show("buttonsui")
+    # hide("cluster_page")
+    # hide("sc_cluster_page")
+    # hide("pub")
+    # hide("single_cell")
+    # show("searchui")
+    # show("searchUI")
+    # click("generalPage")
+    # updateTabItems(session, "tabs", selected = character(0))
+    show("nvbr")
+    show("inpt")
+    updateNavbarPage(inputId = "nvbr", selected = "General info")
   })
 
   # observeEvent(trimmedGname(), {
   #   updateProgressBar(session = session, id = "pb8", value = inputseq(), total = 21271)
   # })
 
-  observeEvent(input$homePage, {
-    show("landing_page")
-    show("toggleui2")
-    hide("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("buttonsui")
-    hide("pub")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("single_cell")
-    click("geneName_reset")
-    click("geneName2_reset")
-    hide("searchui")
-    hide("searchUI")
-    updateTabItems(session, "tabs", "hometab")
-  })
-
-  observeEvent(input$generalPage, {
-    show("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("pub")
-    hide("single_cell")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-  })
-
-  observeEvent(input$proteinPage, {
-    show("protein_interaction")
-    show("protein_interaction1")
-    hide("general_info")
-    hide("landing_page")
-    hide("pub")
-    hide("single_cell")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-  })
-
-  observeEvent(input$clusterPage, {
-    show("cluster_page")
-    hide("general_info")
-    hide("landing_page")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("pub")
-    hide("sc_cluster_page")
-    hide("single_cell")
-  })
-
-  observeEvent(input$scclusterPage, {
-    show("sc_cluster_page")
-    hide("general_info")
-    hide("landing_page")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("pub")
-    hide("cluster_page")
-    hide("single_cell")
-  })
-
-  observeEvent(input$pubPage, {
-    show("pub")
-    hide("general_info")
-    hide("landing_page")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("single_cell")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-  })
+  # observeEvent(input$homePage, {
+  #   show("landing_page")
+  #   show("toggleui2")
+  #   hide("general_info")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("buttonsui")
+  #   hide("pub")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  #   hide("single_cell")
+  #   click("geneName_reset")
+  #   click("geneName2_reset")
+  #   hide("searchui")
+  #   hide("searchUI")
+  #   updateTabItems(session, "tabs", "hometab")
+  # })
+  # 
+  # observeEvent(input$generalPage, {
+  #   show("general_info")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("pub")
+  #   hide("single_cell")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  # })
+  # 
+  # observeEvent(input$proteinPage, {
+  #   show("protein_interaction")
+  #   show("protein_interaction1")
+  #   hide("general_info")
+  #   hide("landing_page")
+  #   hide("pub")
+  #   hide("single_cell")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  # })
+  # 
+  # observeEvent(input$clusterPage, {
+  #   show("cluster_page")
+  #   hide("general_info")
+  #   hide("landing_page")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("pub")
+  #   hide("sc_cluster_page")
+  #   hide("single_cell")
+  # })
+  # 
+  # observeEvent(input$scclusterPage, {
+  #   show("sc_cluster_page")
+  #   hide("general_info")
+  #   hide("landing_page")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("pub")
+  #   hide("cluster_page")
+  #   hide("single_cell")
+  # })
+  # 
+  # observeEvent(input$pubPage, {
+  #   show("pub")
+  #   hide("general_info")
+  #   hide("landing_page")
+  #   hide("protein_interaction")
+  #   hide("protein_interaction1")
+  #   hide("single_cell")
+  #   hide("cluster_page")
+  #   hide("sc_cluster_page")
+  # })
 
   # observeEvent(input$hometab, {
   #   show("landing_page")
@@ -392,20 +408,35 @@ server <- function(input, output, session){
   #   updateReactable("hclusternumbertable", selected = NA)
   # })
 
-  observeEvent(input$tabs == "hometab", {
-    show("hometab")
-    # show("landing_page")
-    # hide("general_info")
-    # hide("protein_interaction")
-    # hide("protein_interaction1")
-    # hide("buttonsui")
-    # hide("pub")
-    # hide("single_cell")
-    # hide("cluster_page")
-    # hide("sc_cluster_page")
-    # hide("back_button")
-    #click("geneName_reset")
-    updateReactable("hclusternumbertable", selected = NA)
+  # observeEvent(input$tabs == "hometab", {
+  #   show("hometab")
+  #   # show("landing_page")
+  #   # hide("general_info")
+  #   # hide("protein_interaction")
+  #   # hide("protein_interaction1")
+  #   # hide("buttonsui")
+  #   # hide("pub")
+  #   # hide("single_cell")
+  #   # hide("cluster_page")
+  #   # hide("sc_cluster_page")
+  #   # hide("back_button")
+  #   #click("geneName_reset")
+  #   updateReactable("hclusternumbertable", selected = NA)
+  # })
+  
+  # eventt<-eventReactive(input$nvbr == "Home", {
+  #   runif(1)
+  # })
+  # observeEvent(eventt(), {
+  #   hide("nvbr")
+  # })
+  
+  observeEvent(input$nvbr, {
+    if (input$nvbr == "Home"){
+      hide("nvbr")
+      hide("inpt")
+      #hide("geneName2")
+    }
   })
 
   observeEvent(input$explore, {
@@ -419,15 +450,16 @@ server <- function(input, output, session){
       if (genenumber() != ""){
         session$sendCustomMessage("geneName", genenumber())
         updateTabItems(session, "tabs", selected = "hometab")
-        hide("exptab")
-        show("buttonsui")
-        show("general_info")
-        hide("protein_interaction")
-        hide("protein_interaction1")
-        hide("landing_page")
-        click("generalPage")
-        show("searchui")
-        show("searchUI")
+        updateNavbarPage(inputId = "nvbr", selected = "General info")
+        # hide("exptab")
+        # show("buttonsui")
+        # show("general_info")
+        # hide("protein_interaction")
+        # hide("protein_interaction1")
+        # hide("landing_page")
+        # click("generalPage")
+        # show("searchui")
+        # show("searchUI")
       }
     }
   },
@@ -442,16 +474,17 @@ server <- function(input, output, session){
     if (length(genenumber2() != "") != 0){
       if (genenumber2() != ""){
         session$sendCustomMessage("geneName", genenumber2())
-        hide("exptab")
-        show("buttonsui")
-        show("general_info")
-        hide("protein_interaction")
-        hide("protein_interaction1")
-        hide("landing_page")
-        show("searchui")
-        show("searchUI")
-        click("generalPage")
-        updateTabItems(session, "tabs", selected = character(0))
+        updateNavbarPage(inputId = "nvbr", selected = "General info")
+        # hide("exptab")
+        # show("buttonsui")
+        # show("general_info")
+        # hide("protein_interaction")
+        # hide("protein_interaction1")
+        # hide("landing_page")
+        # show("searchui")
+        # show("searchUI")
+        # click("generalPage")
+        # updateTabItems(session, "tabs", selected = character(0))
       }
     }
   },
@@ -466,13 +499,14 @@ server <- function(input, output, session){
     if (length(genenumbercluster() != "") != 0){
       if (genenumbercluster() != ""){
         session$sendCustomMessage("geneName", genenumbercluster())
-        show("general_info")
-        hide("protein_interaction")
-        hide("protein_interaction1")
-        hide("landing_page")
-        show("back_button")
-        click("generalPage")
-        updateTabItems(session, "tabs", selected = character(0))
+        updateNavbarPage(inputId = "nvbr", selected = "General info")
+        # show("general_info")
+        # hide("protein_interaction")
+        # hide("protein_interaction1")
+        # hide("landing_page")
+        # show("back_button")
+        # click("generalPage")
+        # updateTabItems(session, "tabs", selected = character(0))
       }
     }
   },
@@ -487,16 +521,17 @@ server <- function(input, output, session){
     if (length(genenumbergeneralcluster() != "") != 0){
       if (genenumbergeneralcluster() != ""){
         session$sendCustomMessage("geneName", genenumbergeneralcluster())
-        hide("exptab")
-        show("buttonsui")
-        show("general_info")
-        hide("protein_interaction")
-        hide("protein_interaction1")
-        hide("landing_page")
-        show("searchui")
-        show("searchUI")
-        click("generalPage")
-        updateTabItems(session, "tabs", selected = character(0))
+        updateNavbarPage(inputId = "nvbr", selected = "General info")
+        # hide("exptab")
+        # show("buttonsui")
+        # show("general_info")
+        # hide("protein_interaction")
+        # hide("protein_interaction1")
+        # hide("landing_page")
+        # show("searchui")
+        # show("searchUI")
+        # click("generalPage")
+        # updateTabItems(session, "tabs", selected = character(0))
       }
     }
   },
@@ -593,34 +628,34 @@ server <- function(input, output, session){
             br(),
             actionBttn("homePage", "Home",
                        icon = icon("home"),
-                       style = "unite",
+                       style = "fill",
                        color = "default",
                        size = "sm"),
             actionBttn("generalPage", "General Information",
                        icon = icon("info"),
                        color = "primary",
-                       style = "unite",
+                       style = "fill",
                        size = "sm"),
             actionBttn("proteinPage", "Protein interactions",
                        icon = img(src = "network2.png", height = "20px"),
                        color = "primary",
-                       style = "unite",
+                       style = "fill",
                        size = "sm"),
             actionBttn("scclusterPage", "Single Cell Clusters",
                        icon = img(src = "tree.png", height = "20px"),
                        color = "primary",
-                       style = "unite",
+                       style = "fill",
                        size = "sm"),
             br(),
             actionBttn("clusterPage", "Phylogenetic Analysis",
                        icon = img(src = "tree.png", height = "20px"),
                        color = "primary",
-                       style = "unite",
+                       style = "fill",
                        size = "sm"),
             actionBttn("pubPage", "Publications",
                        icon = icon("book"),
                        color = "primary",
-                       style = "unite",
+                       style = "fill",
                        size = "sm")
           )
         ),
@@ -1039,17 +1074,6 @@ server <- function(input, output, session){
     df
   })
 
-  inputclusternumbertable<-reactive({
-
-    a<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == input$clusternumber),1])
-    a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
-    a$`Gold standard` <- "NO"
-    a$`Gold standard`[which(a[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
-    a$CilioGenics <- "NO"
-    a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
-    a
-  })
-
   selected3 <- reactive(getReactableState("hclustertable", "selected"))
 
   genenumbercluster<-reactive({
@@ -1061,10 +1085,11 @@ server <- function(input, output, session){
   })
 
   reactiveHeatmap1<-reactive({
-    req(input$geneName)
-    inputclustergname()
-    hmap <- isolate(inputcluster())
-    hmap2 <- isolate(inputclusterGene())
+    #isolate({selected3()})
+    #req(genename())
+    #inputclustergname()
+    #isolate(inputcluster())
+    #isolate(inputclusterGene())
     mmap<-main_heatmap(inputcluster(), layout = list(paper_bgcolor='transparent'),
                        tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Organism: "))%>%
       #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
@@ -1089,10 +1114,9 @@ server <- function(input, output, session){
   })
 
   output$heatmapcluster<-renderIheatmap({
-    input$clusterPage
     reactiveHeatmap1()
   })
-
+  
   output$clusterui<-renderUI({
     div(
       style = "position: relative",
@@ -1219,10 +1243,10 @@ server <- function(input, output, session){
   })
 
   r_sctwoheatmap<-reactive({
-    req(input$geneName)
-    r_scgeneradio()
-    hmap <- isolate(r_scmainheatmap())
-    hmap2 <- isolate(r_scgeneheatmap())
+    #req(input$geneName)
+    #r_scgeneradio()
+    #hmap <- isolate(r_scmainheatmap())
+    #hmap2 <- isolate(r_scgeneheatmap())
     if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
       mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'),
                          tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
@@ -1269,7 +1293,7 @@ server <- function(input, output, session){
   })
 
   output$scheatmapcluster<-renderIheatmap({
-    input$scclusterPage
+    #input$scclusterPage
     r_sctwoheatmap()
   })
 
@@ -1830,6 +1854,24 @@ server <- function(input, output, session){
       )
     )
   })
+  
+  output$pubchart<-renderHighchart({
+    hchart(xc3, type = "line", hcaes(x = Publication, y = `Number of genes`, group = type)) %>%
+      hc_tooltip(shared = TRUE)
+  })
+  
+  gene_pub_list<-reactive({
+    xc4[xc4$Publication == input$pubpub,c(1,5,6)]
+  })
+  
+  output$pubselecttable<-renderReactable({
+    reactable(gene_pub_list(), resizable = TRUE, filterable = TRUE,
+              searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+              highlight = TRUE
+    )
+  })
+  
+  
   
   observeEvent(input$toggleSidebar, {
     shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")

@@ -1,0 +1,37 @@
+---
+title: | 
+  | 
+  | About CilioGenics
+output: 
+  html_document: 
+    theme: cerulean
+---
+
+```{css, echo=FALSE}
+body {
+    background-color: #eeeeee;
+}
+```
+|
+## A cilia database
+
+CilioGenics is an integrated and open source, community friendly database for ciliary genes. The key goal is to combine a variety of cilia-related data, including single-cell RNA-seq, comparative genomics, aggregation of gene list from cilia-related publications, protein atlas, proteomics, and cilia-specific motifs. Gene search is quick and user friendly, and it connects to a page devoted to the specific gene, which displays a variety of cilia-related information about that gene.
+
+CilioGenics also provides a number of resources to:
+
+-   explore the evolutionary dynamics ( the comparative genomics) of each gene in the interactive heatmap
+
+-   explore the expression patterns of each gene (whole organisms in C. elegans, and lung tissue in human)
+
+-   view proteomics relationship between ciliary proteins and other proteins
+
+-   search for the name of gene in each cilia related publications
+
+|
+|
+
+## Update Policy of CilioGenics
+
+Cilia are a complex organelle that possibly house hundreds of various proteins, and CilioGenics is a user-friendly database that aims to provide all existing knowledge about a gene. An automatic update is introduced into CilioGenics. For example, proteomics database BioGRID is automatically updated when a new update from BioGRID is released. However, since any effort to reveal the full constituents of cilia by one technique or a combination of two techniques is likely to fail to catch the entire ciliary genes and there will always new data about a gene, please help us to update the website if you have new data about a gene(s), as CilioGenics strives to incorporate new emerging data about each gene.
+
+## 
