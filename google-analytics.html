@@ -6,5 +6,35 @@
   gtag('js', new Date());
 
   gtag('config', 'UA-162255421-3');
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'geneName') {
+       gtag('event', 'updates', {
+            'event_category': 'input',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });     
+      
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'nvbr') {
+       gtag('event', 'updates', {
+            'event_category': 'input',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'exploredt') {
+       gtag('event', 'updates', {
+            'event_category': 'input',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
 </script>
 

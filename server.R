@@ -7,11 +7,12 @@ source("functions.R")
 # Server ----
 server <- function(input, output, session){
   js$getcookie()
-
+  
+  customnumber<-reactiveVal(0)
   # Show modal
   observeEvent(input$jscookie,{
     if (!is.null(input$jscookie) && input$jscookie != "" && input$jscookie == sessionid) {
-
+     
     }
     else {
       showModal(
@@ -35,6 +36,8 @@ server <- function(input, output, session){
     removeModal()
     guide$init()$start()
     js$setcookie(sessionid)
+    nn<-customnumber()+1
+    customnumber(nn)
   })
 
   # Remove modal
@@ -160,6 +163,19 @@ server <- function(input, output, session){
       show("nvbr")
       show("inpt")
       updateNavbarPage(inputId = "nvbr", selected = "General info")
+      if(customnumber() == 1){
+        showModal(
+          modalDialog(
+            "Continue the tour?",
+            easyClose = TRUE,
+            footer = tagList(
+              actionButton(inputId = "tour2", label = "Yes", icon = icon("info-circle")),
+              actionButton(inputId = "close2", label = "Close", icon = icon("close"))
+            )
+          )
+        )
+      }
+      
       #updateTabItems(session, "tabs", selected = character(0))
       }
     },
@@ -167,6 +183,15 @@ server <- function(input, output, session){
     ignoreNULL = TRUE
     )
   
+  observeEvent(input$tour2, {
+    removeModal()
+    guide2$init()$start()
+  })
+  
+  # Remove modal
+  observeEvent(input$close2,{
+    removeModal()
+  })
   
   
   # observeEvent(input$geneName2_search, {
@@ -175,13 +200,13 @@ server <- function(input, output, session){
   
   observeEvent(input$geneName2_search, {
     if (input$geneName2 == ""){
-      sendSweetAlert(
-        session = session,
-        title = "WARNING!",
-        text = "Please first write a gene name, gene id or Ensembl id",
-        type = "warning",
-        showCloseButton = TRUE
-      )
+      # sendSweetAlert(
+      #   session = session,
+      #   title = "WARNING!",
+      #   text = "Please first write a gene name, gene id or Ensembl id",
+      #   type = "warning",
+      #   showCloseButton = TRUE
+      # )
     }
     else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) > 1){
       showModal(

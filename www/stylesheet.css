@@ -89,13 +89,13 @@
 }
 
 .box.box-solid.box-success {
-    border-radius: 25px;
+    border-radius: 10px;
 }
 
 .box .box-header {
     padding: 15px;
-    border-radius: 25px;
-    margin-top: 10px;
+    border-radius: 10px;
+    margin-top: 5px;
     margin-bottom: 10px;
     margin-left: 5px;
     margin-right: 5px;
@@ -108,7 +108,7 @@
 .sidebar-menu>li>a {
     padding: 12px 34px 12px 21px;
     display: block;
-    border-radius: 0 15px 15px 0;
+    border-radius: 0 10px 10px 0;
 }
 
 .progress {

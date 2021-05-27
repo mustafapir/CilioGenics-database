@@ -52,17 +52,17 @@ guide <- Cicerone$
   )
 #       "You can click a gene to further explore in detail. The numbers on second table represent order of gene in that column."
 
-guide1 <- Cicerone$
+guide2 <- Cicerone$
   new()$
   step(
-    "homePage",
-    "Gene table",
-    "You can toggle between gene table and clusters"
+    "nvbr",
+    "Navigation bar",
+    "Here, you can toggle between different tabs"
   )$
   step(
-    "tab1",
-    "Tables",
-    "This is a list of all genes. You can find "
+    "general_info",
+    "Gene info",
+    "Here are all the info about the gene "
   )
 
 
