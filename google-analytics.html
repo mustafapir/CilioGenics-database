@@ -9,7 +9,7 @@
 
   $(document).on('shiny:inputchanged', function(event) {
      if (event.name === 'geneName') {
-       gtag('event', 'updates', {
+       gtag('event', 'gene search', {
             'event_category': 'input',
             'event_label': event.name,
             'value': event.value
@@ -19,8 +19,8 @@
       
   $(document).on('shiny:inputchanged', function(event) {
      if (event.name === 'nvbr') {
-       gtag('event', 'updates', {
-            'event_category': 'input',
+       gtag('event', 'navigation bar 1', {
+            'event_category': 'nav',
             'event_label': event.name,
             'value': event.value
        });
@@ -29,8 +29,8 @@
 
   $(document).on('shiny:inputchanged', function(event) {
      if (event.name === 'exploredt') {
-       gtag('event', 'updates', {
-            'event_category': 'input',
+       gtag('event', 'navigation bar 2', {
+            'event_category': 'nav',
             'event_label': event.name,
             'value': event.value
        });
