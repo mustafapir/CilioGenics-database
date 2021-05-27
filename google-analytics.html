@@ -15,8 +15,139 @@
             'value': event.value
        });
       }
-   });     
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'geneName2') {
+       gtag('event', 'gene search 2', {
+            'event_category': 'input',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   }); 
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'clusternumber') {
+       gtag('event', 'cluster number search', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   }); 
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'hmap3') {
+       gtag('event', 'Cluster plot download', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });    
       
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'scsource') {
+       gtag('event', 'Single cell paper selection', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'scgene') {
+       gtag('event', 'Single cell gene selection', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'sccelltypes') {
+       gtag('event', 'sc Cluster selection', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'pubpub') {
+       gtag('event', 'Publication selection', {
+            'event_category': 'explore',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'abouttab') {
+       gtag('event', 'About page', {
+            'event_category': 'pages',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'proradio') {
+       gtag('event', 'Protein int. source', {
+            'event_category': 'gene search',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'hmapradio') {
+       gtag('event', 'Phylogeny map change', {
+            'event_category': 'gene search',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'hmap1') {
+       gtag('event', 'Cluster plot download 2', {
+            'event_category': 'gene search',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'scclusterradio') {
+       gtag('event', 'sc Cluster map change', {
+            'event_category': 'gene search',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+  $(document).on('shiny:inputchanged', function(event) {
+     if (event.name === 'scdownloadbttn') {
+       gtag('event', 'sc plot download', {
+            'event_category': 'gene search',
+            'event_label': event.name,
+            'value': event.value
+       });
+      }
+   });
+
+
   $(document).on('shiny:inputchanged', function(event) {
      if (event.name === 'nvbr') {
        gtag('event', 'navigation bar 1', {
