@@ -153,6 +153,10 @@
     border-radius: 10px;
 }
 
+.box.box-solid {
+    border-radius: 10px;
+}
+
 
 /*.skin-blue-light .main-header .navbar {
     background-color: #6f7dc8;
