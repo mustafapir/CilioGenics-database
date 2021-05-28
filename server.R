@@ -8,6 +8,20 @@ source("functions.R")
 server <- function(input, output, session){
   js$getcookie()
   
+  # Dark theme
+  observeEvent(input$darkmode,{
+    if (input$darkmode == TRUE){
+      output$dark<-renderUI({
+        includeCSS("www/dark_mode.css")
+      })
+    }
+    else{
+      output$dark<-renderUI({
+        
+      })
+    }
+  })
+  
   customnumber<-reactiveVal(0)
   # Show modal
   observeEvent(input$jscookie,{
@@ -192,7 +206,6 @@ server <- function(input, output, session){
   observeEvent(input$close2,{
     removeModal()
   })
-  
   
   # observeEvent(input$geneName2_search, {
   #   session$sendCustomMessage("geneName", input$geneName2)
@@ -1354,13 +1367,14 @@ server <- function(input, output, session){
             )
           ),
           div(
+            id = "scdownloadbttnid",
             style = "position: absolute; left: 8em;bottom: 0.5em;",
-            dropdown(
-              downloadButton(outputId = "scdownloadbttn", label = "Download Plot"),
-              size = "xm",
-              icon = icon("download", class = "opt"),
-              up = TRUE
-            )
+            #dropdown(
+              downloadButton(outputId = "scdownloadbttn", label = "Download Plot")
+            #   size = "xm",
+            #   icon = icon("download", class = "opt"),
+            #   up = TRUE
+            # )
           ),
           #tableOutput("xxx"),
           withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),

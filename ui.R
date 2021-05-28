@@ -120,7 +120,20 @@ ui <- shinydashboardPlus::dashboardPage(
         menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
         menuItem("About us", tabName = "abouttab", icon = icon("address-card"))
         )
+      ),
+    div(
+      id = "darktoggle",
+      style = "width: 50px; padding: 12px 15px 0px 10px;",
+      prettyToggle(
+        inputId = "darkmode",
+        label_on = "", 
+        label_off = "",
+        outline = TRUE,
+        plain = TRUE,
+        icon_on = icon("sun"), 
+        icon_off = icon("moon")
       )
+    )
     ),
 
   ## Body ----
@@ -145,6 +158,7 @@ ui <- shinydashboardPlus::dashboardPage(
       tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "/favicon-16x16.png"),
       tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
       includeCSS("www/stylesheet.css"),
+      uiOutput("dark"),
       tags$script("
       Shiny.addCustomMessageHandler('geneName', function(value) {
       Shiny.setInputValue('geneName', value);
@@ -212,11 +226,11 @@ ui <- shinydashboardPlus::dashboardPage(
                 tags$script(src = "enter_button.js"),
                 align = "center",
                 br(), br(), br(), br(), br(), br(), br(),
-                HTML("<h1><center>WELCOME TO <b>CilioGenics</b> DATABASE</center></h1>"),
+                HTML("<h1><center><b>WELCOME TO CilioGenics DATABASE</b></center></h1>"),
                 br(), br(),
                 searchInput(
                   inputId = "geneName",
-                  label = HTML("<h3><center>Gene Search</center></h3>"),
+                  label = HTML("<h3><center><b>Gene Search</b></center></h3>"),
                   placeholder = "Search genes by gene name, gene id or Ensembl gene id",
                   btnSearch = icon("search"),
                   btnReset = icon("remove"),
@@ -361,7 +375,10 @@ ui <- shinydashboardPlus::dashboardPage(
           )
         )
         ),
-        
+        # tags$script(
+        #   HTML("var header = $('.navbar > .container-fluid');
+        #                       header.append('<div style=\"float:right; padding-top: 8px\"><button id=\"signin\" type=\"button\" class=\"btn btn-primary action-button\" onclick=\"signIn()\">Sign In</button></div>')")
+        # ),
         ### Cookie ----
         uiOutput("cookie_footer")
         )
@@ -405,8 +422,8 @@ ui <- shinydashboardPlus::dashboardPage(
                     offset = 1,
                     box(
                       title = "Phylogenetic analysis",
-                      #solidHeader = TRUE,
-                      #status = "success",
+                      solidHeader = TRUE,
+                      status = "success",
                       width = 12,
                       pickerInput(
                         inputId = "clusternumber",
@@ -446,8 +463,8 @@ ui <- shinydashboardPlus::dashboardPage(
                         width = 12,
                         box(
                           title = "Genes in cluster",
-                          #solidHeader = TRUE,
-                          #status = "success",
+                          solidHeader = TRUE,
+                          status = "success",
                           width = 12,
                           withSpinner(reactableOutput("hclusternumbertable"), type = 8)
                         )

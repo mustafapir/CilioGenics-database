@@ -1,0 +1,61 @@
+.skin-blue-light .sidebar-menu>li:hover>a, .skin-blue-light .sidebar-menu>li.active>a {
+    color: #FFF;
+    background: #426f75;
+}
+
+.skin-blue-light .wrapper, .skin-blue-light .main-sidebar, .skin-blue-light .left-side {
+    background-color: #090a0a85;
+}
+
+.skin-blue-light .sidebar a {
+    color: #bebad2;
+}
+
+.box.box-solid.box-success>.box-header {
+    color: #ffffff;
+    background: #44aaeeb8;
+    background-color: #666;
+}
+
+.content-wrapper, .right-side {
+    background-color: #c1b9b9;
+}
+
+.box {
+    position: relative;
+    border-radius: 3px;
+    background: #ffffff8c;
+    border-top: 3px solid #d2d6de;
+    margin-bottom: 20px;
+    width: 100%;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #d2d6de;
+}
+
+.skin-blue-light a, .skin-blue-light a:hover, .skin-blue-light a:focus {
+    color: #444;
+}
+
+b, strong {
+    font-weight: 700;
+    color: black;
+}
+
+td, th {
+    color: black;
+}
+
+.main-footer {
+    background: #e3dfdf;
+}
+
+.navbar, .navbar.navbar-default {
+    background-color: #666;
+    border-radius: 10px;
+}
