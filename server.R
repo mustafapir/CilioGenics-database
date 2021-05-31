@@ -1294,7 +1294,9 @@ server <- function(input, output, session){
           width = 6,
           align = "center",
           offset = 3,
-          h3("Select a single cell RNA-seq data to visualize cell groups and gene expressions"),
+          h3(paste0("Select a single cell RNA-seq data to visualize cell groups and expression profile of ",
+                    genename(),
+                    " gene")),
           br(),
           pickerInput(
             inputId = "scsource2",
@@ -1853,18 +1855,21 @@ server <- function(input, output, session){
             column(
               width = 6,
               fluidRow(
+                uiOutput("message"),
                 column(
                   width = 6,
                   uiOutput("scgeneinput")
                 ),
                 column(
                   width = 3,
+                  br(),
                   uiOutput("scgenebutton")
                 )
               ),
               fluidRow(
                 column(
                   width = 12,
+                  br(),
                   plotOutput("dotgene") %>% withSpinner(type = 8)
                 )
               )
@@ -1916,6 +1921,9 @@ server <- function(input, output, session){
   
   
   # Server #
+  output$message<-renderUI({
+    h4("Select a group of genes to visualize expressions in a dot plot")
+  })
   
   source.list<-reactive({
     sc.paper.list$data[sc.paper.list$paper == input$scsource]
@@ -1953,7 +1961,7 @@ server <- function(input, output, session){
   
   output$scgenebutton<-renderUI({
     req(input$scsource)
-    actionButton("scbttn","Draw",icon = "thumbs-up")
+    actionButton("scbttn","Draw",icon = icon("thumbs-up"))
   })
   
   # output$scgeneinput<-renderUI({
@@ -1989,7 +1997,7 @@ server <- function(input, output, session){
     req(input$scgene)
     req(input$scbttn)
     input$scbttn
-    DotPlot(eval(parse(text = source.list())), features = input$scgene)
+    DotPlot(eval(parse(text = source.list())), features = input$scgene) + RotatedAxis()
   })
   
   output$heatmapgene<-renderPlot({

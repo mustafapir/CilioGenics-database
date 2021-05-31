@@ -342,7 +342,7 @@ ui <- shinydashboardPlus::dashboardPage(
           #uiOutput("searchUI"),
         fluidRow(
           div(
-            br(), br(),
+            br(),
             id = "sc_cluster_page",
             uiOutput("scInputUI2"),
             uiOutput("scUI2")
@@ -479,7 +479,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   id = "tab3",
                   title = "Single cell clusters",
                   uiOutput("scInputUI"),
-                  uiOutput("scUI") %>% withSpinner(),
+                  uiOutput("scUI"),
                   #uiOutput("scUI2")
                   # fluidRow(
                   #   column(
