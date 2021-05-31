@@ -28,6 +28,7 @@ library(Seurat)
 #library(dqshiny)
 library(highcharter)
 library(bsplus)
+library(plotly)
 
 
 # Sourcing global data and functions ----
@@ -119,8 +120,8 @@ ui <- shinydashboardPlus::dashboardPage(
         menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
         menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
         menuItem("About us", tabName = "abouttab", icon = icon("address-card"))
-        )
       )
+    )
     # div(
     #   id = "darktoggle",
     #   style = "width: 50px; padding: 12px 15px 0px 10px;",
@@ -343,8 +344,10 @@ ui <- shinydashboardPlus::dashboardPage(
           div(
             br(), br(),
             id = "sc_cluster_page",
-            uiOutput("scclusterui"),
-            uiOutput("scclustertableui")
+            uiOutput("scInputUI2"),
+            uiOutput("scUI2")
+            # uiOutput("scclusterui"),
+            # uiOutput("scclustertableui")
           )
         )
         ),
@@ -475,6 +478,9 @@ ui <- shinydashboardPlus::dashboardPage(
                 tabPanel(
                   id = "tab3",
                   title = "Single cell clusters",
+                  uiOutput("scInputUI"),
+                  uiOutput("scUI") %>% withSpinner(),
+                  #uiOutput("scUI2")
                   # fluidRow(
                   #   column(
                   #     width = 3,
@@ -502,54 +508,54 @@ ui <- shinydashboardPlus::dashboardPage(
                   #   ),
                   #   uiOutput("tippy3")
                   # ),
-                  fluidRow(
-                    column(
-                      width = 4,
-                      box(
-                        #title = "Gene list",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                        pickerInput(
-                          inputId = "scsource",
-                          label = "Select source of scRNA-seq data",
-                          choices = list(
-                            "Carraro et al(2021) - Lung",
-                            "Reyfman et al(2018) - Lung"
-                          ),
-                          selected = NULL,
-                          multiple = TRUE,
-                          options = pickerOptions(maxOptions = 1)
-                        ),
-                        plotOutput("scumapgeneral") %>% withSpinner(type = 8),
-                        bsTooltip("scsource", "Select a source to visualize the cells", placement = "top")
-                      )
-                    ),
-                    column(
-                      width = 4,
-                      box(
-                        #title = "Gene list",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                        uiOutput("scgeneinput") %>% withSpinner(type = 8),
-                        plotOutput("scmapgene") %>% withSpinner(type = 8),
-                        bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
-                      )
-                    ),
-                    column(
-                      width = 4,
-                      box(
-                        #title = "Gene list",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                        uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
-                        reactableOutput("scmaptable"),
-                        bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
-                      )
-                    )
-                  )
+                  # fluidRow(
+                  #   column(
+                  #     width = 4,
+                  #     box(
+                  #       #title = "Gene list",
+                  #       solidHeader = TRUE,
+                  #       status = "success",
+                  #       width = 12,
+                  #       pickerInput(
+                  #         inputId = "scsource",
+                  #         label = "Select source of scRNA-seq data",
+                  #         choices = list(
+                  #           "Carraro et al(2021) - Lung",
+                  #           "Reyfman et al(2018) - Lung"
+                  #         ),
+                  #         selected = NULL,
+                  #         multiple = TRUE,
+                  #         options = pickerOptions(maxOptions = 1)
+                  #       ),
+                  #       plotOutput("scumapgeneral") %>% withSpinner(type = 8),
+                  #       bsTooltip("scsource", "Select a source to visualize the cells", placement = "top")
+                  #     )
+                  #   ),
+                  #   column(
+                  #     width = 4,
+                  #     box(
+                  #       #title = "Gene list",
+                  #       solidHeader = TRUE,
+                  #       status = "success",
+                  #       width = 12,
+                  #       uiOutput("scgeneinput") %>% withSpinner(type = 8),
+                  #       plotOutput("scmapgene") %>% withSpinner(type = 8),
+                  #       bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
+                  #     )
+                  #   ),
+                  #   column(
+                  #     width = 4,
+                  #     box(
+                  #       #title = "Gene list",
+                  #       solidHeader = TRUE,
+                  #       status = "success",
+                  #       width = 12,
+                  #       uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
+                  #       reactableOutput("scmaptable"),
+                  #       bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
+                  #     )
+                  #   )
+                  # )
                 ),
                 tabPanel(
                   id = "tab4",

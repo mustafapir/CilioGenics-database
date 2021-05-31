@@ -1267,198 +1267,293 @@ server <- function(input, output, session){
   )
 
   ### Single cell page ----
-  r_scmainheatmap<-reactive({
-    a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
-    rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
-    a
+  
+  source.list2<-reactive({
+    sc.paper.list$data[sc.paper.list$paper == input$scsource2]
   })
-
-  r_scgeneheatmap<-reactive({
-    a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(genename())),2:28])
-    a<-rbind(a,a)
-    rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(genename()))],"")
-    a
+  
+  output$scumapgeneral2<-renderPlot({
+    req(input$scsource2)
+    DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
   })
-
-  r_sctwoheatmap<-reactive({
-    #req(input$geneName)
-    #r_scgeneradio()
-    #hmap <- isolate(r_scmainheatmap())
-    #hmap2 <- isolate(r_scgeneheatmap())
-    if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
-      mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'),
-                         tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-        #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
-        add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90,
-                       tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-        add_col_annotation(annotation = anot_sc, colors = "Paired", side="top", size = 0.1) %>%
-        modify_layout(list(margin = list(l = 80)))
-
-      mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'),
-                          tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-        add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-        add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
-                       tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
-        add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
-    }
-
-    if(input$scclusterradio == "clusterradbut1"){
-      mmap
-    }
-    else {
-      mmap2
-    }
+  
+  output$scmapgene<-renderPlotly({
+    plot<-FeaturePlot(object = eval(parse(text = source.list2())), features = genename())
+    HoverLocator(plot = plot, information = FetchData(eval(parse(text = source.list2())), vars = c("ident","nFeature_RNA","nCount_RNA")))
   })
-
-  r_scclusternumber<-reactive({
-    celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]
+  
+  output$vlngene<-renderPlot({
+    VlnPlot(eval(parse(text = source.list2())), features = genename())
   })
-
-  r_scgeneradio<-reactive({
-    input$scclusterradio
-  })
-
-  observeEvent(input$scclusterradio, {
-    session$sendCustomMessage("close_drop1", "")
-  })
-
-  observeEvent(input$scdownloadbttn, {
-    session$sendCustomMessage("close_drop1", "")
-  })
-
-  observeEvent(input$scclusterheatmap, {
-    session$sendCustomMessage("close_drop2", "")
-  })
-
-  output$scheatmapcluster<-renderIheatmap({
-    #input$scclusterPage
-    r_sctwoheatmap()
-  })
-
-  output$scclusterui<-renderUI({
-    div(
-      style = "position: relative",
-      column(
-        align = "center",
-        id = "scclusterheatmap",
-        width = 10,
-        offset = 1,
-        box(
-          width = 12,
-          solidHeader = TRUE,
-          status = "success",
-          title = paste("Cluster", r_scclusternumber()),
-          height = "750px",
-          div(
-            style = "position: absolute; left: 2em; bottom: 0.5em;",
-            dropdown(
-              radioGroupButtons(
-                inputId = "scclusterradio",
-                label = "Genes to display:",
-                choiceNames = c("Cluster", genename()),
-                choiceValues = c("clusterradbut1", "generadbut1"),
-                direction = "vertical",
-                selected = "clusterradbut1"
-              ),
-              size = "xm",
-              icon = icon("gear", class = "opt"),
-              up = TRUE,
-              inputId = "ddownid1"
-            )
-          ),
-          div(
-            id = "scdownloadbttnid",
-            style = "position: absolute; left: 8em;bottom: 0.5em;",
-            #dropdown(
-              downloadButton(outputId = "scdownloadbttn", label = "Download Plot")
-            #   size = "xm",
-            #   icon = icon("download", class = "opt"),
-            #   up = TRUE
-            # )
-          ),
-          #tableOutput("xxx"),
-          withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),
-          br(),br(),br()
+  
+  output$scInputUI2<-renderUI({
+    fluidRow(
+      div(
+        id = "scselectUI2",
+        column(
+          width = 6,
+          align = "center",
+          offset = 3,
+          h3("Select a single cell RNA-seq data to visualize cell groups and gene expressions"),
+          br(),
+          pickerInput(
+            inputId = "scsource2",
+            label = "Select source of scRNA-seq data",
+            choices = list(
+              "Carraro et al(2021) - Lung",
+              "Reyfman et al(2018) - Lung"
+            ),
+            selected = NULL,
+            multiple = TRUE,
+            options = pickerOptions(maxOptions = 1)
+          )
         )
       )
     )
   })
-
-  reactiveDownload2<-reactive({
-    if (r_scgeneradio() == "clusterradbut1"){
-      filename = paste0("cluster_", r_scclusternumber(), "_heatmap.png")
+  
+  output$scUI2<-renderUI({
+    if (is.null(input$scsource2)){
+      
     }
-    else {filename = paste0(genename(), "_heatmap.png")}
-    filename
-  })
-
-  output$scdownloadbttn<-downloadHandler(
-    filename = function() {
-      reactiveDownload2()
-    },
-    content = function(file) {
-      withProgress(
-        message = "Downloading heatmap",
-        value = 0,
-        {
-          shiny::incProgress(2/10)
-          Sys.sleep(1)
-          shiny::incProgress(5/10)
-          save_iheatmap(r_sctwoheatmap(), file, vwidth=1200,vheight=700)
-          shiny::incProgress(3/10)
-        }
+    else {
+      div(
+        id = "scUIdiv2",
+        fluidRow(
+          box(
+            width = 12,
+            column(
+              width = 6,
+              plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8),
+              #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+            ),
+            column(
+              width = 6,
+              plotlyOutput("scmapgene", height = "600px") %>% withSpinner(type = 8),
+              #bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
+            )
+          )
+        ),
+        fluidRow(
+          box(
+            width = 12,
+            column(
+              width = 12,
+              plotOutput("vlngene") %>% withSpinner(type = 8)
+            )
+          )
+        )
+        # fluidRow(
+        #   column(
+        #     width = 8,
+        #     align = "center",
+        #     offset = 2,
+        #     br(),br(),
+        #     h4("Select a cluster to explore differentially expressed genes"),
+        #     box(
+        #       width = 12,
+        #       uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
+        #       reactableOutput("scmaptable"),
+        #       bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
+        #     )
+        #   )
+        # )
       )
-    },
-    contentType = "image/png"
-  )
-
-  # Table
-  r_scclustertable<-reactive({
-
-    df<-data.frame(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),29], stringsAsFactors = FALSE)
-    colnames(df)<-"Gene_name"
-    df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
-    df$`Gold standard` <- "NO"
-    df$`Gold standard`[which(df[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
-    df$CilioGenics <- "NO"
-    df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
-    df
+    }
   })
-
-
-  output$scclustertable<-renderReactable({
-    reactable(r_scclustertable(), resizable = TRUE, filterable = TRUE,
-              searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
-              highlight = TRUE,
-              columns = list(
-                Score = colDef(name = "Score",
-                               format = colFormat(digits = 3),
-                               align = "left",
-                               header = with_tooltip2("Score", "Single cell scores")),
-                Gene_name = colDef(name = "Gene name",
-                                   header = with_tooltip2("Gene name", "HGNC gene name")),
-                `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?")),
-                CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
-              ),
-              rowStyle = list(cursor = "pointer"),
-              selection = "single",
-              onClick = "select")
-  })
-
-  output$scclustertableui<-renderUI({
-    column(
-      width = 10,
-      offset = 1,
-      align = "center",
-      box(
-        title = paste("Genes in cluster", r_scclusternumber()),
-        solidHeader = TRUE,
-        status = "success",
-        width = 12,
-        withSpinner(reactableOutput("scclustertable"), type = 8, color = "#10c891")
-      )
-    )
-  })
+  
+  # r_scmainheatmap<-reactive({
+  #   a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
+  #   rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))])]
+  #   a
+  # })
+  # 
+  # r_scgeneheatmap<-reactive({
+  #   a<-as.matrix(celegans_sc[which(celegans_sc$Human_gene_name == toupper(genename())),2:28])
+  #   a<-rbind(a,a)
+  #   rownames(a)<-c(celegans_sc$Human_gene_name[which(celegans_sc$Human_gene_name == toupper(genename()))],"")
+  #   a
+  # })
+  # 
+  # r_sctwoheatmap<-reactive({
+  #   #req(input$geneName)
+  #   #r_scgeneradio()
+  #   #hmap <- isolate(r_scmainheatmap())
+  #   #hmap2 <- isolate(r_scgeneheatmap())
+  #   if(toupper(genename()) %in% toupper(celegans_sc$Human_gene_name)){
+  #     mmap<-main_heatmap(r_scmainheatmap(), layout = list(paper_bgcolor='transparent'),
+  #                        tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+  #       #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 9))%>%
+  #       add_col_labels(size = 0.46, font = list(family = c("open_sansregular"), size = 12), textangle=90,
+  #                      tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+  #       add_col_annotation(annotation = anot_sc, colors = "Paired", side="top", size = 0.1) %>%
+  #       modify_layout(list(margin = list(l = 80)))
+  # 
+  #     mmap2<-main_heatmap(r_scgeneheatmap(), layout = list(paper_bgcolor='transparent'),
+  #                         tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+  #       add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+  #       add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
+  #                      tickvals = c(1:length(colnames(r_scmainheatmap()))))%>%
+  #       add_col_annotation(annotation=anot_sc, colors = "Paired", side="top", size = 0.1)
+  #   }
+  # 
+  #   if(input$scclusterradio == "clusterradbut1"){
+  #     mmap
+  #   }
+  #   else {
+  #     mmap2
+  #   }
+  # })
+  # 
+  # r_scclusternumber<-reactive({
+  #   celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]
+  # })
+  # 
+  # r_scgeneradio<-reactive({
+  #   input$scclusterradio
+  # })
+  # 
+  # observeEvent(input$scclusterradio, {
+  #   session$sendCustomMessage("close_drop1", "")
+  # })
+  # 
+  # observeEvent(input$scdownloadbttn, {
+  #   session$sendCustomMessage("close_drop1", "")
+  # })
+  # 
+  # observeEvent(input$scclusterheatmap, {
+  #   session$sendCustomMessage("close_drop2", "")
+  # })
+  # 
+  # output$scheatmapcluster<-renderIheatmap({
+  #   #input$scclusterPage
+  #   r_sctwoheatmap()
+  # })
+  # 
+  # output$scclusterui<-renderUI({
+  #   div(
+  #     style = "position: relative",
+  #     column(
+  #       align = "center",
+  #       id = "scclusterheatmap",
+  #       width = 10,
+  #       offset = 1,
+  #       box(
+  #         width = 12,
+  #         solidHeader = TRUE,
+  #         status = "success",
+  #         title = paste("Cluster", r_scclusternumber()),
+  #         height = "750px",
+  #         div(
+  #           style = "position: absolute; left: 2em; bottom: 0.5em;",
+  #           dropdown(
+  #             radioGroupButtons(
+  #               inputId = "scclusterradio",
+  #               label = "Genes to display:",
+  #               choiceNames = c("Cluster", genename()),
+  #               choiceValues = c("clusterradbut1", "generadbut1"),
+  #               direction = "vertical",
+  #               selected = "clusterradbut1"
+  #             ),
+  #             size = "xm",
+  #             icon = icon("gear", class = "opt"),
+  #             up = TRUE,
+  #             inputId = "ddownid1"
+  #           )
+  #         ),
+  #         div(
+  #           id = "scdownloadbttnid",
+  #           style = "position: absolute; left: 8em;bottom: 0.5em;",
+  #           #dropdown(
+  #             downloadButton(outputId = "scdownloadbttn", label = "Download Plot")
+  #           #   size = "xm",
+  #           #   icon = icon("download", class = "opt"),
+  #           #   up = TRUE
+  #           # )
+  #         ),
+  #         #tableOutput("xxx"),
+  #         withSpinner(iheatmaprOutput("scheatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),
+  #         br(),br(),br()
+  #       )
+  #     )
+  #   )
+  # })
+  # 
+  # reactiveDownload2<-reactive({
+  #   if (r_scgeneradio() == "clusterradbut1"){
+  #     filename = paste0("cluster_", r_scclusternumber(), "_heatmap.png")
+  #   }
+  #   else {filename = paste0(genename(), "_heatmap.png")}
+  #   filename
+  # })
+  # 
+  # output$scdownloadbttn<-downloadHandler(
+  #   filename = function() {
+  #     reactiveDownload2()
+  #   },
+  #   content = function(file) {
+  #     withProgress(
+  #       message = "Downloading heatmap",
+  #       value = 0,
+  #       {
+  #         shiny::incProgress(2/10)
+  #         Sys.sleep(1)
+  #         shiny::incProgress(5/10)
+  #         save_iheatmap(r_sctwoheatmap(), file, vwidth=1200,vheight=700)
+  #         shiny::incProgress(3/10)
+  #       }
+  #     )
+  #   },
+  #   contentType = "image/png"
+  # )
+  # 
+  # # Table
+  # r_scclustertable<-reactive({
+  # 
+  #   df<-data.frame(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),29], stringsAsFactors = FALSE)
+  #   colnames(df)<-"Gene_name"
+  #   df$Score<-final_score_table$Weighted_total_scores[match(df[[1]], final_score_table$Gene_name)]
+  #   df$`Gold standard` <- "NO"
+  #   df$`Gold standard`[which(df[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+  #   df$CilioGenics <- "NO"
+  #   df$CilioGenics[which(df[[1]] %in% ciliogenics[[1]])]<-"YES"
+  #   df
+  # })
+  # 
+  # 
+  # output$scclustertable<-renderReactable({
+  #   reactable(r_scclustertable(), resizable = TRUE, filterable = TRUE,
+  #             searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+  #             highlight = TRUE,
+  #             columns = list(
+  #               Score = colDef(name = "Score",
+  #                              format = colFormat(digits = 3),
+  #                              align = "left",
+  #                              header = with_tooltip2("Score", "Single cell scores")),
+  #               Gene_name = colDef(name = "Gene name",
+  #                                  header = with_tooltip2("Gene name", "HGNC gene name")),
+  #               `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?")),
+  #               CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
+  #             ),
+  #             rowStyle = list(cursor = "pointer"),
+  #             selection = "single",
+  #             onClick = "select")
+  # })
+  # 
+  # output$scclustertableui<-renderUI({
+  #   column(
+  #     width = 10,
+  #     offset = 1,
+  #     align = "center",
+  #     box(
+  #       title = paste("Genes in cluster", r_scclusternumber()),
+  #       solidHeader = TRUE,
+  #       status = "success",
+  #       width = 12,
+  #       withSpinner(reactableOutput("scclustertable"), type = 8, color = "#10c891")
+  #     )
+  #   )
+  # })
 
   # Explore gene tab ----
   
@@ -1705,6 +1800,118 @@ server <- function(input, output, session){
   
   #### Single cell maps ----
   
+  # UI #
+  output$scInputUI<-renderUI({
+    fluidRow(
+      div(
+        id = "scselectUI",
+        column(
+          width = 6,
+          align = "center",
+          offset = 3,
+          h3("Select a single cell RNA-seq data to visualize cell groups and gene expressions"),
+          br(),
+          pickerInput(
+            inputId = "scsource",
+            label = "Select source of scRNA-seq data",
+            choices = list(
+              "Carraro et al(2021) - Lung",
+              "Reyfman et al(2018) - Lung"
+            ),
+            selected = NULL,
+            multiple = TRUE,
+            options = pickerOptions(maxOptions = 1)
+          )
+        )
+      )
+    )
+  })
+  
+  output$scUI<-renderUI({
+    if (is.null(input$scsource)){
+      
+    }
+    else {
+      div(
+        id = "scUIdiv",
+        # fluidRow(
+        #   column(
+        #     width = 6,
+        #     offset = 6,
+        #     uiOutput("scgeneinput"),
+        #     uiOutput("scgenebutton")
+        #   )
+        # ),
+        fluidRow(
+          box(
+            width = 12,
+            column(
+              width = 6,
+              plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
+              bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+            ),
+            column(
+              width = 6,
+              fluidRow(
+                column(
+                  width = 9,
+                  uiOutput("scgeneinput")
+                ),
+                column(
+                  width = 3,
+                  uiOutput("scgenebutton")
+                )
+              ),
+              plotOutput("dotgene") %>% withSpinner(type = 8),
+            )
+            # column(
+            #   width = 6,
+            #   plotOutput("heatmapgene") %>% withSpinner(type = 8),
+            # )
+          )
+        ),
+        fluidRow(
+          column(
+            width = 8,
+            align = "center",
+            offset = 2,
+            br(),br(),
+            h4("Select a cluster to explore differentially expressed genes"),
+            box(
+              width = 12,
+              uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
+              reactableOutput("scmaptable"),
+              bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
+            )
+          )
+        )
+      )
+    }
+  })
+  
+  # output$scUI2<-renderUI({
+  #   fluidRow(
+  #     column(
+  #       width = 9,
+  #       uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
+  #       reactableOutput("scmaptable"),
+  #       bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
+  #     )
+  #   )
+  # })
+  
+  # observeEvent(input$scsource,{
+  #   if (is.null(input$scsource)){
+  #     hide("scUIdiv")
+  #   }
+  #   else {
+  #     show("scUIdiv")
+  #   }
+  # })
+  
+  
+  # Server #
+  
   source.list<-reactive({
     sc.paper.list$data[sc.paper.list$paper == input$scsource]
   })
@@ -1714,17 +1921,35 @@ server <- function(input, output, session){
     DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
   })
   
+  # output$scgeneinput<-renderUI({
+  #   req(input$scsource)
+  #   pickerInput(
+  #     inputId = "scgene",
+  #     label = "Select a gene",
+  #     choices = rownames(eval(parse(text = source.list()))),
+  #     selected = NULL,
+  #     multiple = TRUE,
+  #     options = pickerOptions(maxOptions = 1,
+  #                             liveSearch = TRUE)
+  #   )
+  # })
+  
   output$scgeneinput<-renderUI({
     req(input$scsource)
     pickerInput(
       inputId = "scgene",
-      label = "Select a gene",
+      label = "Select multiple genes",
       choices = rownames(eval(parse(text = source.list()))),
       selected = NULL,
       multiple = TRUE,
-      options = pickerOptions(maxOptions = 1,
-                              liveSearch = TRUE)
+      options = pickerOptions(liveSearch = TRUE),
+      width = "50%"
     )
+  })
+  
+  output$scgenebutton<-renderUI({
+    req(input$scsource)
+    actionButton("scbttn","Draw")
   })
   
   # output$scgeneinput<-renderUI({
@@ -1749,9 +1974,24 @@ server <- function(input, output, session){
   
   #updateSelectizeInput(session, "scgene", choices = rownames(lung), server = TRUE)
   
-  output$scmapgene<-renderPlot({
+  # output$scmapgene<-renderPlot({
+  #   req(input$scgene)
+  #   plot<-FeaturePlot(object = eval(parse(text = source.list())), features = input$scgene)
+  #   HoverLocator(plot = plot, information = FetchData(reyfmans.reduced, vars = c("ident","nFeature_RNA","nCount_RNA")))
+  # })
+  
+  output$dotgene<-renderPlot({
     req(input$scgene)
-    FeaturePlot(object = eval(parse(text = source.list())), features = input$scgene)
+    req(input$scbttn)
+    input$scbttn
+    DotPlot(eval(parse(text = source.list())), features = input$scgene)
+  })
+  
+  output$heatmapgene<-renderPlot({
+    req(input$scgene)
+    #req(input$scbttn)
+    input$scbttn
+    DoHeatmap(subset(eval(parse(text = source.list())), downsample = 100), features = input$scgene, size = 3)
   })
   
   output$sccelltypeinput<-renderUI({
@@ -1762,7 +2002,8 @@ server <- function(input, output, session){
       choices = c(levels(eval(parse(text = source.list())))),
       selected = NULL,
       multiple = TRUE,
-      options = pickerOptions(maxOptions = 1)
+      options = pickerOptions(maxOptions = 1),
+      width = "40%"
     )
     
   })
@@ -1789,7 +2030,7 @@ server <- function(input, output, session){
     req(input$sccelltypes)
     reactable(
       diff_list(), resizable = TRUE, filterable = TRUE,
-      searchable = TRUE, defaultPageSize = 5, showPageSizeOptions = TRUE,
+      searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
       highlight = TRUE
     )
   })
