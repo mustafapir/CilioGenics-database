@@ -120,20 +120,20 @@ ui <- shinydashboardPlus::dashboardPage(
         menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
         menuItem("About us", tabName = "abouttab", icon = icon("address-card"))
         )
-      ),
-    div(
-      id = "darktoggle",
-      style = "width: 50px; padding: 12px 15px 0px 10px;",
-      prettyToggle(
-        inputId = "darkmode",
-        label_on = "", 
-        label_off = "",
-        outline = TRUE,
-        plain = TRUE,
-        icon_on = icon("sun"), 
-        icon_off = icon("moon")
       )
-    )
+    # div(
+    #   id = "darktoggle",
+    #   style = "width: 50px; padding: 12px 15px 0px 10px;",
+    #   prettyToggle(
+    #     inputId = "darkmode",
+    #     label_on = "", 
+    #     label_off = "",
+    #     outline = TRUE,
+    #     plain = TRUE,
+    #     icon_on = icon("sun"), 
+    #     icon_off = icon("moon")
+    #   )
+    # )
     ),
 
   ## Body ----
@@ -158,7 +158,7 @@ ui <- shinydashboardPlus::dashboardPage(
       tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "/favicon-16x16.png"),
       tags$link(rel = "stylesheet", type = "text/css", href = "styles2.css"),
       includeCSS("www/stylesheet.css"),
-      uiOutput("dark"),
+      #uiOutput("dark"),
       tags$script("
       Shiny.addCustomMessageHandler('geneName', function(value) {
       Shiny.setInputValue('geneName', value);
@@ -515,7 +515,7 @@ ui <- shinydashboardPlus::dashboardPage(
                           label = "Select source of scRNA-seq data",
                           choices = list(
                             "Carraro et al(2021) - Lung",
-                            "Reyfman et al(2018)"
+                            "Reyfman et al(2018) - Lung"
                           ),
                           selected = NULL,
                           multiple = TRUE,
@@ -549,37 +549,8 @@ ui <- shinydashboardPlus::dashboardPage(
                         bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
                       )
                     )
-                  ),
-                  fluidRow(
-                    column(
-                      width = 3,
-                      pickerInput(
-                        inputId = "clusternumber2",
-                        label = "Select cluster number to explore",
-                        choices = list(
-                          "Ciliary cells specific clusters" = 5,
-                          "Neurons specific cluster" = 7,
-                          "Low specificity" = c(1:4,6,8:20)
-                          ),
-                        selected = 5
-                        )
-                      ),
-                    column(
-                      width = 3,
-                      uiOutput("pickeroutput")
-                      )
-                    ),
-                  fluidRow(
-                    column(
-                      width = 12,
-                      withSpinner(iheatmaprOutput("scheatmapclusternumber", height = "600px"), type = 8, color = "#10c891")
-                      ),
-                    column(
-                      width = 12,
-                      withSpinner(reactableOutput("schclusternumbertable"), type = 8, color = "#10c891"),
-                      )
-                    )
-                  ),
+                  )
+                ),
                 tabPanel(
                   id = "tab4",
                   title = "Publications",

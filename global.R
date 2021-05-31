@@ -11,11 +11,16 @@ source("functions.R")
 #rmdfiles <- rmarkdown::render("about.Rmd")
 #sapply(rmdfiles, knitr::knit, quiet = T)
 
-lung<-readRDS("./data/lung_orig.RDS")
+lung<-readRDS("./data/lung_reduced.RDS")
 #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
 lung_idents<-Idents(object = lung)
 cell_types_lung<-levels(lung_idents)
-markers<-readRDS("./data/markers.RDS")
+lung_markers<-readRDS("./data/markers.RDS")
+
+reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
+reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al(2018) - Lung"),
+                          data = c("lung","reyfman"))
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")

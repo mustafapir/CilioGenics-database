@@ -1619,115 +1619,112 @@ server <- function(input, output, session){
   )
 
   ### Single cell ----
-  r_scclusternumber2<-reactive({
-    a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
-    rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
-    a
-  })
+  # r_scclusternumber2<-reactive({
+  #   a<-as.matrix(celegans_sc[which(celegans_sc$tree == input$clusternumber2),2:28])
+  #   rownames(a)<-celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)]
+  #   a
+  # })
+  # 
+  # r_scgenenumber<-reactive({
+  #   b<-celegans_sc[which(celegans_sc$tree == input$clusternumber2),]
+  #   a<-as.matrix(b[which(b$Human_gene_name == toupper(input$clusternumber3)),2:28])
+  #   a<-rbind(a,a)
+  #   rownames(a)<-c(b$Human_gene_name[which(b$Human_gene_name == toupper(input$clusternumber3))],"")
+  #   a
+  # })
+  # 
+  # r_scclusternumbertable<-reactive({
+  #   a<-data.frame(celegans_sc[which(celegans_sc$tree == input$clusternumber2),29])
+  #   colnames(a)<-"Gene_name"
+  #   a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
+  #   a$`Gold standard` <- "NO"
+  #   a$`Gold standard`[which(a[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
+  #   a$CilioGenics <- "NO"
+  #   a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
+  #   a
+  # })
 
-  r_scgenenumber<-reactive({
-    b<-celegans_sc[which(celegans_sc$tree == input$clusternumber2),]
-    a<-as.matrix(b[which(b$Human_gene_name == toupper(input$clusternumber3)),2:28])
-    a<-rbind(a,a)
-    rownames(a)<-c(b$Human_gene_name[which(b$Human_gene_name == toupper(input$clusternumber3))],"")
-    a
-  })
+  # output$schclusternumbertable<-renderReactable({
+  #   reactable(r_scclusternumbertable(), resizable = TRUE, filterable = TRUE,
+  #             columns = list(Score = colDef(format = colFormat(digits = 3)),
+  #                            Gene_name = colDef(name = "Gene name")),
+  #             defaultPageSize = 10, showPageSizeOptions = TRUE,
+  #             highlight = TRUE)
+  # })
 
-  r_scclusternumbertable<-reactive({
-    a<-data.frame(celegans_sc[which(celegans_sc$tree == input$clusternumber2),29])
-    colnames(a)<-"Gene_name"
-    a$Score<-final_score_table$Weighted_total_scores[match(a[[1]], final_score_table$Gene_name)]
-    a$`Gold standard` <- "NO"
-    a$`Gold standard`[which(a[[1]] %in% ciliaryGenes1$Gene.Name)]<-"YES"
-    a$CilioGenics <- "NO"
-    a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
-    a
-  })
+  # scheatmapclusternumberR<-reactive({
+  #   main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
+  #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+  #     #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
+  #     add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90,
+  #                    tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
+  #     add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+  #     modify_layout(list(margin = list(l = 80)))
+  # })
 
-  output$schclusternumbertable<-renderReactable({
-    reactable(r_scclusternumbertable(), resizable = TRUE, filterable = TRUE,
-              columns = list(Score = colDef(format = colFormat(digits = 3)),
-                             Gene_name = colDef(name = "Gene name")),
-              defaultPageSize = 10, showPageSizeOptions = TRUE,
-              highlight = TRUE,
-              rowStyle = list(cursor = "pointer"),
-              selection = "single",
-              onClick = "select")
-  })
+  # scheatmapgenenumberR<-reactive({
+  #   main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'),
+  #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+  #     #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
+  #     add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
+  #                    tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
+  #     add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
+  #     modify_layout(list(margin = list(l = 80)))
+  # })
 
-  scheatmapclusternumberR<-reactive({
-    main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
-                 tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-      #add_row_labels(size = 0.03,font = list(family = c("open_sansregular"), size = 7))%>%
-      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90,
-                     tickvals = c(1:length(colnames(r_scclusternumber2()))))%>%
-      add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
-      modify_layout(list(margin = list(l = 80)))
-  })
-
-  scheatmapgenenumberR<-reactive({
-    main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'),
-                 tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-      #add_row_labels(size = 0.03, font = list(family = c("open_sansregular"), size = 12))%>%
-      add_col_labels(size = 1, font = list(family = c("open_sansregular"), size = 12), textangle=90,
-                     tickvals = c(1:length(colnames(r_scgenenumber()))))%>%
-      add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
-      modify_layout(list(margin = list(l = 80)))
-  })
-
-  output$scheatmapclusternumber<-renderIheatmap({
-    if (input$clusternumber3 == "All"){
-      scheatmapclusternumberR()
-    }
-    else if(input$clusternumber3 == ""){
-      scheatmapclusternumberR()
-    }
-    else {
-      scheatmapgenenumberR()
-    }
-  })
+  # output$scheatmapclusternumber<-renderIheatmap({
+  #   if (input$clusternumber3 == "All"){
+  #     scheatmapclusternumberR()
+  #   }
+  #   else if(input$clusternumber3 == ""){
+  #     scheatmapclusternumberR()
+  #   }
+  #   else {
+  #     scheatmapgenenumberR()
+  #   }
+  # })
   
   
-  genelistforpicker<-reactive({
-    a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
-    a<-sort(a)
-    a
-  })
+  # genelistforpicker<-reactive({
+  #   a<-c(celegans_sc$Human_gene_name[which(celegans_sc$tree == input$clusternumber2)])
+  #   a<-sort(a)
+  #   a
+  # })
 
-  output$pickeroutput<-renderUI({
-    pickerInput(
-      inputId = "clusternumber3",
-      label = "Select a gene to explore",
-      choices = list(
-        "Gene name" = c("All", genelistforpicker())
-      ),
-      selected = "All",
-      options=pickerOptions(liveSearch=T)
-    )
-  })
+  # output$pickeroutput<-renderUI({
+  #   pickerInput(
+  #     inputId = "clusternumber3",
+  #     label = "Select a gene to explore",
+  #     choices = list(
+  #       "Gene name" = c("All", genelistforpicker())
+  #     ),
+  #     selected = "All",
+  #     options=pickerOptions(liveSearch=T)
+  #   )
+  # })
   
   #### Single cell maps ----
   
+  source.list<-reactive({
+    sc.paper.list$data[sc.paper.list$paper == input$scsource]
+  })
+  
   output$scumapgeneral<-renderPlot({
     req(input$scsource)
-    if (input$scsource == "Carraro et al(2021) - Lung"){
-      DimPlot(object = lung, reduction = "umap", label = TRUE)
-    }
+    DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
   })
   
   output$scgeneinput<-renderUI({
     req(input$scsource)
-    if (input$scsource == "Carraro et al(2021) - Lung"){
-      pickerInput(
-        inputId = "scgene",
-        label = "Select a gene",
-        choices = rownames(lung),
-        selected = NULL,
-        multiple = TRUE,
-        options = pickerOptions(maxOptions = 1,
-                                liveSearch = TRUE)
-      )
-    }
+    pickerInput(
+      inputId = "scgene",
+      label = "Select a gene",
+      choices = rownames(eval(parse(text = source.list()))),
+      selected = NULL,
+      multiple = TRUE,
+      options = pickerOptions(maxOptions = 1,
+                              liveSearch = TRUE)
+    )
   })
   
   # output$scgeneinput<-renderUI({
@@ -1754,32 +1751,36 @@ server <- function(input, output, session){
   
   output$scmapgene<-renderPlot({
     req(input$scgene)
-    FeaturePlot(object = lung, features = input$scgene)
+    FeaturePlot(object = eval(parse(text = source.list())), features = input$scgene)
   })
   
   output$sccelltypeinput<-renderUI({
     req(input$scsource)
-    if (input$scsource == "Carraro et al(2021) - Lung"){
-      pickerInput(
-        inputId = "sccelltypes",
-        label = "Select cluster to get gene list",
-        choices = c(levels(lung)),
-        selected = NULL,
-        multiple = TRUE,
-        options = pickerOptions(maxOptions = 1)
-      )
-    }
+    pickerInput(
+      inputId = "sccelltypes",
+      label = "Select cluster to get gene list",
+      choices = c(levels(eval(parse(text = source.list())))),
+      selected = NULL,
+      multiple = TRUE,
+      options = pickerOptions(maxOptions = 1)
+    )
+    
   })
   
   diff_list<-reactive({
-    a<-levels(lung)
+    a<-levels(eval(parse(text = source.list())))
     i<-which(a == input$sccelltypes)
-    markers[[i]]
+    if (source.list() == "lung"){
+      lung_markers[[i]]
+    }
+    else if (source.list() == "reyfman"){
+      reyfman_markers[reyfman_markers$cluster == input$sccelltypes,]
+    }
   })
   
   output$sometext<-renderText({
     
-    a<-levels(lung)
+    a<-levels(eval(parse(text = source.list())))
     i<-which(a == input$sccelltypes)
     paste("i is:", i)
   })
