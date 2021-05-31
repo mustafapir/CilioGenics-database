@@ -1854,7 +1854,7 @@ server <- function(input, output, session){
               width = 6,
               fluidRow(
                 column(
-                  width = 9,
+                  width = 6,
                   uiOutput("scgeneinput")
                 ),
                 column(
@@ -1862,7 +1862,12 @@ server <- function(input, output, session){
                   uiOutput("scgenebutton")
                 )
               ),
-              plotOutput("dotgene") %>% withSpinner(type = 8),
+              fluidRow(
+                column(
+                  width = 12,
+                  plotOutput("dotgene") %>% withSpinner(type = 8)
+                )
+              )
             )
             # column(
             #   width = 6,
@@ -1942,14 +1947,13 @@ server <- function(input, output, session){
       choices = rownames(eval(parse(text = source.list()))),
       selected = NULL,
       multiple = TRUE,
-      options = pickerOptions(liveSearch = TRUE),
-      width = "50%"
+      options = pickerOptions(liveSearch = TRUE)
     )
   })
   
   output$scgenebutton<-renderUI({
     req(input$scsource)
-    actionButton("scbttn","Draw")
+    actionButton("scbttn","Draw",icon = "thumbs-up")
   })
   
   # output$scgeneinput<-renderUI({
@@ -1981,6 +1985,7 @@ server <- function(input, output, session){
   # })
   
   output$dotgene<-renderPlot({
+    req(input$scsource)
     req(input$scgene)
     req(input$scbttn)
     input$scbttn
