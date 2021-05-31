@@ -21,6 +21,8 @@ reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
 reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
 sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al(2018) - Lung"),
                           data = c("lung","reyfman"))
+lung_names<-rownames(lung)
+reyfman_names<-rownames(reyfman)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")

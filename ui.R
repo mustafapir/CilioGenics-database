@@ -478,6 +478,7 @@ ui <- shinydashboardPlus::dashboardPage(
                 tabPanel(
                   id = "tab3",
                   title = "Single cell clusters",
+
                   uiOutput("scInputUI"),
                   uiOutput("scUI"),
                   #uiOutput("scUI2")

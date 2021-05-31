@@ -157,6 +157,14 @@
     border-radius: 10px;
 }
 
+.selectize-input > * {
+    background-color: #d2d6de8f !important;
+}
+
+.selectize-control.multi .selectize-input, .selectize-control.multi .selectize-input.input-active, .selectize-control.single .selectize-input, .selectize-control.single .selectize-input.input-active {
+    border-bottom: 1px solid gray;
+    
+}
 
 /*.skin-blue-light .main-header .navbar {
     background-color: #6f7dc8;

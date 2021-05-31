@@ -1922,7 +1922,7 @@ server <- function(input, output, session){
   
   # Server #
   output$message<-renderUI({
-    h4("Select a group of genes to visualize expressions in a dot plot")
+    h4(paste("Select a group of genes to visualize expressions in a dot plot", input$scbttn))
   })
   
   source.list<-reactive({
@@ -1949,14 +1949,36 @@ server <- function(input, output, session){
   
   output$scgeneinput<-renderUI({
     req(input$scsource)
-    pickerInput(
-      inputId = "scgene",
-      label = "Select multiple genes",
-      choices = rownames(eval(parse(text = source.list()))),
-      selected = NULL,
+    selectInput(
+      "scgene",
+      "Select multiple genes",
       multiple = TRUE,
-      options = pickerOptions(liveSearch = TRUE)
+      choices = character(0)
     )
+    # pickerInput(
+    #   inputId = "scgene",
+    #   label = "Select multiple genes",
+    #   choices = rownames(eval(parse(text = source.list()))),
+    #   selected = NULL,
+    #   multiple = TRUE,
+    #   options = pickerOptions(liveSearch = TRUE)
+    # )
+  })
+  
+  selectchoices<-reactive({
+    if (!is.null(input$scsource)){
+      x<-sc.paper.list$data[sc.paper.list$paper == input$scsource]
+      as.character(rownames(x))
+    }
+  })
+  
+  observeEvent(input$scsource, {
+    if (input$scsource == "Carraro et al(2021) - Lung"){
+      delay(1000, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
+    }
+    else if(input$scsource == "Reyfman et al(2018) - Lung"){
+      delay(1000, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE))
+    }
   })
   
   output$scgenebutton<-renderUI({
@@ -1992,20 +2014,20 @@ server <- function(input, output, session){
   #   HoverLocator(plot = plot, information = FetchData(reyfmans.reduced, vars = c("ident","nFeature_RNA","nCount_RNA")))
   # })
   
-  output$dotgene<-renderPlot({
-    req(input$scsource)
-    req(input$scgene)
-    req(input$scbttn)
-    input$scbttn
-    DotPlot(eval(parse(text = source.list())), features = input$scgene) + RotatedAxis()
+  scgene1<-eventReactive(input$scbttn, {
+    input$scgene
   })
   
-  output$heatmapgene<-renderPlot({
-    req(input$scgene)
-    #req(input$scbttn)
-    input$scbttn
-    DoHeatmap(subset(eval(parse(text = source.list())), downsample = 100), features = input$scgene, size = 3)
+  output$dotgene<-renderPlot({
+    DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis()
   })
+  
+  # output$heatmapgene<-renderPlot({
+  #   req(input$scgene)
+  #   #req(input$scbttn)
+  #   input$scbttn
+  #   DoHeatmap(subset(eval(parse(text = source.list())), downsample = 100), features = input$scgene, size = 3)
+  # })
   
   output$sccelltypeinput<-renderUI({
     req(input$scsource)
