@@ -238,9 +238,19 @@ ui <- shinydashboardPlus::dashboardPage(
                   width = "600px",
                   value = NULL
                 ),
-                actionLink("ARL13B","ARL13B"),
-                actionLink("IFT74","ENSG00000096872"),
-                actionLink("BBS5","129880"),
+                div(
+                  id = "examples",
+                  fluidRow(
+                    h5("Identifier examples:"),
+                    actionLink("ARL13B","ARL13B"),
+                    actionLink("IFT74","ENSG00000096872"),
+                    actionLink("BBS5","129880"),
+                    actionLink("che-3","che-3"),
+                    actionLink("birc5b","birc5b"),
+                    actionLink("FBgn0052751","FBgn0052751")
+                  )
+                ),
+                
                 HTML("<h3><center>OR</center></h3>"),
                 br(),
                 actionBttn(
@@ -259,8 +269,9 @@ ui <- shinydashboardPlus::dashboardPage(
           #uiOutput("searchUI"),
         fluidRow(
           div(
-            br(), br(),
             id = "general_info",
+            br(), br(),
+            
             box(
               title = "Gene info",
               solidHeader = TRUE,
@@ -478,7 +489,6 @@ ui <- shinydashboardPlus::dashboardPage(
                 tabPanel(
                   id = "tab3",
                   title = "Single cell clusters",
-
                   uiOutput("scInputUI"),
                   uiOutput("scUI"),
                   #uiOutput("scUI2")
@@ -574,20 +584,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   #   uiOutput("pubgeneralheatmapUi")
                   #   ),
                   
-                  fluidRow(
-                    column(
-                      width = 3,
-                      pickerInput(
-                        inputId = "pubpub",
-                        label = "Select a publication",
-                        choices = list(
-                          "Publication" = c("", unique(publications$Publication))
-                        ),
-                        selected = "",
-                        options=pickerOptions(liveSearch=T)
-                      )
-                    )
-                  ),
+                  
                   fluidRow(
                     column(
                       width = 3,
@@ -596,6 +593,15 @@ ui <- shinydashboardPlus::dashboardPage(
                         solidHeader = TRUE,
                         status = "success",
                         width = 12,
+                        pickerInput(
+                          inputId = "pubpub",
+                          label = "Select a publication",
+                          choices = list(
+                            "Publication" = c("", unique(publications$Publication))
+                          ),
+                          selected = "",
+                          options=pickerOptions(liveSearch=T)
+                        ),
                       reactableOutput("pubselecttable") %>% withSpinner(type = 8)
                       )
                     ),

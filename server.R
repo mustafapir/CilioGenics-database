@@ -86,15 +86,21 @@ server <- function(input, output, session){
       else if (toupper(trimmedGname()) %in% toupper(gene_synonyms2$Gene_name)){
         gname<-unique(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_name) %in% toupper(trimmedGname()))])
       }
+      else if (trimmedGname() %in% orthology$Gene1Symbol){
+        gname<-orthology$Gene2Symbol[which(orthology$Gene1Symbol %in% trimmedGname())]
+      }
+      else if (trimmedGname() %in% orthology$Gene1ID){
+        gname<-orthology$Gene2Symbol[which(orthology$Gene1ID %in% trimmedGname())]
+      }
       else {gname<-trimmedGname()}
     }
     gname
   })
 
   # List of genes having same synonym gene names
-  geneoption<-reactive({
-    c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))])
-  })
+  # geneoption<-reactive({
+  #   c(gene_synonyms2$Gene_name[which(toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname()))])
+  # })
 
   # Show only landing page
   observeEvent("", {
@@ -128,14 +134,15 @@ server <- function(input, output, session){
         showCloseButton = TRUE
         )
       }
-    else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) > 1){
+    else if (length(genename()) > 1){
       showModal(
         modalDialog(
           h3("Multiple Results"),
           radioGroupButtons(
             "generadio",
             h4("It appears there are multiple genes corresponding to the input. Please select one: "),
-            geneoption(),
+            #geneoption(),
+            genename(),
             selected = character(0)
             ),
           easyClose = TRUE,
@@ -213,15 +220,9 @@ server <- function(input, output, session){
   
   observeEvent(input$geneName2_search, {
     if (input$geneName2 == ""){
-      # sendSweetAlert(
-      #   session = session,
-      #   title = "WARNING!",
-      #   text = "Please first write a gene name, gene id or Ensembl id",
-      #   type = "warning",
-      #   showCloseButton = TRUE
-      # )
+  
     }
-    else if (length(unique(gene_synonyms2$Gene_name[toupper(gene_synonyms2$Gene_synonyms) %in% toupper(trimmedGname())])) > 1){
+    else if (length(genename()) > 1){
       showModal(
         modalDialog(
           h3("Multiple Results"),
@@ -258,40 +259,14 @@ server <- function(input, output, session){
 
   observeEvent(input$generadio, {
     session$sendCustomMessage("geneName", input$generadio)
-    click("generalPage")
-    show("general_info")
-    hide("protein_interaction")
-    hide("protein_interaction1")
-    hide("landing_page")
-    hide("toggleui2")
-    show("buttonsui")
-    hide("cluster_page")
-    hide("sc_cluster_page")
-    hide("pub")
-    hide("single_cell")
-    show("searchui")
-    show("searchUI")
-    click("generalPage")
-    updateTabItems(session, "tabs", selected = character(0))
+    #click("generalPage")
+    updateTabItems(session, "nvbr", selected = "General info")
+    show("nvbr")
+    show("inpt")
   })
 
   observeEvent(input$ARL13B, {
     session$sendCustomMessage("geneName", "ARL13B")
-    # click("generalPage")
-    # show("general_info")
-    # hide("protein_interaction")
-    # hide("protein_interaction1")
-    # hide("landing_page")
-    # hide("toggleui2")
-    # show("buttonsui")
-    # hide("cluster_page")
-    # hide("sc_cluster_page")
-    # hide("pub")
-    # hide("single_cell")
-    # show("searchui")
-    # show("searchUI")
-    # click("generalPage")
-    # updateTabItems(session, "tabs", selected = character(0))
     show("nvbr")
     show("inpt")
     updateNavbarPage(inputId = "nvbr", selected = "General info")
@@ -339,6 +314,72 @@ server <- function(input, output, session){
     show("nvbr")
     show("inpt")
     updateNavbarPage(inputId = "nvbr", selected = "General info")
+  })
+  
+  observeEvent(input$`che-3`, {
+    session$sendCustomMessage("geneName", "che-3")
+    show("nvbr")
+    show("inpt")
+    updateNavbarPage(inputId = "nvbr", selected = "General info")
+    
+  })
+  
+  observeEvent(input$birc5b, {
+    session$sendCustomMessage("geneName", "birc5b")
+    # show("nvbr")
+    # show("inpt")
+    # updateNavbarPage(inputId = "nvbr", selected = "General info")
+    delay(100,
+          showModal(
+            modalDialog(
+              h3("Multiple Results"),
+              radioGroupButtons(
+                "generadio",
+                h4("It appears there are multiple genes corresponding to the input. Please select one: "),
+                #geneoption(),
+                genename(),
+                selected = character(0)
+              ),
+              easyClose = TRUE,
+              footer = tagList(
+                actionButton(
+                  inputId = "close",
+                  label = "Close",
+                  icon = icon("close")
+                )
+              )
+            )
+          )
+    )
+  })
+  
+  observeEvent(input$FBgn0052751, {
+    session$sendCustomMessage("geneName", "FBgn0052751")
+    # show("nvbr")
+    # show("inpt")
+    # updateNavbarPage(inputId = "nvbr", selected = "General info")
+    delay(100,
+      showModal(
+        modalDialog(
+          h3("Multiple Results"),
+          radioGroupButtons(
+            "generadio",
+            h4("It appears there are multiple genes corresponding to the input. Please select one: "),
+            #geneoption(),
+            genename(),
+            selected = character(0)
+          ),
+          easyClose = TRUE,
+          footer = tagList(
+            actionButton(
+              inputId = "close",
+              label = "Close",
+              icon = icon("close")
+            )
+          )
+        )
+      )
+    )
   })
 
   # observeEvent(trimmedGname(), {
@@ -1277,9 +1318,9 @@ server <- function(input, output, session){
     DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
   })
   
-  output$scmapgene<-renderPlotly({
-    plot<-FeaturePlot(object = eval(parse(text = source.list2())), features = genename())
-    HoverLocator(plot = plot, information = FetchData(eval(parse(text = source.list2())), vars = c("ident","nFeature_RNA","nCount_RNA")))
+  output$scmapgene<-renderPlot({
+    FeaturePlot(object = eval(parse(text = source.list2())), features = genename(), pt.size = 0.05)
+    #HoverLocator(plot = plot, information = FetchData(eval(parse(text = source.list2())), vars = c("ident","nFeature_RNA","nCount_RNA")))
   })
   
   output$vlngene<-renderPlot({
@@ -1331,7 +1372,7 @@ server <- function(input, output, session){
             ),
             column(
               width = 6,
-              plotlyOutput("scmapgene", height = "600px") %>% withSpinner(type = 8),
+              plotOutput("scmapgene", height = "600px") %>% withSpinner(type = 8),
               #bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
             )
           )
@@ -1922,7 +1963,7 @@ server <- function(input, output, session){
   
   # Server #
   output$message<-renderUI({
-    h4(paste("Select a group of genes to visualize expressions in a dot plot", input$scbttn))
+    h4("Select a group of genes to visualize expressions in a dot plot")
   })
   
   source.list<-reactive({
@@ -1965,21 +2006,26 @@ server <- function(input, output, session){
     # )
   })
   
-  selectchoices<-reactive({
-    if (!is.null(input$scsource)){
-      x<-sc.paper.list$data[sc.paper.list$paper == input$scsource]
-      as.character(rownames(x))
-    }
-  })
+  # selectchoices<-reactive({
+  #   if (!is.null(input$scsource)){
+  #     x<-sc.paper.list$data[sc.paper.list$paper == input$scsource]
+  #     as.character(rownames(x))
+  #   }
+  # })
   
   observeEvent(input$scsource, {
     if (input$scsource == "Carraro et al(2021) - Lung"){
-      delay(1000, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
+      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE)))
     }
     else if(input$scsource == "Reyfman et al(2018) - Lung"){
-      delay(1000, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE))
+      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE)))
     }
   })
+  
+  # observe({
+  #   input$scgene
+  #   isolate(updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
+  # })
   
   output$scgenebutton<-renderUI({
     req(input$scsource)
@@ -2038,7 +2084,7 @@ server <- function(input, output, session){
       selected = NULL,
       multiple = TRUE,
       options = pickerOptions(maxOptions = 1),
-      width = "40%"
+      width = "80%"
     )
     
   })
