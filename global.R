@@ -24,8 +24,6 @@ sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al
 lung_names<-rownames(lung)
 reyfman_names<-rownames(reyfman)
 
-load("./data/Cao_et_al_2017_vignette.RData")
-
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
 ciliogenics<-final_score_table %>%
