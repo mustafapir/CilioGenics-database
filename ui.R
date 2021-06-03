@@ -179,7 +179,12 @@ ui <- shinydashboardPlus::dashboardPage(
       tags$script("
       Shiny.addCustomMessageHandler('close_drop2', function(x) {
       $('html').click();
-                  });")
+                  });"),
+      tags$script("
+    Shiny.addCustomMessageHandler('scsource2', function(value) {
+    Shiny.setInputValue('scsource2', value);
+    });
+  ")
     ),
 
     ### Menu ----
