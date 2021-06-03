@@ -1329,16 +1329,18 @@ server <- function(input, output, session){
         req(input$celeinput)
         ggplot(cele_data, aes(tsne_1, tsne_2, colour = cell.type), label = TRUE) +
           geom_point(size = 0.05) +
-          guides(colour = guide_legend(override.aes = list(size=2))) +
+          #guides(colour = guide_legend(override.aes = list(size=2))) +
           ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
-          theme_classic()
+          theme_classic() +
+          theme(legend.position = "none")
       }
       else{
         ggplot(cele_data, aes(tsne_1, tsne_2, colour = cell.type), label = TRUE) +
           geom_point(size = 0.05) +
-          guides(colour = guide_legend(override.aes = list(size=2))) +
+          #guides(colour = guide_legend(override.aes = list(size=2))) +
           ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
-          theme_classic()
+          theme_classic() +
+          theme(legend.position = "none")
       }
     }
     else{
@@ -1413,7 +1415,7 @@ server <- function(input, output, session){
   output$vlngene2<-renderPlot({
     plot_genes_jitter(cds[dfforvln(),], grouping = "cell.type", color_by = "cell.type", nrow= 1,
                       ncol = NULL, plot_trend = TRUE) + 
-      theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5))
+      theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5), legend.position = "none")
   })
   
   
@@ -2152,7 +2154,8 @@ server <- function(input, output, session){
         geom_point(size = 0.05) +
         guides(colour = guide_legend(override.aes = list(size=2))) +
         ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
-        theme_classic()
+        theme_classic() +
+        theme(legend.position = "none")
     }
     else{
       DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
@@ -2258,7 +2261,13 @@ server <- function(input, output, session){
   })
   
   output$dotgene<-renderPlot({
-    DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis()
+    if(input$scsource == "Cao et al(2017) - C. elegans"){
+      DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis() +
+        theme(axis.title.y = element_text(size=1))
+    }
+    else {
+      DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis()
+    }
   })
   
   # output$heatmapgene<-renderPlot({
