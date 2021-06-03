@@ -19,10 +19,24 @@ lung_markers<-readRDS("./data/markers.RDS")
 
 reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
 reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
-sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al(2018) - Lung"),
-                          data = c("lung","reyfman"))
+cele<-readRDS("./data/cele_seurat.RDS")
+sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al(2018) - Lung", "Cao et al(2017) - C. elegans"),
+                          data = c("lung","reyfman","cele"))
 lung_names<-rownames(lung)
 reyfman_names<-rownames(reyfman)
+cele_names<-rownames(cele)
+
+load("./data/Cao_et_al_2017_vignette.RData")
+cele_data<-pData(cds)
+cele_data$cell.type<-as.factor(cele_data$cell.type)
+label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
+label.df_2 <- cele_data %>% 
+  group_by(cell.type) %>% 
+  summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>% 
+  left_join(label.df)
+
+cele_genes<-fData(cds)
+
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")

@@ -1859,7 +1859,8 @@ server <- function(input, output, session){
             label = "Select source of scRNA-seq data",
             choices = list(
               "Carraro et al(2021) - Lung",
-              "Reyfman et al(2018) - Lung"
+              "Reyfman et al(2018) - Lung",
+              "Cao et al(2017) - C. elegans"
             ),
             selected = NULL,
             multiple = TRUE,
@@ -1972,8 +1973,28 @@ server <- function(input, output, session){
   
   output$scumapgeneral<-renderPlot({
     req(input$scsource)
-    DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
+    if(input$scsource == "Cao et al(2017) - C. elegans"){
+      ggplot(cele_data, aes(tsne_1, tsne_2, colour = cell.type), label = TRUE) +
+        geom_point(size = 0.05) +
+        guides(colour = guide_legend(override.aes = list(size=2))) +
+        ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
+        theme_classic()
+    }
+    else{
+      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
+    }
   })
+  
+  output$sctsnegeneral<-renderPlot({
+    
+    
+  })
+  
+  # output$scgeneralmaps<-renderUI({
+  #   if (input$scsource == "Cao et al(2017) - C. elegans"){
+  #     
+  #   }
+  # })
   
   # output$scgeneinput<-renderUI({
   #   req(input$scsource)
@@ -2019,6 +2040,9 @@ server <- function(input, output, session){
     }
     else if(input$scsource == "Reyfman et al(2018) - Lung"){
       isolate(delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE)))
+    }
+    else if(input$scsource == "Cao et al(2017) - C. elegans"){
+      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE)))
     }
   })
   
