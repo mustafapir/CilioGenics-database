@@ -1309,25 +1309,95 @@ server <- function(input, output, session){
 
   ### Single cell page ----
   
+  feature.names<-reactive({
+    if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      orthology$Gene1Symbol[orthology$Gene2Symbol == genename() & orthology$Gene1SpeciesName == "Caenorhabditis elegans"]
+    }
+    else {genename()}
+  })
+  
   source.list2<-reactive({
     sc.paper.list$data[sc.paper.list$paper == input$scsource2]
   })
   
-  output$scumapgeneral2<-renderPlot({
+  scumapgeneral2_binding<-reactive({
     req(input$scsource2)
-    DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
+    #input$geneName
+    if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      if(length(feature.names()>1)){
+        req(input$celeinput)
+        ggplot(cele_data, aes(tsne_1, tsne_2, colour = cell.type), label = TRUE) +
+          geom_point(size = 0.05) +
+          guides(colour = guide_legend(override.aes = list(size=2))) +
+          ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
+          theme_classic()
+      }
+      else{
+        ggplot(cele_data, aes(tsne_1, tsne_2, colour = cell.type), label = TRUE) +
+          geom_point(size = 0.05) +
+          guides(colour = guide_legend(override.aes = list(size=2))) +
+          ggrepel::geom_text_repel(data = label.df_2, aes(label = label), colour = "black", size = 3.2) +
+          theme_classic()
+      }
+    }
+    else{
+      DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
+    }
+  })
+  output$scumapgeneral2<-renderPlot({
+    scumapgeneral2_binding()
+  })
+  
+  output$generalscmap2<-renderUI({
+    if(length(feature.names())>1){
+      req(input$celeinput)
+      plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8)
+    }
+    else{
+      plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8)
+    }
+  })
+  
+   celeinput1<-reactive({
+     input$celeinput
+   })
+  
+  scmapgeneplot<-reactive({
+    req(input$scsource2)
+    input$geneName
+    if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      if(length(feature.names())>1){
+        req(input$celeinput)
+        plot.expr(cds, celeinput1(), cell_size = 0.05) + theme(legend.position = "right")
+      }
+      else{
+        plot.expr(cds, feature.names(), cell_size = 0.05) + theme(legend.position = "right")
+      }
+    }
+    else {
+      FeaturePlot(object = eval(parse(text = source.list2())), features = feature.names(), pt.size = 0.05)
+      #HoverLocator(plot = plot, information = FetchData(eval(parse(text = source.list2())), vars = c("ident","nFeature_RNA","nCount_RNA")))
+    }
   })
   
   output$scmapgene<-renderPlot({
-    FeaturePlot(object = eval(parse(text = source.list2())), features = genename(), pt.size = 0.05)
-    #HoverLocator(plot = plot, information = FetchData(eval(parse(text = source.list2())), vars = c("ident","nFeature_RNA","nCount_RNA")))
+    scmapgeneplot()
   })
   
   output$vlngene<-renderPlot({
-    VlnPlot(eval(parse(text = source.list2())), features = genename())
+    req(input$scsource2)
+    if(input$scsource2 == "Cao et al(2017) - C. elegans" & !is.null(input$celeinput)){
+      req(input$celeinput)
+      VlnPlot(eval(parse(text = source.list2())), features = input$celeinput)
+    }
+    else{
+      VlnPlot(eval(parse(text = source.list2())), features = feature.names())
+    }
   })
   
+  
   output$scInputUI2<-renderUI({
+    input$geneName
     fluidRow(
       div(
         id = "scselectUI2",
@@ -1344,22 +1414,92 @@ server <- function(input, output, session){
             label = "Select source of scRNA-seq data",
             choices = list(
               "Carraro et al(2021) - Lung",
-              "Reyfman et al(2018) - Lung"
+              "Reyfman et al(2018) - Lung",
+              "Cao et al(2017) - C. elegans"
             ),
             selected = NULL,
             multiple = TRUE,
             options = pickerOptions(maxOptions = 1)
-          )
+          ),
+          uiOutput("cele_options")
         )
       )
     )
   })
   
+  output$cele_options<-renderUI({
+    req(input$scsource2)
+    if(length(feature.names())>1){
+      div(
+        pickerInput(
+          inputId = "celeinput",
+          label = "Select a C. elegans gene",
+          choices = feature.names(),
+          selected = NULL,
+          multiple = TRUE,
+          options = pickerOptions(maxOptions = 1)
+        )
+      )
+    }
+    else {}
+  })
+  
+  output$singlegeneexp<-renderUI({
+    if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      if(length(feature.names()) > 1){
+        req(input$celeinput)
+      }
+      else if(length(feature.names()) == 0){
+        h4(paste0("There is no ortholog of ", genename(), " gene in C. elegans"))
+      }
+      plotOutput("scmapgene", height = "600px") %>% withSpinner(type = 8)
+    }
+    else {
+      plotOutput("scmapgene", height = "600px") %>% withSpinner(type = 8)
+      #bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
+    }
+  })
+  
   output$scUI2<-renderUI({
+    req(input$scsource2)
     if (is.null(input$scsource2)){
       
     }
-    else {
+    else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      if(length(feature.names())>1 & is.null(input$celeinput)){
+        
+      }
+      else {
+        div(
+          id = "scUIdiv2",
+          fluidRow(
+            box(
+              width = 12,
+              column(
+                width = 6,
+                uiOutput("generalscmap2")
+                #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+              ),
+              column(
+                width = 6,
+                uiOutput("singlegeneexp")
+              )
+            )
+          ),
+          fluidRow(
+            box(
+              width = 12,
+              column(
+                width = 12,
+                plotOutput("vlngene") %>% withSpinner(type = 8)
+              )
+            )
+          )
+        )
+      }
+    }
+      
+    else{
       div(
         id = "scUIdiv2",
         fluidRow(
@@ -1367,13 +1507,12 @@ server <- function(input, output, session){
             width = 12,
             column(
               width = 6,
-              plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8),
+              uiOutput("generalscmap2")
               #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
             ),
             column(
               width = 6,
-              plotOutput("scmapgene", height = "600px") %>% withSpinner(type = 8),
-              #bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
+              uiOutput("singlegeneexp")
             )
           )
         ),
@@ -1892,7 +2031,7 @@ server <- function(input, output, session){
             column(
               width = 6,
               plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
-              bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+              bsTooltip("scsource", "Select a source to visualize the cells", placement = "top")
             ),
             column(
               width = 6,
@@ -1912,7 +2051,7 @@ server <- function(input, output, session){
                 column(
                   width = 12,
                   br(),
-                  plotOutput("dotgene") %>% withSpinner(type = 8)
+                  plotOutput("dotgene", height = "600px") %>% withSpinner(type = 8)
                 )
               )
             )
@@ -1983,11 +2122,6 @@ server <- function(input, output, session){
     else{
       DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
     }
-  })
-  
-  output$sctsnegeneral<-renderPlot({
-    
-    
   })
   
   # output$scgeneralmaps<-renderUI({

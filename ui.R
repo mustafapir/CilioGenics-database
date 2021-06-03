@@ -29,6 +29,7 @@ library(Seurat)
 library(highcharter)
 library(bsplus)
 library(plotly)
+library(monocle)
 
 
 # Sourcing global data and functions ----

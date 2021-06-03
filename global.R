@@ -6,6 +6,7 @@ library(tidyr)
 library(RColorBrewer)
 library(circlize)
 library(Seurat)
+library(monocle)
 source("functions.R")
 
 #rmdfiles <- rmarkdown::render("about.Rmd")
