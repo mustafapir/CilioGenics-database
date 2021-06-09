@@ -1058,7 +1058,7 @@ server <- function(input, output, session){
       title = paste("Genes interacting with ", genename(), "gene"),
       solidHeader = TRUE,
       status = "success",
-      withSpinner(reactableOutput("pro_int"), type = 8, color = "#10c891")
+      withSpinner(reactableOutput("pro_int"), type = 8)
     )
   })
 
@@ -1072,7 +1072,7 @@ server <- function(input, output, session){
         textOutput("textForPro")
       }
       else {
-        withSpinner(simpleNetworkOutput("networkplot"), type = 8, color = "#10c891")
+        withSpinner(simpleNetworkOutput("networkplot"), type = 8)
       }
     )
   })
@@ -1238,7 +1238,7 @@ server <- function(input, output, session){
               up = TRUE
             )
           ),
-          withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8, color = "#10c891"),
+          withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8),
           br(),br(),br()
         )
       )
@@ -1274,7 +1274,7 @@ server <- function(input, output, session){
         solidHeader = TRUE,
         status = "success",
         width = 12,
-        withSpinner(reactableOutput("hclustertable"), type = 8, color = "#10c891")
+        withSpinner(reactableOutput("hclustertable"), type = 8)
       )
     )
   })
@@ -1344,7 +1344,8 @@ server <- function(input, output, session){
       }
     }
     else if(input$scsource2 == "Habermann et al(2020) - Lung (human)"){
-      DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE, repel = TRUE) + NoLegend()
+      DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE, repel = TRUE, raster = FALSE) +
+      NoLegend()
     }
     else{
       DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
@@ -1408,10 +1409,10 @@ server <- function(input, output, session){
   
   dfforvln<-reactive({
     if(length(feature.names())>1){
-      row.names(subset(fData(cds), symbol == input$celeinput))
+      row.names(subset(cele_genes, symbol == input$celeinput))
     }
     else{
-      row.names(subset(fData(cds), symbol == feature.names()))
+      row.names(subset(cele_genes, symbol == feature.names()))
     }
   })
   
@@ -1518,7 +1519,7 @@ server <- function(input, output, session){
               width = 12,
               column(
                 width = 6,
-                plotOutput("scumapgeneral2_binding", height = "700px") %>% withSpinner(type = 8)
+                plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
                 #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
               ),
               column(
@@ -2163,7 +2164,8 @@ server <- function(input, output, session){
         theme(legend.position = "none")
     }
     else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
-      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE, repel = TRUE) + NoLegend()
+      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE, repel = TRUE, raster = FALSE) + 
+      NoLegend()
     }
     else{
       DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)

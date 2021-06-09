@@ -35,17 +35,20 @@ reyfman_names<-rownames(reyfman)
 habermann_names<-rownames(habermann)
 cele_names<-rownames(cele)
 
-load("./data/Cao_et_al_2017_vignette.RData")
-cele_data<-pData(cds)
-cele_data$cell.type<-as.factor(cele_data$cell.type)
-label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
-label.df_2 <- cele_data %>% 
-  group_by(cell.type) %>% 
-  summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>% 
-  left_join(label.df)
+load("cele.Rdata")
+#load("./data/Cao_et_al_2017_vignette.RData")
+#cele_data<-pData(cds)
+#cele_data$cell.type<-as.factor(cele_data$cell.type)
+#cds<-readRDS("./data/cds.RDS")
+#cele_data<-readRDS("./data/cele_data.RDS")
+#label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
+# label.df_2 <- cele_data %>% 
+#   group_by(cell.type) %>% 
+#   summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>% 
+#   left_join(label.df)
 
-cele_genes<-fData(cds)
-
+#cele_genes<-fData(cds)
+cele_genes<-readRDS("./data/cele_genes.RDS")
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")

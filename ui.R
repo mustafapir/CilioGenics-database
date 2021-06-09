@@ -283,7 +283,7 @@ ui <- shinydashboardPlus::dashboardPage(
               solidHeader = TRUE,
               status = "success",
               width = 6,
-              withSpinner(htmlOutput("textgeneid"), type = 8, color = "#10c891")
+              withSpinner(htmlOutput("textgeneid"), type = 8)
             ),
             
             box(
@@ -429,7 +429,7 @@ ui <- shinydashboardPlus::dashboardPage(
                     solidHeader = TRUE,
                     status = "success",
                     width = 12,
-                    withSpinner(reactableOutput("generaltable2"), type = 8, color = "#10c891")
+                    withSpinner(reactableOutput("generaltable2"), type = 8)
                   ),
                   br(), br()
                   ),
@@ -445,13 +445,16 @@ ui <- shinydashboardPlus::dashboardPage(
                       solidHeader = TRUE,
                       status = "success",
                       width = 12,
-                      pickerInput(
-                        inputId = "clusternumber",
-                        label = "Select cluster number to explore",
-                        choices = list(
-                          "Ciliary organisms specific clusters" = c(56,58),
-                          "Average conservation" = c(1,4,6,9,16,30),
-                          "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
+                      column(
+                        width = 4,
+                        pickerInput(
+                          inputId = "clusternumber",
+                          label = "Select cluster number to explore",
+                          choices = list(
+                            "Ciliary organisms specific clusters" = c(56,58),
+                            "Average conservation" = c(1,4,6,9,16,30),
+                            "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
+                          )
                         )
                       ),
                     
