@@ -20,11 +20,19 @@ lung_markers<-readRDS("./data/markers.RDS")
 
 reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
 reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+
+habermann<-readRDS("./data/banovich_reduced.RDS")
+habermann_markers<-fread("./data/banovich_markers.txt")
+
 cele<-readRDS("./data/cele_seurat.RDS")
-sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung", "Reyfman et al(2018) - Lung", "Cao et al(2017) - C. elegans"),
-                          data = c("lung","reyfman","cele"))
+sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)", 
+                                    "Reyfman et al(2018) - Lung (human)", 
+                                    "Habermann et al(2020) - Lung (human)",
+                                    "Cao et al(2017) - C. elegans"),
+                          data = c("lung","reyfman","habermann","cele"))
 lung_names<-rownames(lung)
 reyfman_names<-rownames(reyfman)
+habermann_names<-rownames(habermann)
 cele_names<-rownames(cele)
 
 load("./data/Cao_et_al_2017_vignette.RData")

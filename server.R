@@ -1343,6 +1343,9 @@ server <- function(input, output, session){
           theme(legend.position = "none")
       }
     }
+    else if(input$scsource2 == "Habermann et al(2020) - Lung (human)"){
+      DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE, repel = TRUE) + NoLegend()
+    }
     else{
       DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
     }
@@ -1436,8 +1439,9 @@ server <- function(input, output, session){
             inputId = "scsource2",
             label = "Select source of scRNA-seq data",
             choices = list(
-              "Carraro et al(2021) - Lung",
-              "Reyfman et al(2018) - Lung",
+              "Carraro et al(2021) - Lung (human)",
+              "Reyfman et al(2018) - Lung (human)",
+              "Habermann et al(2020) - Lung (human)",
               "Cao et al(2017) - C. elegans"
             ),
             selected = NULL,
@@ -2034,8 +2038,9 @@ server <- function(input, output, session){
             inputId = "scsource",
             label = "Select source of scRNA-seq data",
             choices = list(
-              "Carraro et al(2021) - Lung",
-              "Reyfman et al(2018) - Lung",
+              "Carraro et al(2021) - Lung (human)",
+              "Reyfman et al(2018) - Lung (human)",
+              "Habermann et al(2020) - Lung (human)",
               "Cao et al(2017) - C. elegans"
             ),
             selected = NULL,
@@ -2157,6 +2162,9 @@ server <- function(input, output, session){
         theme_classic() +
         theme(legend.position = "none")
     }
+    else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
+      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE, repel = TRUE) + NoLegend()
+    }
     else{
       DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
     }
@@ -2187,7 +2195,7 @@ server <- function(input, output, session){
       "scgene",
       "Select multiple genes",
       multiple = TRUE,
-      choices = character(0)
+      choices = NULL
     )
     # pickerInput(
     #   inputId = "scgene",
@@ -2207,16 +2215,38 @@ server <- function(input, output, session){
   # })
   
   observeEvent(input$scsource, {
-    if (input$scsource == "Carraro et al(2021) - Lung"){
-      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE)))
+    if (input$scsource == "Carraro et al(2021) - Lung (human)"){
+      delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
     }
-    else if(input$scsource == "Reyfman et al(2018) - Lung"){
-      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE)))
+    else if(input$scsource == "Reyfman et al(2018) - Lung (human)"){
+      delay(500, updateSelectizeInput(session, "scgene", choices = reyman_names, server = TRUE))
+    }
+    else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
+      delay(500, updateSelectizeInput(session, "scgene", choices = habermann_names, server = TRUE))
     }
     else if(input$scsource == "Cao et al(2017) - C. elegans"){
-      isolate(delay(500, updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE)))
+      delay(500, updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE))
     }
   })
+  
+  # observe({
+  #   if (!is.null(input$scsource)){
+  #     if (input$scsource == "Carraro et al(2021) - Lung"){
+  #       input_choice<-lung_names
+  #     }
+  #     else if(input$scsource == "Reyfman et al(2018) - Lung"){
+  #       input_choice<-reyfman_names
+  #     }
+  #     else{
+  #       input_choice<-cele_names
+  #     }
+  #   }
+  #   
+  #   #input_placeholder<-isolate(input$scgene)
+  #   isolate(
+  #     updateSelectizeInput(session, "scgene", choices = input_choice, server = TRUE)
+  #   )
+  # })
   
   # observe({
   #   input$scgene
@@ -2257,7 +2287,8 @@ server <- function(input, output, session){
   # })
   
   scgene1<-eventReactive(input$scbttn, {
-    input$scgene
+    input$scbttn
+    isolate(input$scgene)
   })
   
   output$dotgene<-renderPlot({
@@ -2299,6 +2330,9 @@ server <- function(input, output, session){
     }
     else if (source.list() == "reyfman"){
       reyfman_markers[reyfman_markers$cluster == input$sccelltypes,]
+    }
+    else if (source.list() == "habermann"){
+      habermann_markers[habermann_markers$cluster == input$sccelltypes,]
     }
   })
   
