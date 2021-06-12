@@ -119,8 +119,13 @@ ui <- shinydashboardPlus::dashboardPage(
         menuItem("Explore data", tabName = "exploretab", icon = icon("search")),
         menuItem("How to use CilioGenics", tabName = "howtab", icon = icon("question-circle")),
         menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
-        menuItem("Cite", tabName = "citetab", icon = icon("file-alt")),
-        menuItem("About us", tabName = "abouttab", icon = icon("address-card"))
+        menuItem("Data", tabName = "datatab", icon = icon("database"),
+                 menuSubItem("Source","sourcetab",icon = icon("file")),
+                 menuSubItem("Download", "downloadtab", icon = icon("download"))
+        ),
+        menuItem("About", tabName = "abouttab", icon = icon("address-card"),
+                 menuSubItem("About us","abouttab2",icon = icon("id-card")),
+                 menuSubItem("Cite", tabName = "citetab", icon = icon("file-alt")))
       )
     )
     # div(
@@ -395,6 +400,26 @@ ui <- shinydashboardPlus::dashboardPage(
           )
         )
         ),
+        #### Motifs ----
+        tabPanel(
+          title = "Motifs",
+          fluidRow(
+            div(
+              br(), br(),
+              id = "motif",
+              column(
+                width = 10,
+                offset = 1,
+                box(
+                  width = 12,
+                  title = "Motifs",
+                  reactableOutput("motiftbl")
+                )
+              )
+            )
+          )
+        ),
+        
         # tags$script(
         #   HTML("var header = $('.navbar > .container-fluid');
         #                       header.append('<div style=\"float:right; padding-top: 8px\"><button id=\"signin\" type=\"button\" class=\"btn btn-primary action-button\" onclick=\"signIn()\">Sign In</button></div>')")
@@ -626,7 +651,35 @@ ui <- shinydashboardPlus::dashboardPage(
                       )
                     )
                   )
-                )   
+                ),
+                tabPanel(
+                  id = "tab5",
+                  title = "Motifs",
+                  box(
+                    width = 12,
+                    column(
+                      width = 12,
+                      offset = 1,
+                      h4("Explore the TFs and the genes having their binding sites"),
+                    ),
+                    fluidRow(
+                      column(
+                        width = 3,
+                        offset = 1,
+                        uiOutput("motifUI")
+                      ),
+                      column(
+                        width = 2,
+                        offset = 1,
+                        uiOutput("consUI") %>% withSpinner(type = 8)
+                      )
+                    ),
+                    br(),
+                    fluidRow(
+                      uiOutput("motiftableUI")
+                    )
+                  )
+                )
               )
             )
           )
@@ -639,11 +692,27 @@ ui <- shinydashboardPlus::dashboardPage(
         "citetab"
         ),
       tabItem(
-        "abouttab",
+        "abouttab2",
         tags$iframe(src = 'about.html', # put testdoc.html to /www
                     width = '100%', height = '800px', 
                     frameborder = 0, scrolling = 'auto')
+      ),
+      tabItem(
+        "sourcetab",
+        br(),
+        box(
+          title = "Source list used in CilioGenics",
+          width = 12,
+          br(),
+          h4("Interactions"),
+          br(),
+          htmlOutput("sourcelisttable"),
+          br(),
+          h4("Publications"),
+          tags$a(href="https://www.ebi.ac.uk/intact/"),
+          tags$a(href="https://www.ebi.ac.uk/intact/")
         )
+      )
     )
   ),
   ## Footer ----

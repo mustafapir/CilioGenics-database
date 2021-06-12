@@ -1120,6 +1120,45 @@ server <- function(input, output, session){
             height = unit(8, "cm"), show_heatmap_legend = FALSE, column_names_side = "top", row_names_side = "left",
             heatmap_height = unit(1.5, "npc"))
   })
+  
+  ### Motif page ----
+  motiftable<-reactive({
+    unique(motifs[motifs$`Gene name` == genename(),6:9])
+  })
+  
+  output$motiftbl<-renderReactable({
+    reactable(motiftable(), columns = list(
+      `Motif ID` = colDef(name = "Consensus sequence",
+                          cell = function(value) {
+                            image <- img(src = sprintf("http://motifmap.ics.uci.edu/static/logos/%s.jpg", value), height = "100px", width = "220px", alt = value)
+                            tagList(
+                              div(style = list(display = "inline-block", width = "220px"), image)
+                            )
+                          },
+                          header = div(tags$style("display: flex; flexDirection: column; justifyContent: center; text-align: center;"),
+                                       "Consensus sequence")
+                          ),
+      Motif = colDef(name = "Motif", 
+                     style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
+                     header = with_tooltip3("Motif",
+                                           "Name of the motif")),
+      `Motif ID` = colDef(name = "Motif ID"),
+      BBLS = colDef(name = "BBLS",
+                    style = function(value) {
+                      bar_style(width = value / max(motifs$BBLS), fill = "#2c5e77", color = "#fff")
+                    },
+                    align = "left",
+                    format = colFormat(digits = 3),
+                    header = with_tooltip3("BBLS",
+                                          "BBLS () is conservation score.")),
+      `Distance(bp)` = colDef(name = "Distance(bp)",
+                              style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
+                              header = with_tooltip3("Distance (bp)",
+                                                     "Motif's distance from the gene (upstream)"))
+    ),
+    bordered = TRUE,
+    sortable = FALSE)
+  })
 
   ### Phylogeny page ----
   inputcluster<-reactive({
@@ -1316,11 +1355,11 @@ server <- function(input, output, session){
     }
     else {x<-isolate(genename())}
   })
-  
+
   source.list2<-reactive({
     sc.paper.list$data[sc.paper.list$paper == input$scsource2]
   })
-  
+
   output$scumapgeneral2_binding<-renderPlot({
     req(input$scsource2)
     #input$geneName
@@ -1351,24 +1390,11 @@ server <- function(input, output, session){
       DimPlot(object = eval(parse(text = source.list2())), reduction = "umap", label = TRUE)
     }
   })
-  # output$scumapgeneral2<-renderPlot({
-  #   scumapgeneral2_binding()
-  # })
-  
-  # output$generalscmap2<-renderUI({
-  #   if(length(feature.names())>1){
-  #     req(input$celeinput)
-  #     plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8)
-  #   }
-  #   else{
-  #     plotOutput("scumapgeneral2",height = "600px") %>% withSpinner(type = 8)
-  #   }
-  # })
-  
+
    celeinput1<-reactive({
      input$celeinput
    })
-  
+
   scmapgeneplot<-reactive({
     req(input$scsource2)
     input$scsource2
@@ -1387,13 +1413,13 @@ server <- function(input, output, session){
     }
     p
   })
-  
+
   output$scmapgene<-renderPlot({
     input$scsource2
     p<-isolate(scmapgeneplot())
     p
   })
-  
+
   output$vlngene<-renderPlot({
     req(input$scsource2)
     input$scsource2
@@ -1406,7 +1432,7 @@ server <- function(input, output, session){
     }
     p
   })
-  
+
   dfforvln<-reactive({
     if(length(feature.names())>1){
       row.names(subset(cele_genes, symbol == input$celeinput))
@@ -1415,14 +1441,14 @@ server <- function(input, output, session){
       row.names(subset(cele_genes, symbol == feature.names()))
     }
   })
-  
+
   output$vlngene2<-renderPlot({
     plot_genes_jitter(cds[dfforvln(),], grouping = "cell.type", color_by = "cell.type", nrow= 1,
-                      ncol = NULL, plot_trend = TRUE) + 
+                      ncol = NULL, plot_trend = TRUE) +
       theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5), legend.position = "none")
   })
-  
-  
+
+
   output$scInputUI2<-renderUI({
     input$geneName
     fluidRow(
@@ -1454,7 +1480,7 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   observeEvent(input$nvbr, {
     if(input$nvbr == "Home"){
       hide("scUIdiv2")
@@ -1466,8 +1492,8 @@ server <- function(input, output, session){
       click("geneName_reset")
     }
   })
-  
-  
+
+
   output$cele_options<-renderUI({
     req(input$scsource2)
     if(length(feature.names())>1){
@@ -1484,7 +1510,7 @@ server <- function(input, output, session){
     }
     else {}
   })
-  
+
   output$singlegeneexp<-renderUI({
     input$scsource2
     if(input$scsource2 == "Cao et al(2017) - C. elegans"){
@@ -1501,15 +1527,15 @@ server <- function(input, output, session){
       #bsTooltip("scgeneinput", "Select a gene to display its expression across cells", placement = "top")
     }
   })
-  
+
   output$scUI2<-renderUI({
     req(input$scsource2)
     if (is.null(input$scsource2)){
-      
+
     }
     else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
       if(length(feature.names())>1 & is.null(input$celeinput)){
-        
+
       }
       else {
         div(
@@ -1540,7 +1566,7 @@ server <- function(input, output, session){
         )
       }
     }
-      
+
     else{
       div(
         id = "scUIdiv2",
@@ -1567,24 +1593,17 @@ server <- function(input, output, session){
             )
           )
         )
-        # fluidRow(
-        #   column(
-        #     width = 8,
-        #     align = "center",
-        #     offset = 2,
-        #     br(),br(),
-        #     h4("Select a cluster to explore differentially expressed genes"),
-        #     box(
-        #       width = 12,
-        #       uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
-        #       reactableOutput("scmaptable"),
-        #       bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
-        #     )
-        #   )
-        # )
       )
     }
   })
+  
+  
+  
+  
+  
+  
+  
+  
   
   # r_scmainheatmap<-reactive({
   #   a<-as.matrix(celegans_sc[which(celegans_sc$tree == celegans_sc$tree[which(toupper(celegans_sc$Human_gene_name) == toupper(genename()))]),2:28])
@@ -1962,7 +1981,7 @@ server <- function(input, output, session){
   #   a$CilioGenics[which(a[[1]] %in% ciliogenics[[1]])]<-"YES"
   #   a
   # })
-
+  # 
   # output$schclusternumbertable<-renderReactable({
   #   reactable(r_scclusternumbertable(), resizable = TRUE, filterable = TRUE,
   #             columns = list(Score = colDef(format = colFormat(digits = 3)),
@@ -1970,7 +1989,7 @@ server <- function(input, output, session){
   #             defaultPageSize = 10, showPageSizeOptions = TRUE,
   #             highlight = TRUE)
   # })
-
+  # 
   # scheatmapclusternumberR<-reactive({
   #   main_heatmap(r_scclusternumber2(), layout = list(paper_bgcolor='transparent'),
   #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
@@ -1980,7 +1999,7 @@ server <- function(input, output, session){
   #     add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
   #     modify_layout(list(margin = list(l = 80)))
   # })
-
+  # 
   # scheatmapgenenumberR<-reactive({
   #   main_heatmap(r_scgenenumber(), layout = list(paper_bgcolor='transparent'),
   #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
@@ -1990,7 +2009,7 @@ server <- function(input, output, session){
   #     add_col_annotation(annotation=anot_sc, side="top", size = 0.1) %>%
   #     modify_layout(list(margin = list(l = 80)))
   # })
-
+  # 
   # output$scheatmapclusternumber<-renderIheatmap({
   #   if (input$clusternumber3 == "All"){
   #     scheatmapclusternumberR()
@@ -2052,10 +2071,10 @@ server <- function(input, output, session){
       )
     )
   })
-  
+
   output$scUI<-renderUI({
     if (is.null(input$scsource)){
-      
+
     }
     else {
       div(
@@ -2122,7 +2141,7 @@ server <- function(input, output, session){
       )
     }
   })
-  
+
   # output$scUI2<-renderUI({
   #   fluidRow(
   #     column(
@@ -2133,7 +2152,7 @@ server <- function(input, output, session){
   #     )
   #   )
   # })
-  
+
   # observeEvent(input$scsource,{
   #   if (is.null(input$scsource)){
   #     hide("scUIdiv")
@@ -2142,17 +2161,17 @@ server <- function(input, output, session){
   #     show("scUIdiv")
   #   }
   # })
-  
-  
+
+
   # Server #
   output$message<-renderUI({
     h4("Select a group of genes to visualize expressions in a dot plot")
   })
-  
+
   source.list<-reactive({
     sc.paper.list$data[sc.paper.list$paper == input$scsource]
   })
-  
+
   output$scumapgeneral<-renderPlot({
     req(input$scsource)
     if(input$scsource == "Cao et al(2017) - C. elegans"){
@@ -2164,20 +2183,20 @@ server <- function(input, output, session){
         theme(legend.position = "none")
     }
     else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
-      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE, repel = TRUE, raster = FALSE) + 
+      DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE, repel = TRUE, raster = FALSE) +
       NoLegend()
     }
     else{
       DimPlot(object = eval(parse(text = source.list())), reduction = "umap", label = TRUE)
     }
   })
-  
+
   # output$scgeneralmaps<-renderUI({
   #   if (input$scsource == "Cao et al(2017) - C. elegans"){
-  #     
+  #
   #   }
   # })
-  
+
   # output$scgeneinput<-renderUI({
   #   req(input$scsource)
   #   pickerInput(
@@ -2190,7 +2209,7 @@ server <- function(input, output, session){
   #                             liveSearch = TRUE)
   #   )
   # })
-  
+
   output$scgeneinput<-renderUI({
     req(input$scsource)
     selectInput(
@@ -2208,14 +2227,14 @@ server <- function(input, output, session){
     #   options = pickerOptions(liveSearch = TRUE)
     # )
   })
-  
+
   # selectchoices<-reactive({
   #   if (!is.null(input$scsource)){
   #     x<-sc.paper.list$data[sc.paper.list$paper == input$scsource]
   #     as.character(rownames(x))
   #   }
   # })
-  
+
   observeEvent(input$scsource, {
     if (input$scsource == "Carraro et al(2021) - Lung (human)"){
       delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
@@ -2230,7 +2249,7 @@ server <- function(input, output, session){
       delay(500, updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE))
     }
   })
-  
+
   # observe({
   #   if (!is.null(input$scsource)){
   #     if (input$scsource == "Carraro et al(2021) - Lung"){
@@ -2243,23 +2262,23 @@ server <- function(input, output, session){
   #       input_choice<-cele_names
   #     }
   #   }
-  #   
+  #
   #   #input_placeholder<-isolate(input$scgene)
   #   isolate(
   #     updateSelectizeInput(session, "scgene", choices = input_choice, server = TRUE)
   #   )
   # })
-  
+
   # observe({
   #   input$scgene
   #   isolate(updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
   # })
-  
+
   output$scgenebutton<-renderUI({
     req(input$scsource)
     actionButton("scbttn","Draw",icon = icon("thumbs-up"))
   })
-  
+
   # output$scgeneinput<-renderUI({
   #   req(input$scsource)
   #   if (input$scsource == "Carraro et al(2021) - Lung"){
@@ -2271,7 +2290,7 @@ server <- function(input, output, session){
   #     )
   #   }
   # })
-  
+
   # observeEvent(input$scsource, {
   #   update_autocomplete_input(
   #     session,
@@ -2279,20 +2298,20 @@ server <- function(input, output, session){
   #     options = rownames(lung)
   #   )
   # })
-  
+
   #updateSelectizeInput(session, "scgene", choices = rownames(lung), server = TRUE)
-  
+
   # output$scmapgene<-renderPlot({
   #   req(input$scgene)
   #   plot<-FeaturePlot(object = eval(parse(text = source.list())), features = input$scgene)
   #   HoverLocator(plot = plot, information = FetchData(reyfmans.reduced, vars = c("ident","nFeature_RNA","nCount_RNA")))
   # })
-  
+
   scgene1<-eventReactive(input$scbttn, {
     input$scbttn
     isolate(input$scgene)
   })
-  
+
   output$dotgene<-renderPlot({
     if(input$scsource == "Cao et al(2017) - C. elegans"){
       DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis() +
@@ -2302,14 +2321,14 @@ server <- function(input, output, session){
       DotPlot(eval(parse(text = source.list())), features = scgene1()) + RotatedAxis()
     }
   })
-  
+
   # output$heatmapgene<-renderPlot({
   #   req(input$scgene)
   #   #req(input$scbttn)
   #   input$scbttn
   #   DoHeatmap(subset(eval(parse(text = source.list())), downsample = 100), features = input$scgene, size = 3)
   # })
-  
+
   output$sccelltypeinput<-renderUI({
     req(input$scsource)
     pickerInput(
@@ -2321,9 +2340,9 @@ server <- function(input, output, session){
       options = pickerOptions(maxOptions = 1),
       width = "80%"
     )
-    
+
   })
-  
+
   diff_list<-reactive({
     a<-levels(eval(parse(text = source.list())))
     i<-which(a == input$sccelltypes)
@@ -2337,14 +2356,14 @@ server <- function(input, output, session){
       habermann_markers[habermann_markers$cluster == input$sccelltypes,]
     }
   })
-  
+
   output$sometext<-renderText({
-    
+
     a<-levels(eval(parse(text = source.list())))
     i<-which(a == input$sccelltypes)
     paste("i is:", i)
   })
-  
+
   output$scmaptable<-renderReactable({
     req(input$sccelltypes)
     reactable(
@@ -2353,14 +2372,14 @@ server <- function(input, output, session){
       highlight = TRUE
     )
   })
-  
+
   # output$scmaptable<-renderDT({
   #   #req(input$sccelltypes)
   #   as.data.table(diff_list())
   # })
-  
+
   # tippy
-  
+
   output$tippy1<-renderUI({
     column(
       width = 1,
@@ -2472,6 +2491,81 @@ server <- function(input, output, session){
   })
   
   
+  ### Motifs ----
+  motiftable2<-reactive({
+    unique(motifs[motifs$`Motif ID` == input$motifname, c(6,7,4,8,9)])
+  })
+  
+  output$motifUI<-renderUI({
+    pickerInput(
+      inputId = "motifname",
+      label = "Select motif",
+      choices = list("Motifs" = motiflist),
+      selected = "",
+      options=pickerOptions(liveSearch=T)
+    )
+  })
+  
+  output$consUI<-renderUI({
+    req(input$motifname)
+    div(
+      img(src=sprintf("http://motifmap.ics.uci.edu/static/logos/%s.jpg", input$motifname), height='150px', width='300px')
+    )
+  })
+  
+  
+  output$motiftbl2<-renderReactable({
+    req(input$motifname)
+    reactable(motiftable2(), columns = list(
+      `Motif ID` = colDef(name = "Motif id"
+      ),
+      `Gene name` = colDef(name = "Gene name", 
+                     style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
+                     header = with_tooltip4("Gene name",
+                                            "Name of the motif")),
+      Motif = colDef(name = "Motif name"),
+      BBLS = colDef(name = "BBLS",
+                    style = function(value) {
+                      bar_style2(width = value / max(motifs$BBLS), fill = "#2c5e77", color = "#fff")
+                    },
+                    align = "left",
+                    format = colFormat(digits = 3),
+                    header = with_tooltip4("BBLS",
+                                           "Bayesian Branch Length Score (BBLS) is assessment of the degree of evolutionary conservation")),
+      `Distance(bp)` = colDef(name = "Distance (bp)",
+                              style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
+                              header = with_tooltip4("Distance (bp)",
+                                                     "Motif's distance from the gene (upstream)"))
+    ),
+    bordered = TRUE,
+    sortable = TRUE)
+  })
+  
+  output$motiftableUI<-renderUI({
+    req(input$motifname)
+    column(
+      width = 12,
+      reactableOutput("motiftbl2") %>% withSpinner(type = 8),
+      h5("* For more information: http://motifmap.ics.uci.edu/")
+    )
+  })
+  
+  # Source Page ----
+  
+  output$sourcelisttable<-renderText({
+    
+    paste(
+      "<table style=\"font-size:15px;\">", "<col style=\"width: 20%;\"/>", "<col style=\"width: 80%;\"/>",
+      
+      "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "IntAct", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", "https://www.ebi.ac.uk/intact/", "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", "https://www.ebi.ac.uk/intact/", "</td>", "</tr>",
+      
+      "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "BioGRID", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", "https://thebiogrid.org/", "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", "https://thebiogrid.org/","</td>", "</tr>",
+      
+      "<tr>", "<td style=\"padding:0 0 10px 20px;\">", "WormBase (Alliance)", "</td>", "<td style=\"padding:0 0 10px 15px;\">", "<a href=", "https://www.alliancegenome.org/", "target=\"_blank\"", "rel=\"noopener noreferrer\"", "</a>", "https://www.alliancegenome.org/", "</td>", "</tr>",
+      
+      "<table>")
+  })
+  
   
   observeEvent(input$toggleSidebar, {
     shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")
@@ -2486,6 +2580,12 @@ server <- function(input, output, session){
   })
   
   # Others ----
+  
+  ## Download page ----
+  
+  downloadUI<-renderUI({
+    
+  })
 
   waiter_hide()
 }

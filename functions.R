@@ -14,7 +14,8 @@ with_tooltip <- function(value, tooltip, ...) {
   div(br(),br(),
     tags$style(type = "text/css", "#q1 {vertical-align: top;}"),
      tippy(bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
-           sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue"),
+           sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue"
+           ),
      br(),
      value
   )
@@ -32,6 +33,30 @@ with_tooltip2 <- function(value, tooltip, ...) {
       #tippy_this("tooltipbutton", sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", allowHTML = TRUE, theme = "light")
   )
 }
+
+with_tooltip3 <- function(value, tooltip, ...) {
+  div(
+    tags$style("display: flex; flexDirection: column; justifyContent: center; text-align: center;"),
+        value,
+        tippy(bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+              sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue",
+              trigger = "click")
+      
+    
+  )
+}
+
+with_tooltip4 <- function(value, tooltip, ...) {
+  div(
+    tags$style("display: flex; flexDirection: column; justifyContent: center; text-align: center;"),
+    value,
+    tippy(bsButton("tooltipbutton", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+          sprintf("<span style='font-size:15px;'>%s<span>", tooltip), placement = "top", animation = "scale", arrow = TRUE, theme = "blue")
+    
+    
+  )
+}
+
 
 guide <- Cicerone$
   new()$ 
@@ -243,3 +268,45 @@ min_max_norm <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
 
+bar_style <- function(width = 1, fill = "#e6e6e6", height = "30%", align = c("left", "right"), color = NULL) {
+  align <- match.arg(align)
+  if (align == "left") {
+    position <- paste0(width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, %1$s %2$s, transparent %2$s)", fill, position)
+  } else {
+    position <- paste0(100 - width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
+  }
+  list(
+    backgroundImage = image,
+    backgroundSize = paste("100%", height),
+    backgroundRepeat = "no-repeat",
+    backgroundPosition = "center",
+    color = color,
+    display = "flex",
+    flexDirection = "column",
+    justifyContent = "center"
+  )
+}
+
+
+bar_style2 <- function(width = 1, fill = "#e6e6e6", height = "70%", align = c("left", "right"), color = NULL) {
+  align <- match.arg(align)
+  if (align == "left") {
+    position <- paste0(width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, %1$s %2$s, transparent %2$s)", fill, position)
+  } else {
+    position <- paste0(100 - width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
+  }
+  list(
+    backgroundImage = image,
+    backgroundSize = paste("100%", height),
+    backgroundRepeat = "no-repeat",
+    backgroundPosition = "center",
+    color = color,
+    display = "flex",
+    flexDirection = "column",
+    justifyContent = "center"
+  )
+}

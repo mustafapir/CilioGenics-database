@@ -231,6 +231,10 @@
     box-shadow: 0 6px 12px rgb(0 0 0 / 18%) !important;
 }
 
+.notbold{
+    font-weight:normal
+}​
+
 
 /*.selectize-control.multi .selectize-input, .selectize-control.multi .selectize-input.input-active, .selectize-control.single .selectize-input, .selectize-control.single .selectize-input.input-active {
     border-bottom: 1px solid gray;
