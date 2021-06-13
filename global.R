@@ -25,8 +25,8 @@ habermann<-readRDS("./data/banovich_reduced.RDS")
 habermann_markers<-fread("./data/banovich_markers.txt")
 
 cele<-readRDS("./data/cele_seurat.RDS")
-sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)", 
-                                    "Reyfman et al(2018) - Lung (human)", 
+sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
+                                    "Reyfman et al(2018) - Lung (human)",
                                     "Habermann et al(2020) - Lung (human)",
                                     "Cao et al(2017) - C. elegans"),
                           data = c("lung","reyfman","habermann","cele"))
@@ -239,6 +239,7 @@ cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 7
 
 df_n <- as.data.table(lapply(final_score_table[,2:8], min_max_norm))
 df_n1<-round(df_n, digits = 3)
+df_n1<-df_n1[,c(1,4,3,2,5:7)]
 
 
 # Pub chart
