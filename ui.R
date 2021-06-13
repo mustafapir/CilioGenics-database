@@ -297,7 +297,7 @@ ui <- shinydashboardPlus::dashboardPage(
               status = "success",
               width = 6,
               #withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
-              withSpinner(highchartOutput("polarscores", height = "550px"), type = 8)
+              withSpinner(highchartOutput("polarscores", height = "450px"), type = 8)
             )
           )
         )
