@@ -7,71 +7,130 @@ library(RColorBrewer)
 library(circlize)
 library(Seurat)
 library(monocle)
+library(geneName)
+library(RMySQL)
 source("functions.R")
 
 #rmdfiles <- rmarkdown::render("about.Rmd")
 #sapply(rmdfiles, knitr::knit, quiet = T)
 
-lung<-readRDS("./data/lung_reduced.RDS")
-#lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
-lung_idents<-Idents(object = lung)
-cell_types_lung<-levels(lung_idents)
-lung_markers<-readRDS("./data/markers.RDS")
-
-reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
-reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
-
-habermann<-readRDS("./data/banovich_reduced.RDS")
-habermann_markers<-fread("./data/banovich_markers.txt")
-
-cele<-readRDS("./data/cele_seurat.RDS")
-sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
-                                    "Reyfman et al(2018) - Lung (human)",
-                                    "Habermann et al(2020) - Lung (human)",
-                                    "Cao et al(2017) - C. elegans"),
-                          data = c("lung","reyfman","habermann","cele"))
-lung_names<-rownames(lung)
-reyfman_names<-rownames(reyfman)
-habermann_names<-rownames(habermann)
-cele_names<-rownames(cele)
-
-load("./data/Cao_et_al_2017_vignette.RData")
-cele_data<-pData(cds)
-cele_data$cell.type<-as.factor(cele_data$cell.type)
-
-label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
-label.df_2 <- cele_data %>%
-  group_by(cell.type) %>%
-  summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
-  left_join(label.df)
-
-cele_genes<-fData(cds)
+# lung<-readRDS("./data/lung_reduced.RDS")
+# #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
+# lung_idents<-Idents(object = lung)
+# cell_types_lung<-levels(lung_idents)
+# lung_markers<-readRDS("./data/markers.RDS")
+#
+# reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
+# reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+#
+# habermann<-readRDS("./data/banovich_reduced.RDS")
+# habermann_markers<-fread("./data/banovich_markers.txt")
+#
+# cele<-readRDS("./data/cele_seurat.RDS")
+# sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
+#                                     "Reyfman et al(2018) - Lung (human)",
+#                                     "Habermann et al(2020) - Lung (human)",
+#                                     "Cao et al(2017) - C. elegans"),
+#                           data = c("lung","reyfman","habermann","cele"))
+# lung_names<-rownames(lung)
+# reyfman_names<-rownames(reyfman)
+# habermann_names<-rownames(habermann)
+# cele_names<-rownames(cele)
+#
+# load("./data/Cao_et_al_2017_vignette.RData")
+# cele_data<-pData(cds)
+# cele_data$cell.type<-as.factor(cele_data$cell.type)
+#
+# label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
+# label.df_2 <- cele_data %>%
+#   group_by(cell.type) %>%
+#   summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
+#   left_join(label.df)
+#
+# cele_genes<-fData(cds)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
-final_score_table<-fread("./data/ciliogenics_ordered_list.csv", sep = ",")
-ciliogenics<-final_score_table %>%
-  filter(Weighted_total_scores >= 0.5)
-#final_score_table1<-final_score_table
-# final_score_table1$goldstandard<-"NO"
-# final_score_table1$goldstandard[which(final_score_table1$goldstandard %in% ciliaryGenes1[[1]])]<-"YES"
 ciliaryGenes1$gold<-"YES"
+#final_score_table<-fread("./data/new_scores.txt")
 
-homsap<-fread("./data/Homo_sapiens.gene_info")
-homsap2<-homsap %>% 
-  separate_rows(Synonyms, sep = "\\|")
 
-ens<-fread("./data/ens.txt")
+db<-load_data_mysql()
+final_score_table<-tbl(db, "new_scores") %>%
+  collect()
+homsap<-tbl(db, "gene_info_edited") %>%
+  collect()
+orthology<-tbl(db, "orthology") %>%
+  collect()
+dbDisconnect(db)
 
-orthology<-fread("./data/orthology.txt")
+ciliogenics<-final_score_table %>%
+  filter(Mean_score >= 0.4)
 
-biogrid<-fread("./data/biogrid.csv")
-intact<-fread("./data/intact.csv")
-wbP<-fread("./data/wormbaseP1.csv")
+# homsap<-fread("./data/Homo_sapiens.gene_info")
+# homsap2<-homsap %>%
+#   separate_rows(Synonyms, sep = "\\|")
 
-publications<-fread("./data/publications.csv")
-publ<-read_xlsx("./data/Publications.xlsx")
-nscores2<-fread("./data/nscores21.csv", )
+
+
+#ens<-fread("./data/ens.txt")
+
+#orthology<-fread("./data/orthology.txt")
+
+# meta.data<-orthology
+# colnames(meta.data)[3]<-"Gene.Name"
+# meta.data<-left_join(meta.data, ciliaryGenes1, by = "Gene.Name")
+
+
+
+# biogrid<-fread("./data/biogrid.csv")
+# intact<-fread("./data/intact.csv")
+# wbP<-fread("./data/wormbaseP1.csv")
+
+# load_data_mysql <- function(query) {
+#   db <- dbConnect(MySQL(), dbname = "ciliogenics",
+#                   host = Sys.getenv("host"),
+#                   port = 3306,
+#                   user = Sys.getenv("user"),
+#                   password = Sys.getenv("password"))
+#   #query <- sprintf("SELECT * FROM %s", TABLE_NAME)
+#   #query <- sprintf("SELECT * FROM %s WHERE `Interactor A` = '%s'", TABLE_NAME, gname)
+#   #query <- paste0("SELECT * FROM ", TABLE_NAME, " WHERE `Interactor A` = ", gname)
+#   data <- dbGetQuery(db, query)
+#   dbDisconnect(db)
+#   data
+# }
+
+
+#prot.int<-load_data_mysql("protein_interactions")
+
+# Prot. int.
+# con <- dbConnect(RMySQL::MySQL(), host = 'localhost', user = 'user', password = 'pswd', dbname = 'ciliogenics', port = 3306)
+# prot.int<-tbl(con, "protein_interactions") %>%
+#   collect()
+#
+# # Genetic int.
+# gen.int<-tbl(con, "genetic_interactions") %>%
+#   collect()
+#
+#
+# con <- dbConnect(RMySQL::MySQL(), host = 'localhost', user = 'user', password = 'pswd', dbname = 'ciliogenics', port = 3306)
+# celegans<-tbl(con, "celegans_single_cell") %>%
+#   filter(is_ciliary == 1) %>%
+#   select(gene, precision, is_ciliary) %>%
+#   collect() %>%
+#   celegansConverter("gene") %>%
+#   group_by(gene) %>%
+#   summarise(mean_score = mean(precision))
+
+
+
+#publications<-fread("./data/publications.csv")
+# publications<-fread("./data/publications_17.06.21.txt")
+# publ<-read_xlsx("./data/Publications.xlsx")
+# nscores2<-fread("./data/nscores21.csv")
+#nscores2<-hgncConverter(nscores2, "Gene_name")
 aa<-fread("./data/aa.csv")
+#aa<-hgncConverter(aa, "Gene_name")
 row.names(nscores2)<-nscores2$gene_name
 
 species<-fread("./data/species_app.txt")
@@ -82,17 +141,17 @@ anot<-data.frame(Class = species[,2], Organisms = rep(c("Ciliary", "Nonciliary")
 row.names(anot)<-species$X1
 colnames(anot)[1]<-"Class"
 
-my_colour = list(Organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"), 
+my_colour = list(Organisms = c(Ciliary = "firebrick3", Nonciliary = "dodgerblue3"),
                  Class = c(Animals = "firebrick3", Fungi = "dodgerblue3", Protists = "darkgrey", Plants = "chartreuse", Other = "ghostwhite", Bacteria = "gray0"))
 gene_synonyms2<-fread("./data/gene_synonyms2.csv")
 
-final_seq_table<-final_score_table
-
-for (i in 2:11){
-  
-  final_seq_table<-final_seq_table[order(final_seq_table[[i]], decreasing = TRUE),]
-  final_seq_table[[i]]<-c(1:length(final_seq_table[[i]]))
-}
+# final_seq_table<-final_score_table
+#
+# for (i in 2:11){
+#
+#   final_seq_table<-final_seq_table[order(final_seq_table[[i]], decreasing = TRUE),]
+#   final_seq_table[[i]]<-c(1:length(final_seq_table[[i]]))
+# }
 
 # Single cell clusters
 
@@ -180,67 +239,72 @@ names(coldefs) <- numcols
 
 
 
-omim<-fread("./data/mim2gene.txt", skip = 4) %>%
-  filter(`MIM Entry Type (see FAQ 1.3 at https://omim.org/help/faq)` == "gene") %>%
-  filter(`Approved Gene Symbol (HGNC)` != "")
-colnames(omim)[c(1,4)]<-c("omim_id","Gene_name")
+# omim<-fread("./data/mim2gene.txt", skip = 4) %>%
+#   filter(`MIM Entry Type (see FAQ 1.3 at https://omim.org/help/faq)` == "gene") %>%
+#   filter(`Approved Gene Symbol (HGNC)` != "")
+# colnames(omim)[c(1,4)]<-c("omim_id","Gene_name")
 
 
 lst<-readRDS("./data/lst.RDS")
 lst[sapply(lst, is.null)] <- NULL
 
-pub_mat<-readRDS("./data/pub_mat.RDS")
-pub_mat2<-pub_mat
-pub_mat2$all<-rowSums(pub_mat2[,-1])
-pub_mat2<-pub_mat2[order(-pub_mat2$all),]
-pub_mat3<-pub_mat2[1:11,]
-pub_mat3<-pub_mat3[,-56]
-colnames(pub_mat2)[1]<-"Gene_name"
-colnames(pub_mat)[1]<-"Gene_name"
+# pub_mat<-readRDS("./data/pub_mat.RDS")
+# pub_mat2<-pub_mat
+# pub_mat2$all<-rowSums(pub_mat2[,-1])
+# pub_mat2<-pub_mat2[order(-pub_mat2$all),]
+# pub_mat3<-pub_mat2[1:11,]
+# pub_mat3<-pub_mat3[,-56]
+# colnames(pub_mat2)[1]<-"Gene_name"
+# colnames(pub_mat)[1]<-"Gene_name"
+#
+# temp_pub<-anti_join(final_score_table, pub_mat2, by = "Gene_name")
+# pub_mat4<-data.frame(Gene_name = temp_pub$Gene_name)
+# pub_mat4[colnames(pub_mat)[-1]]<-0
+# pub_mat<-rbind(pub_mat, pub_mat4)
+#
+# temp2<-anti_join(pub_mat, final_score_table, by = "Gene_name")
+# pub_mat<-anti_join(pub_mat, temp2, by = "Gene_name")
+# rownames(pub_mat)<-pub_mat$Gene_name
 
-temp_pub<-anti_join(final_seq_table, pub_mat2, by = "Gene_name")
-pub_mat4<-data.frame(Gene_name = temp_pub$Gene_name)
-pub_mat4[colnames(pub_mat)[-1]]<-0
-pub_mat<-rbind(pub_mat, pub_mat4)
-
-temp2<-anti_join(pub_mat, final_seq_table, by = "Gene_name")
-pub_mat<-anti_join(pub_mat, temp2, by = "Gene_name")
-rownames(pub_mat)<-pub_mat$Gene_name
+pubgenelist<-c("IFT172", "IFT57", "IFT88", "PACRG", "TRAF3IP1", "EFHC1", "IFT80", "DNAI1", "DYNC2LI1", "NME7", "TTC26")
 
 col_fun = colorRamp2(c(1, 0), c("blue4", "antiquewhite"))
 
 # pub_mat4<-melt(pub_mat3)
 # colnames(pub_mat4)<-c("Gene name", "Publication", "Value")
-# 
+#
 # p<-ggplot(pub_mat4, aes(Publication, `Gene name`)) +
 #   geom_tile(aes(fill = Value), colour = "black") +
 #   scale_fill_gradient(low = "white",high = "steelblue")
-# 
-# pt<-p + theme_grey() + 
+#
+# pt<-p + theme_grey() +
 #   labs(x = "", y = "") +
 #   scale_x_discrete(expand = c(0, 0)) +
 #   scale_y_discrete(expand = c(0, 0)) +
 #   theme(legend.position = "none")
-#                                              
-# 
+#
+#
 # ggplotly(pt)
-# 
+#
 # library(heatmaply)
 # heatmaply(as.matrix(rbind(pub_mat[pub_mat$V1 == "ARL13B",-1], pub_mat3[,-1])), grid_color = "black", seriate = "none",
-#           column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE, 
+#           column_text_angle = 90, Rowv = FALSE, Colv = FALSE, show_dendrogram = c(FALSE, FALSE), hide_colorbar = TRUE,
 #           colors = c("azure","blue4"))
 
 pub_genes<-pub_mat[which(apply(pub_mat[,-1],1,sum) != 0),]
 
 cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 70px; position: fixed; width: 80%",
-                  "This website places cookies on your device to help us improve our service 
+                  "This website places cookies on your device to help us improve our service
       to you", HTML('<a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>'))
 
 
-df_n <- as.data.table(lapply(final_score_table[,2:8], min_max_norm))
-df_n1<-round(df_n, digits = 3)
-df_n1<-df_n1[,c(1,4,3,2,5:7)]
-
+# all_scores<-fread("./data/new_scores_all.txt")
+# df_n1<-all_scores[,c(1,3,7,11,15,19,23,27)]
+# colnames(df_n1)<-colnames(final_score_table)[1:8]
+# #df_n <- as.data.table(lapply(final_score_table[,2:8], min_max_norm))
+# df_n1<-round(df_n1[,2:8], digits = 3)
+# df_n1<-df_n1[,c(2,1,4,3,5:7)]
+#df_n1<-df_n1[,1:7]
 
 # Pub chart
 xc<-publications %>% dplyr::count(Publication)
@@ -264,4 +328,10 @@ xc4$`is unique`<-ifelse(xc4$n == 1, "Yes", "No")
 
 motiflist<-c("",unique(motifs$`Motif ID`))
 names(motiflist)<-c("", unique(paste(motifs$`Motif ID`, motifs$Motif, sep = "-")))
+
+sources<-read_xlsx("./data/source.xlsx", col_names = FALSE)
+colnames(sources)<-c("Source","Link","Link1")
+sources$Link <- paste0("<a href='",sources$Link1,"' target='_blank'>",sources$Link,"</a>")
+
+
 

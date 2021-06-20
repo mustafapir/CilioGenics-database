@@ -5,6 +5,7 @@ library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(Homo.sapiens)
+library(RMySQL)
 library(shinyjs)
 library(shinyWidgets)
 #library(formattable)
@@ -63,6 +64,14 @@ jscode2 <- '$(document).keyup(function(e) {
     if (e.key == "Enter") {
     $("#geneName2_search").click();
 }});'
+
+jscode3 <-
+  '$(document).on("shiny:connected", function(e) {
+  var jsWidth = screen.width;
+  Shiny.onInputChange("GetScreenWidth",jsWidth);
+});
+'
+
 # Header functions ----
 
 header <- dashboardHeader(fixed = TRUE, disable = FALSE,
@@ -133,11 +142,11 @@ ui <- shinydashboardPlus::dashboardPage(
     #   style = "width: 50px; padding: 12px 15px 0px 10px;",
     #   prettyToggle(
     #     inputId = "darkmode",
-    #     label_on = "", 
+    #     label_on = "",
     #     label_off = "",
     #     outline = TRUE,
     #     plain = TRUE,
-    #     icon_on = icon("sun"), 
+    #     icon_on = icon("sun"),
     #     icon_off = icon("moon")
     #   )
     # )
@@ -155,9 +164,10 @@ ui <- shinydashboardPlus::dashboardPage(
                                 }", functions = "hidehead"),
     mobileDetect('isMobile'),
     ### Tags$head ----
-    
+
     tags$head(
       tags$script(HTML(jscode2)),
+      tags$script(jscode3),
       tags$script(src = "js-cookie.js"),
       tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "/favicon-32x32.png"),
       tags$link(rel = "shortcut icon", href = "favicon.ico"),
@@ -193,13 +203,13 @@ ui <- shinydashboardPlus::dashboardPage(
     ),
 
     ### Menu ----
-    
+
 
     ### Tabs ----
     tabItems(
       tabItem(
         "hometab",
-        
+
         # div(
         #   id = "toggleui2",
         #   column(
@@ -261,7 +271,7 @@ ui <- shinydashboardPlus::dashboardPage(
                     actionLink("FBgn0052751","FBgn0052751")
                   )
                 ),
-                
+
                 HTML("<h3><center>OR</center></h3>"),
                 br(),
                 actionBttn(
@@ -277,40 +287,41 @@ ui <- shinydashboardPlus::dashboardPage(
         ),
         tabPanel(
           title = "General info",
+          h3(uiOutput("geneinfo")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
             id = "general_info",
-            br(), br(),
-            
+            br(),
             box(
               title = "Gene info",
               solidHeader = TRUE,
               status = "success",
               width = 6,
-              withSpinner(htmlOutput("textgeneid"), type = 8)
+              htmlOutput("textgeneid") %>% withSpinner(type = 8)
             ),
-            
+
             box(
-              title = "Rankings in Each Category (Lower is Better)",
+              title = "CilioGenics scores for each category",
               solidHeader = TRUE,
               status = "success",
               width = 6,
               #withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
-              withSpinner(highchartOutput("polarscores", height = "450px"), type = 8)
+              uiOutput("polarUI") %>% withSpinner(type = 8)
             )
           )
         )
         ),
-        
+
         #### Protein interactions ----
         tabPanel(
-          title = "Protein interactions",
+          title = "Interactions",
+          h3(uiOutput("geneinfo1")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
             style="margin-left:15px",
-            br(),
+            #br(),
             id = "protein_interaction",
             column(
               width = 6,
@@ -328,25 +339,92 @@ ui <- shinydashboardPlus::dashboardPage(
             br()
           )
         ),
-        
+
+        # fluidRow(
+        #   div(
+        #     id = "protein_interaction1",
+        #     column(
+        #       width = 6,
+        #       h3("Protein interactions"),
+        #       br(),
+        #       uiOutput("pro_box1"),
+        #       br(),
+        #       h3("Genetic interactions"),
+        #       br(),
+        #       uiOutput("gene_box")
+        #
+        #     ),
+        #     column(
+        #       width = 6,
+        #       uiOutput("protable"),
+        #       uiOutput("genetable")
+        #     )
+        #   )
+        # ),
+        h3("Protein interactions"),
+        br(),
         fluidRow(
           div(
             id = "protein_interaction1",
             column(
               width = 6,
-              uiOutput("pro_box1")
+              box(
+                title = "Network plot for protein interactions",
+                width = 12,
+                solidHeader = TRUE,
+                status = "success",
+                uiOutput("pro_box1") %>% withSpinner(type = 8)
+              )
+              #uiOutput("pro_box1")
             ),
             column(
               width = 6,
-              uiOutput("protable")
+              box(
+                width = 12,
+                title = "Protein interactions",
+                solidHeader = TRUE,
+                status = "success",
+                reactableOutput("pro_int") %>% withSpinner(type = 8)
+              )
+              #uiOutput("protable")
+            )
+          )
+        ),
+        h3("Genetic interactions"),
+        br(),
+        fluidRow(
+          div(
+            id = "genetic_interaction1",
+            column(
+              width = 6,
+              box(
+                title = "Network plot for genetic interactions",
+                width = 12,
+                solidHeader = TRUE,
+                status = "success",
+                uiOutput("gene_box") %>% withSpinner(type = 8)
+              )
+              #uiOutput("gene_box")
+            ),
+            column(
+              width = 6,
+              box(
+                width = 12,
+                title = "Genetic interactions",
+                solidHeader = TRUE,
+                status = "success",
+                reactableOutput("gene_int") %>% withSpinner(type = 8)
+              )
+              #uiOutput("genetable")
             )
           )
         )
         ),
-        
+
         #### Phylogenetic analysis ----
         tabPanel(
           title = "Phylogenetic analysis",
+          h3(uiOutput("geneinfo2")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
@@ -357,10 +435,11 @@ ui <- shinydashboardPlus::dashboardPage(
           )
         )
         ),
-        
+
         #### Single cell ----
         tabPanel(
           title = "Single cell",
+          h3(uiOutput("geneinfo3")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
@@ -373,10 +452,11 @@ ui <- shinydashboardPlus::dashboardPage(
           )
         )
         ),
-        
+
         #### Publications ----
         tabPanel(
           title = "Publications",
+          h3(uiOutput("geneinfo4")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
@@ -403,6 +483,7 @@ ui <- shinydashboardPlus::dashboardPage(
         #### Motifs ----
         tabPanel(
           title = "Motifs",
+          h3(uiOutput("geneinfo5")),
           fluidRow(
             div(
               br(), br(),
@@ -419,7 +500,7 @@ ui <- shinydashboardPlus::dashboardPage(
             )
           )
         ),
-        
+
         # tags$script(
         #   HTML("var header = $('.navbar > .container-fluid');
         #                       header.append('<div style=\"float:right; padding-top: 8px\"><button id=\"signin\" type=\"button\" class=\"btn btn-primary action-button\" onclick=\"signIn()\">Sign In</button></div>')")
@@ -462,63 +543,79 @@ ui <- shinydashboardPlus::dashboardPage(
                   id = "tab2",
                   value = "tab2",
                   title = "Phylogenetic Analysis",
-                  column(
-                    width = 10,
-                    offset = 1,
-                    box(
-                      title = "Phylogenetic analysis",
-                      solidHeader = TRUE,
-                      status = "success",
-                      width = 12,
-                      column(
-                        width = 4,
-                        pickerInput(
-                          inputId = "clusternumber",
-                          label = "Select cluster number to explore",
-                          choices = list(
-                            "Ciliary organisms specific clusters" = c(56,58),
-                            "Average conservation" = c(1,4,6,9,16,30),
-                            "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
-                          )
-                        )
-                      ),
-                    
-                      fluidRow(
-                        column(
-                          width = 12,
-                          withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
-                          ),
-                        column(
-                          width = 12,
-                          align = "left",
-                          div(
-                            id = "button3",
-                            style = "left: 10ex;",
-                            #dropdown(
-                              downloadButton(outputId = "hmap3", label = "Download")
-                            #   size = "xm",
-                            #   icon = icon("download", class = "opt"),
-                            #   up = TRUE
-                            # )
-                          )
-                        )
-                      )
-                    ),
-                  
-                    br(),br(),
-                    fluidRow(
-                      column(
+                  # column(
+                  #   width = 10,
+                  #   offset = 1,
+                  #   box(
+                  #     title = "Phylogenetic analysis",
+                  #     solidHeader = TRUE,
+                  #     status = "success",
+                  #     width = 12,
+                  #     column(
+                  #       width = 4,
+                  #       pickerInput(
+                  #         inputId = "clusternumber",
+                  #         label = "Select cluster number to explore",
+                  #         choices = list(
+                  #           "Ciliary organisms specific clusters" = c(56,58),
+                  #           "Average conservation" = c(1,4,6,9,16,30),
+                  #           "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
+                  #         )
+                  #       )
+                  #     ),
+                  #
+                  #     fluidRow(
+                  #       column(
+                  #         width = 12,
+                  #         withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
+                  #         ),
+                  #       column(
+                  #         width = 12,
+                  #         align = "left",
+                  #         div(
+                  #           id = "button3",
+                  #           style = "left: 10ex;",
+                  #           #dropdown(
+                  #             downloadButton(outputId = "hmap3", label = "Download")
+                  #           #   size = "xm",
+                  #           #   icon = icon("download", class = "opt"),
+                  #           #   up = TRUE
+                  #           # )
+                  #         )
+                  #       )
+                  #     )
+                  #   ),
+                  #
+                  #   br(),br(),
+                  #   fluidRow(
+                  #     column(
+                  #       width = 12,
+                  #       box(
+                  #         title = "Genes in cluster",
+                  #         solidHeader = TRUE,
+                  #         status = "success",
+                  #         width = 12,
+                  #         withSpinner(reactableOutput("hclusternumbertable"), type = 8)
+                  #       )
+                  #     )
+                  #   )
+                  # ),
+                  uiOutput("heatmapclusternumberUI"),
+
+                  fluidRow(
+                    column(
+                      width = 10,
+                      offset = 1,
+                      box(
+                        title = "Genes in cluster",
+                        solidHeader = TRUE,
+                        status = "success",
                         width = 12,
-                        box(
-                          title = "Genes in cluster",
-                          solidHeader = TRUE,
-                          status = "success",
-                          width = 12,
-                          withSpinner(reactableOutput("hclusternumbertable"), type = 8)
-                        )
+                        withSpinner(reactableOutput("hclusternumbertable"), type = 8)
                       )
                     )
-                  )
+                  ),
+                  br(),br()
                 ),
                 tabPanel(
                   id = "tab3",
@@ -617,39 +714,11 @@ ui <- shinydashboardPlus::dashboardPage(
                   # fluidRow(
                   #   uiOutput("pubgeneralheatmapUi")
                   #   ),
-                  
-                  
+
+
                   fluidRow(
-                    column(
-                      width = 3,
-                      box(
-                        title = "Gene list",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                        pickerInput(
-                          inputId = "pubpub",
-                          label = "Select a publication",
-                          choices = list(
-                            "Publication" = c("", unique(publications$Publication))
-                          ),
-                          selected = "",
-                          options=pickerOptions(liveSearch=T)
-                        ),
-                      reactableOutput("pubselecttable") %>% withSpinner(type = 8)
-                      )
-                    ),
-                    column(
-                      width = 9,
-                      box(
-                        title = "Number of genes",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                      br(),br(),br(),br(),
-                      highchartOutput("pubchart") %>% withSpinner(type = 8)
-                      )
-                    )
+                    uiOutput("publicationUI1"),
+                    uiOutput("publicationUI2")
                   )
                 ),
                 tabPanel(
@@ -694,7 +763,7 @@ ui <- shinydashboardPlus::dashboardPage(
       tabItem(
         "abouttab2",
         tags$iframe(src = 'about.html', # put testdoc.html to /www
-                    width = '100%', height = '800px', 
+                    width = '100%', height = '800px',
                     frameborder = 0, scrolling = 'auto')
       ),
       tabItem(
@@ -703,14 +772,25 @@ ui <- shinydashboardPlus::dashboardPage(
         box(
           title = "Source list used in CilioGenics",
           width = 12,
+          solidHeader = TRUE,
+          status = "success",
           br(),
-          h4("Interactions"),
-          br(),
-          htmlOutput("sourcelisttable"),
-          br(),
-          h4("Publications"),
-          tags$a(href="https://www.ebi.ac.uk/intact/"),
-          tags$a(href="https://www.ebi.ac.uk/intact/")
+          column(
+            width = 12,
+            h4(tags$b("Interactions")),
+            #htmlOutput("sourcelisttable1"),
+            reactableOutput("sourcetable"),
+            br(),br(),
+            h4(tags$b("Single cell")),
+            reactableOutput("sourcetable1"),
+            br(),br(),
+            h4(tags$b("Motifs")),
+            reactableOutput("sourcetable2"),
+            br(),br(),
+            h4(tags$b("Others")),
+            reactableOutput("sourcetable3"),
+            br(),br()
+          )
         )
       )
     )
