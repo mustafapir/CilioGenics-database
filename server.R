@@ -2757,61 +2757,61 @@ server <- function(input, output, session){
 
 
   ### Publications ----
-  pubheatmapx<-reactive({
-    req(input$pubgene)
-    main_heatmap(as.matrix(pubgenelist_mat()), layout = list(paper_bgcolor='transparent'),
-                 tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
-      add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90)%>%
-      modify_layout(list(margin = list(b = 200)))
-
-  })
-
-  output$pubgeneralheatmap<-renderIheatmap({
-    pubheatmapx()
-  })
+  # pubheatmapx<-reactive({
+  #   req(input$pubgene)
+  #   main_heatmap(as.matrix(pubgenelist_mat()), layout = list(paper_bgcolor='transparent'),
+  #                tooltip = setup_tooltip_options(prepend_row = "Gene: ", prepend_col = "Cell type: "))%>%
+  #     add_col_labels(size = 0.46,font = list(family = c("open_sansregular"), size = 12), textangle=90)%>%
+  #     modify_layout(list(margin = list(b = 200)))
+  #
+  # })
+  #
+  # output$pubgeneralheatmap<-renderIheatmap({
+  #   pubheatmapx()
+  # })
 
   output$selectgene<-renderText("Please select a gene to visualize associated publications!")
 
-  output$pubgeneralheatmapUi<-renderUI({
-    req(input$pubgene)
-    if(input$pubgene == ""){
-      textOutput("selectgene")
-    }
-    else {
-      withSpinner(iheatmaprOutput("pubgeneralheatmap"), type = 8)
-    }
-  })
+  # output$pubgeneralheatmapUi<-renderUI({
+  #   req(input$pubgene)
+  #   if(input$pubgene == ""){
+  #     textOutput("selectgene")
+  #   }
+  #   else {
+  #     withSpinner(iheatmaprOutput("pubgeneralheatmap"), type = 8)
+  #   }
+  # })
 
-  pubgenelist_mat<-reactive({
-    if(input$pubgene != "All"){
-      pub_genes[pub_genes$Gene_name == input$pubgene,-1]
-    }
-  })
-
-  output$pubpickeroutput<-renderUI({
-    fluidRow(
-      id = "pubpicker",
-      column(
-        width = 3,
-        pickerInput(
-          inputId = "pubgene",
-          label = "Select a gene",
-          choices = list(
-            "Gene name" = c("", pub_genes$Gene_name)
-          ),
-          selected = "",
-          options=pickerOptions(liveSearch=T)
-        )
-      ),
-      column(
-        width = 1,
-        br(),
-        tippy(bsButton("tooltipbuttonpub", label = "", icon = icon("question"), style = "info", size = "big"),
-              "<span style='font-size:15px;'>Please select a gene to visualize associated publications!<span>",
-              placement = "right", animation = "scale", arrow = TRUE, theme = "blue")
-      )
-    )
-  })
+  # pubgenelist_mat<-reactive({
+  #   if(input$pubgene != "All"){
+  #     pub_genes[pub_genes$Gene_name == input$pubgene,-1]
+  #   }
+  # })
+  #
+  # output$pubpickeroutput<-renderUI({
+  #   fluidRow(
+  #     id = "pubpicker",
+  #     column(
+  #       width = 3,
+  #       pickerInput(
+  #         inputId = "pubgene",
+  #         label = "Select a gene",
+  #         choices = list(
+  #           "Gene name" = c("", pub_genes$Gene_name)
+  #         ),
+  #         selected = "",
+  #         options=pickerOptions(liveSearch=T)
+  #       )
+  #     ),
+  #     column(
+  #       width = 1,
+  #       br(),
+  #       tippy(bsButton("tooltipbuttonpub", label = "", icon = icon("question"), style = "info", size = "big"),
+  #             "<span style='font-size:15px;'>Please select a gene to visualize associated publications!<span>",
+  #             placement = "right", animation = "scale", arrow = TRUE, theme = "blue")
+  #     )
+  #   )
+  # })
 
   output$pubchart<-renderHighchart({
     hchart(xc3, type = "line", hcaes(x = Publication, y = `Number of genes`, group = type)) %>%
