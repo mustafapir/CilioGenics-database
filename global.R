@@ -125,7 +125,7 @@ ciliogenics<-final_score_table %>%
 
 
 #publications<-fread("./data/publications.csv")
-# publications<-fread("./data/publications_17.06.21.txt")
+publications<-fread("./data/publications_17.06.21.txt")
 # publ<-read_xlsx("./data/Publications.xlsx")
 nscores2<-fread("./data/nscores21.csv")
 nscores2<-hgncConverter(nscores2, "Gene_name")
