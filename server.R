@@ -2382,7 +2382,7 @@ server <- function(input, output, session){
 
   #### Single cell maps ----
 
-  UI #
+  # UI #
   output$scInputUI<-renderUI({
     fluidRow(
       div(
