@@ -2579,7 +2579,7 @@ server <- function(input, output, session){
       delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
     }
     else if(input$scsource == "Reyfman et al(2018) - Lung (human)"){
-      delay(500, updateSelectizeInput(session, "scgene", choices = reyman_names, server = TRUE))
+      delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE))
     }
     else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
       delay(500, updateSelectizeInput(session, "scgene", choices = habermann_names, server = TRUE))
