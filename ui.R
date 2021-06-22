@@ -472,9 +472,9 @@ ui <- shinydashboardPlus::dashboardPage(
                 solidHeader = TRUE,
                 status = "success",
                 br(),br(),br(),
-                plotOutput("pubheatmap"),
+                plotOutput("pubheatmap") %>% withSpinner(type = 8),
                 br(),br(), br(),br(), br(),
-                uiOutput("pubui")
+                uiOutput("pubui") %>% withSpinner(type = 8)
               )
             )
           )
@@ -714,10 +714,26 @@ ui <- shinydashboardPlus::dashboardPage(
                   # fluidRow(
                   #   uiOutput("pubgeneralheatmapUi")
                   #   ),
+                  fluidRow(
+                    div(
+
+                      column(
+                        width = 6,
+                        box(
+                          width = 12,
+                          solidHeader = TRUE,
+                          status = "success",
+                          title = "List of publications",
+                          reactableOutput("pubselecttable2") %>% withSpinner(type = 8)
+                        )
+                      ),
+                      uiOutput("publicationUI1")
+                    )
+                  ),
 
 
                   fluidRow(
-                    uiOutput("publicationUI1"),
+
                     uiOutput("publicationUI2")
                   )
                 ),
@@ -740,7 +756,7 @@ ui <- shinydashboardPlus::dashboardPage(
                       column(
                         width = 2,
                         offset = 1,
-                        uiOutput("consUI") %>% withSpinner(type = 8)
+                        uiOutput("consUI")
                       )
                     ),
                     br(),

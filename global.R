@@ -113,14 +113,6 @@ ciliogenics<-final_score_table %>%
 #   collect()
 #
 #
-# con <- dbConnect(RMySQL::MySQL(), host = 'localhost', user = 'user', password = 'pswd', dbname = 'ciliogenics', port = 3306)
-# celegans<-tbl(con, "celegans_single_cell") %>%
-#   filter(is_ciliary == 1) %>%
-#   select(gene, precision, is_ciliary) %>%
-#   collect() %>%
-#   celegansConverter("gene") %>%
-#   group_by(gene) %>%
-#   summarise(mean_score = mean(precision))
 
 
 
