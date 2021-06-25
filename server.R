@@ -1270,10 +1270,10 @@ server <- function(input, output, session){
 
   pub_mat<-reactive({
     db<-load_data_mysql()
-    pub<-tbl(db, "pub_mat") %>%
+    pub<-tbl(db, "pub_mat", encoding = "UTF-8") %>%
       filter(Gene_name %in% local(genename())) %>%
       collect()
-    pub2<-tbl(db, "pub_mat") %>%
+    pub2<-tbl(db, "pub_mat", encoding = "UTF-8") %>%
       filter(Gene_name %in% pubgenelist) %>%
       collect()
     pub<-rbind(pub, pub2)
