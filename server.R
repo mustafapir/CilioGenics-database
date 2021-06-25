@@ -1761,74 +1761,78 @@ server <- function(input, output, session){
     }
   })
 
-  output$scUI2<-renderUI({
-    req(input$scsource2)
-    if (is.null(input$scsource2)){
-
-    }
-    else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
-      if(length(feature.names())>1 & is.null(input$celeinput)){
-
-      }
-      else {
-        div(
-          id = "scUIdiv2",
-          fluidRow(
-            box(
-              width = 12,
-              column(
-                width = 6,
-                plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
-                #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
-              ),
-              column(
-                width = 6,
-                uiOutput("singlegeneexp")
-              )
-            )
-          ),
-          fluidRow(
-            box(
-              width = 12,
-              column(
-                width = 12,
-                plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
-              )
-            )
-          )
-        )
-      }
-    }
-
-    else{
-      div(
-        id = "scUIdiv2",
-        fluidRow(
-          box(
-            width = 12,
-            column(
-              width = 6,
-              plotOutput("scumapgeneral2_binding") %>% withSpinner(type = 8)
-              #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
-            ),
-            column(
-              width = 6,
-              uiOutput("singlegeneexp")
-            )
-          )
-        ),
-        fluidRow(
-          box(
-            width = 12,
-            column(
-              width = 12,
-              plotOutput("vlngene") %>% withSpinner(type = 8)
-            )
-          )
-        )
-      )
-    }
+  observeEvent(is.null(input$scsource2) | (length(feature.names())>1 & is.null(input$celeinput)),{
+    hide("scUIdiv2")
   })
+
+  # output$scUI2<-renderUI({
+  #   req(input$scsource2)
+  #   if (is.null(input$scsource2)){
+  #
+  #   }
+  #   else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+  #     if(length(feature.names())>1 & is.null(input$celeinput)){
+  #
+  #     }
+  #     else {
+  #       div(
+  #         id = "scUIdiv2",
+  #         fluidRow(
+  #           box(
+  #             width = 12,
+  #             column(
+  #               width = 6,
+  #               plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
+  #               #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+  #             ),
+  #             column(
+  #               width = 6,
+  #               uiOutput("singlegeneexp")
+  #             )
+  #           )
+  #         ),
+  #         fluidRow(
+  #           box(
+  #             width = 12,
+  #             column(
+  #               width = 12,
+  #               plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
+  #             )
+  #           )
+  #         )
+  #       )
+  #     }
+  #   }
+  #
+  #   else{
+  #     div(
+  #       id = "scUIdiv2",
+  #       fluidRow(
+  #         box(
+  #           width = 12,
+  #           column(
+  #             width = 6,
+  #             plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
+  #             #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+  #           ),
+  #           column(
+  #             width = 6,
+  #             uiOutput("singlegeneexp")
+  #           )
+  #         )
+  #       ),
+  #       fluidRow(
+  #         box(
+  #           width = 12,
+  #           column(
+  #             width = 12,
+  #             plotOutput("vlngene") %>% withSpinner(type = 8)
+  #           )
+  #         )
+  #       )
+  #     )
+  #   }
+  # })
 
 
 

@@ -439,14 +439,40 @@ ui <- shinydashboardPlus::dashboardPage(
         #### Single cell ----
         tabPanel(
           title = "Single cell",
-          h3(uiOutput("geneinfo3")),
+          #h3(uiOutput("geneinfo3")),
           #uiOutput("searchUI"),
         fluidRow(
           div(
             br(),
             id = "sc_cluster_page",
             uiOutput("scInputUI2"),
-            uiOutput("scUI2")
+            div(
+              id = "scUIdiv2",
+              fluidRow(
+                box(
+                  width = 12,
+                  column(
+                    width = 6,
+                    plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
+                    #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+                  ),
+                  column(
+                    width = 6,
+                    uiOutput("singlegeneexp")
+                  )
+                )
+              ),
+              fluidRow(
+                box(
+                  width = 12,
+                  column(
+                    width = 12,
+                    plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
+                  )
+                )
+              )
+            )
+            #uiOutput("scUI2")
             # uiOutput("scclusterui"),
             # uiOutput("scclustertableui")
           )
