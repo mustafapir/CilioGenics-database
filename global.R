@@ -14,40 +14,40 @@ source("functions.R")
 #rmdfiles <- rmarkdown::render("about.Rmd")
 #sapply(rmdfiles, knitr::knit, quiet = T)
 
-lung<-readRDS("./data/lung_reduced.RDS")
-#lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
-lung_idents<-Idents(object = lung)
-cell_types_lung<-levels(lung_idents)
-lung_markers<-readRDS("./data/markers.RDS")
-
-reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
-reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
-
-habermann<-readRDS("./data/banovich_reduced.RDS")
-habermann_markers<-fread("./data/banovich_markers.txt")
-
-cele<-readRDS("./data/cele_seurat.RDS")
-sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
-                                    "Reyfman et al(2018) - Lung (human)",
-                                    "Habermann et al(2020) - Lung (human)",
-                                    "Cao et al(2017) - C. elegans"),
-                          data = c("lung","reyfman","habermann","cele"))
-lung_names<-rownames(lung)
-reyfman_names<-rownames(reyfman)
-habermann_names<-rownames(habermann)
-cele_names<-rownames(cele)
-
-load("./data/Cao_et_al_2017_vignette.RData")
-cele_data<-pData(cds)
-cele_data$cell.type<-as.factor(cele_data$cell.type)
-
-label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
-label.df_2 <- cele_data %>%
-  group_by(cell.type) %>%
-  summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
-  left_join(label.df)
-
-cele_genes<-fData(cds)
+# lung<-readRDS("./data/lung_reduced.RDS")
+# #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
+# lung_idents<-Idents(object = lung)
+# cell_types_lung<-levels(lung_idents)
+# lung_markers<-readRDS("./data/markers.RDS")
+#
+# reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
+# reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+#
+# habermann<-readRDS("./data/banovich_reduced.RDS")
+# habermann_markers<-fread("./data/banovich_markers.txt")
+#
+# cele<-readRDS("./data/cele_seurat.RDS")
+# sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
+#                                     "Reyfman et al(2018) - Lung (human)",
+#                                     "Habermann et al(2020) - Lung (human)",
+#                                     "Cao et al(2017) - C. elegans"),
+#                           data = c("lung","reyfman","habermann","cele"))
+# lung_names<-rownames(lung)
+# reyfman_names<-rownames(reyfman)
+# habermann_names<-rownames(habermann)
+# cele_names<-rownames(cele)
+#
+# load("./data/Cao_et_al_2017_vignette.RData")
+# cele_data<-pData(cds)
+# cele_data$cell.type<-as.factor(cele_data$cell.type)
+#
+# label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
+# label.df_2 <- cele_data %>%
+#   group_by(cell.type) %>%
+#   summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
+#   left_join(label.df)
+#
+# cele_genes<-fData(cds)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 ciliaryGenes1$gold<-"YES"
@@ -117,7 +117,7 @@ ciliogenics<-final_score_table %>%
 
 
 #publications<-fread("./data/publications.csv")
-publications<-fread("./data/publications_17.06.21.txt")
+#publications<-fread("./data/publications_17.06.21.txt")
 # publ<-read_xlsx("./data/Publications.xlsx")
 nscores2<-fread("./data/nscores21.csv")
 nscores2<-hgncConverter(nscores2, "Gene_name")
@@ -299,24 +299,24 @@ cookie_box <- div(class="alert alert-info", style = "margin-bottom: 0; bottom: 7
 #df_n1<-df_n1[,1:7]
 
 # Pub chart
-xc<-publications %>% dplyr::count(Publication)
-xc$type<-"total"
-xc$cil<-"all"
-
-xc1<-publications
-xc1$cil<-"unknown"
-xc1$cil[which(xc1$Gene_name %in% ciliaryGenes1$Gene.Name)]<-"ciliary"
-xc2<-xc1 %>% count(Publication, cil)
-xc2<-xc2[xc2$cil == "ciliary",]
-xc2$type<-"ciliary"
-xc3<-rbind(xc,xc2)
-colnames(xc3)[2]<-"Number of genes"
-
-
-xc4<-publications %>% dplyr::add_count(Gene_name)
-xc4$`is cilliary`<-"No"
-xc4$`is cilliary`[xc4$Gene_name %in% ciliaryGenes1$Gene.Name]<-"Yes"
-xc4$`is unique`<-ifelse(xc4$n == 1, "Yes", "No")
+# xc<-publications %>% dplyr::count(Publication)
+# xc$type<-"total"
+# xc$cil<-"all"
+#
+# xc1<-publications
+# xc1$cil<-"unknown"
+# xc1$cil[which(xc1$Gene_name %in% ciliaryGenes1$Gene.Name)]<-"ciliary"
+# xc2<-xc1 %>% count(Publication, cil)
+# xc2<-xc2[xc2$cil == "ciliary",]
+# xc2$type<-"ciliary"
+# xc3<-rbind(xc,xc2)
+# colnames(xc3)[2]<-"Number of genes"
+#
+#
+# xc4<-publications %>% dplyr::add_count(Gene_name)
+# xc4$`is cilliary`<-"No"
+# xc4$`is cilliary`[xc4$Gene_name %in% ciliaryGenes1$Gene.Name]<-"Yes"
+# xc4$`is unique`<-ifelse(xc4$n == 1, "Yes", "No")
 
 motiflist<-c("",unique(motifs$`Motif ID`))
 names(motiflist)<-c("", unique(paste(motifs$`Motif ID`, motifs$Motif, sep = "-")))
