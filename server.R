@@ -1768,6 +1768,9 @@ server <- function(input, output, session){
     else if(input$scsource2 == "Cao et al(2017) - C. elegans" & length(feature.names())>1 & is.null(input$celeinput)){
       hide("scUIdiv2")
     }
+    else{
+      show("scUIdiv2")
+    }
   })
 
   # output$scUI2<-renderUI({
