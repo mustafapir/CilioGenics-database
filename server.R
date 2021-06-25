@@ -1761,86 +1761,78 @@ server <- function(input, output, session){
     }
   })
 
-  observeEvent(input$scsource2,{
-    if(is.null(input$scsource2)){
-      hide("scUIdiv2")
+  # observeEvent(is.null(input$scsource2) | (length(feature.names())>1 & is.null(input$celeinput)),{
+  #   hide("scUIdiv2")
+  # })
+
+  output$scUI2<-renderUI({
+    req(input$scsource2)
+    if (is.null(input$scsource2)){
+
     }
-    else if(input$scsource2 == "Cao et al(2017) - C. elegans" & length(feature.names())>1 & is.null(input$celeinput)){
-      hide("scUIdiv2")
+    else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
+      if(length(feature.names())>1 & is.null(input$celeinput)){
+
+      }
+      else {
+        div(
+          id = "scUIdiv2",
+          fluidRow(
+            box(
+              width = 12,
+              column(
+                width = 6,
+                plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
+                #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+              ),
+              column(
+                width = 6,
+                uiOutput("singlegeneexp")
+              )
+            )
+          ),
+          fluidRow(
+            box(
+              width = 12,
+              column(
+                width = 12,
+                plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
+              )
+            )
+          )
+        )
+      }
     }
+
     else{
-      show("scUIdiv2")
+      div(
+        id = "scUIdiv2",
+        fluidRow(
+          box(
+            width = 12,
+            column(
+              width = 6,
+              plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
+              #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
+            ),
+            column(
+              width = 6,
+              uiOutput("singlegeneexp")
+            )
+          )
+        ),
+        fluidRow(
+          box(
+            width = 12,
+            column(
+              width = 12,
+              plotOutput("vlngene") %>% withSpinner(type = 8)
+            )
+          )
+        )
+      )
     }
   })
-
-  # output$scUI2<-renderUI({
-  #   req(input$scsource2)
-  #   if (is.null(input$scsource2)){
-  #
-  #   }
-  #   else if(input$scsource2 == "Cao et al(2017) - C. elegans"){
-  #     if(length(feature.names())>1 & is.null(input$celeinput)){
-  #
-  #     }
-  #     else {
-  #       div(
-  #         id = "scUIdiv2",
-  #         fluidRow(
-  #           box(
-  #             width = 12,
-  #             column(
-  #               width = 6,
-  #               plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
-  #               #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
-  #             ),
-  #             column(
-  #               width = 6,
-  #               uiOutput("singlegeneexp")
-  #             )
-  #           )
-  #         ),
-  #         fluidRow(
-  #           box(
-  #             width = 12,
-  #             column(
-  #               width = 12,
-  #               plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
-  #             )
-  #           )
-  #         )
-  #       )
-  #     }
-  #   }
-  #
-  #   else{
-  #     div(
-  #       id = "scUIdiv2",
-  #       fluidRow(
-  #         box(
-  #           width = 12,
-  #           column(
-  #             width = 6,
-  #             plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
-  #             #bsTooltip("scsource", "Select a source to visualize the cells", placement = "top"),
-  #           ),
-  #           column(
-  #             width = 6,
-  #             uiOutput("singlegeneexp")
-  #           )
-  #         )
-  #       ),
-  #       fluidRow(
-  #         box(
-  #           width = 12,
-  #           column(
-  #             width = 12,
-  #             plotOutput("vlngene") %>% withSpinner(type = 8)
-  #           )
-  #         )
-  #       )
-  #     )
-  #   }
-  # })
 
 
 
@@ -2451,7 +2443,13 @@ server <- function(input, output, session){
                 uiOutput("message"),
                 column(
                   width = 6,
-                  uiOutput("scgeneinput")
+                  #uiOutput("scgeneinput")
+                  selectInput(
+                    "scgene",
+                    "Select multiple genes",
+                    multiple = TRUE,
+                    choices = NULL
+                  )
                 ),
                 column(
                   width = 3,
@@ -2560,23 +2558,23 @@ server <- function(input, output, session){
   #   )
   # })
 
-  output$scgeneinput<-renderUI({
-    req(input$scsource)
-    selectInput(
-      "scgene",
-      "Select multiple genes",
-      multiple = TRUE,
-      choices = NULL
-    )
-    # pickerInput(
-    #   inputId = "scgene",
-    #   label = "Select multiple genes",
-    #   choices = rownames(eval(parse(text = source.list()))),
-    #   selected = NULL,
-    #   multiple = TRUE,
-    #   options = pickerOptions(liveSearch = TRUE)
-    # )
-  })
+  # output$scgeneinput<-renderUI({
+  #   req(input$scsource)
+  #   selectInput(
+  #     "scgene",
+  #     "Select multiple genes",
+  #     multiple = TRUE,
+  #     choices = NULL
+  #   )
+  #   # pickerInput(
+  #   #   inputId = "scgene",
+  #   #   label = "Select multiple genes",
+  #   #   choices = rownames(eval(parse(text = source.list()))),
+  #   #   selected = NULL,
+  #   #   multiple = TRUE,
+  #   #   options = pickerOptions(liveSearch = TRUE)
+  #   # )
+  # })
 
   # selectchoices<-reactive({
   #   if (!is.null(input$scsource)){
@@ -2587,7 +2585,7 @@ server <- function(input, output, session){
 
   observeEvent(input$scsource, {
     if (input$scsource == "Carraro et al(2021) - Lung (human)"){
-      delay(500, updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE))
+      updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE)
     }
     else if(input$scsource == "Reyfman et al(2018) - Lung (human)"){
       delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE))
