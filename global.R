@@ -14,40 +14,40 @@ source("functions.R")
 #rmdfiles <- rmarkdown::render("about.Rmd")
 #sapply(rmdfiles, knitr::knit, quiet = T)
 
-# lung<-readRDS("./data/lung_reduced.RDS")
-# #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
-# lung_idents<-Idents(object = lung)
-# cell_types_lung<-levels(lung_idents)
-# lung_markers<-readRDS("./data/markers.RDS")
-#
-# reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
-# reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
-#
-# habermann<-readRDS("./data/banovich_reduced.RDS")
-# habermann_markers<-fread("./data/banovich_markers.txt")
-#
-# cele<-readRDS("./data/cele_seurat.RDS")
-# sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
-#                                     "Reyfman et al(2018) - Lung (human)",
-#                                     "Habermann et al(2020) - Lung (human)",
-#                                     "Cao et al(2017) - C. elegans"),
-#                           data = c("lung","reyfman","habermann","cele"))
-# lung_names<-rownames(lung)
-# reyfman_names<-rownames(reyfman)
-# habermann_names<-rownames(habermann)
-# cele_names<-rownames(cele)
-#
-# load("./data/Cao_et_al_2017_vignette.RData")
-# cele_data<-pData(cds)
-# cele_data$cell.type<-as.factor(cele_data$cell.type)
-#
-# label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
-# label.df_2 <- cele_data %>%
-#   group_by(cell.type) %>%
-#   summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
-#   left_join(label.df)
-#
-# cele_genes<-fData(cds)
+lung<-readRDS("./data/lung_reduced.RDS")
+#lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
+lung_idents<-Idents(object = lung)
+cell_types_lung<-levels(lung_idents)
+lung_markers<-readRDS("./data/markers.RDS")
+
+reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
+reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+
+habermann<-readRDS("./data/banovich_reduced.RDS")
+habermann_markers<-fread("./data/banovich_markers.txt")
+
+cele<-readRDS("./data/cele_seurat.RDS")
+sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
+                                    "Reyfman et al(2018) - Lung (human)",
+                                    "Habermann et al(2020) - Lung (human)",
+                                    "Cao et al(2017) - C. elegans"),
+                          data = c("lung","reyfman","habermann","cele"))
+lung_names<-rownames(lung)
+reyfman_names<-rownames(reyfman)
+habermann_names<-rownames(habermann)
+cele_names<-rownames(cele)
+
+load("./data/Cao_et_al_2017_vignette.RData")
+cele_data<-pData(cds)
+cele_data$cell.type<-as.factor(cele_data$cell.type)
+
+label.df <- data.frame(cell.type=levels(cele_data$cell.type),label=levels(cele_data$cell.type))
+label.df_2 <- cele_data %>%
+  group_by(cell.type) %>%
+  summarize(tsne_1 = mean(tsne_1), tsne_2 = mean(tsne_2)) %>%
+  left_join(label.df)
+
+cele_genes<-fData(cds)
 
 ciliaryGenes1<-fread("./data/ciliaryGenes1.txt")
 ciliaryGenes1$gold<-"YES"
