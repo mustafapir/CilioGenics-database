@@ -1761,8 +1761,13 @@ server <- function(input, output, session){
     }
   })
 
-  observeEvent(is.null(input$scsource2) | (length(feature.names())>1 & is.null(input$celeinput)),{
-    hide("scUIdiv2")
+  observeEvent(input$scsource2,{
+    if(is.null(input$scsource2)){
+      hide("scUIdiv2")
+    }
+    else if(input$scsource2 == "Cao et al(2017) - C. elegans" & length(feature.names())>1 & is.null(input$celeinput)){
+      hide("scUIdiv2")
+    }
   })
 
   # output$scUI2<-renderUI({
