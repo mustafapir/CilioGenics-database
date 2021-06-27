@@ -797,7 +797,13 @@ ui <- shinydashboardPlus::dashboardPage(
         )
       ),
       tabItem(
-        "statstab"
+        "howtab",
+        #includeHTML("howto.html")
+        box(
+          solidHeader = FALSE,
+          width = 12,
+          includeHTML("howto.html")
+        )
         ),
       tabItem(
         "citetab"
@@ -819,11 +825,11 @@ ui <- shinydashboardPlus::dashboardPage(
           br(),
           column(
             width = 12,
-            h4(tags$b("Interactions")),
+            h4(tags$b("Molecular & Genetic Interactions")),
             #htmlOutput("sourcelisttable1"),
             reactableOutput("sourcetable"),
             br(),br(),
-            h4(tags$b("Single cell")),
+            h4(tags$b("Single Cell RNA-Seq")),
             reactableOutput("sourcetable1"),
             br(),br(),
             h4(tags$b("Motifs")),
@@ -834,7 +840,39 @@ ui <- shinydashboardPlus::dashboardPage(
             br(),br()
           )
         )
+      ),
+    tabItem(
+      "downloadtab",
+      br(),
+      box(
+        title = "Downloads for data used in CilioGenics",
+        width = 12,
+        solidHeader = TRUE,
+        status = "success",
+        br(),
+        column(
+          width = 12,
+          h4(tags$b("Single Cell RNA-Seq")),
+          reactableOutput("downloadtable2"),
+          br(),br(),
+          h4(tags$b("Motifs")),
+          reactableOutput("downloadtable3"),
+          br(),br(),
+          h4(tags$b("Moleculer & Genetic Interactions")),
+          reactableOutput("downloadtable4"),
+          br(),br(),
+          h4(tags$b("HGNC Gene Info")),
+          reactableOutput("downloadtable5"),
+          br(),br(),
+          h4(tags$b("Orthology Data")),
+          reactableOutput("downloadtable6"),
+          br(),br(),
+          h4(tags$b("Sequence Data Used in Phylogenetic Analysis")),
+          reactableOutput("downloadtable1"),
+          br(),br()
+        )
       )
+    )
     )
   ),
   ## Footer ----

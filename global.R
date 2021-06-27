@@ -325,5 +325,11 @@ sources<-read_xlsx("./data/source.xlsx", col_names = FALSE)
 colnames(sources)<-c("Source","Link","Link1")
 sources$Link <- paste0("<a href='",sources$Link1,"' target='_blank'>",sources$Link,"</a>")
 
+downloads<-read_xlsx("./data/downloads.xlsx")
+downloads$Link<-paste0("<a href='",downloads$Link1,"' target='_blank'>",downloads$Link,"</a>")
+colnames(downloads)[2]<-"Download"
+
+downloads2<-read_xlsx("./data/downloads2.xlsx")
+downloads2$Download<-paste0("<a href='",downloads2$Download,"' target='_blank'>",downloads2$Download,"</a>")
 
 

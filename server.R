@@ -2588,13 +2588,13 @@ server <- function(input, output, session){
       updateSelectizeInput(session, "scgene", choices = lung_names, server = TRUE)
     }
     else if(input$scsource == "Reyfman et al(2018) - Lung (human)"){
-      delay(500, updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE))
+      updateSelectizeInput(session, "scgene", choices = reyfman_names, server = TRUE)
     }
     else if(input$scsource == "Habermann et al(2020) - Lung (human)"){
-      delay(500, updateSelectizeInput(session, "scgene", choices = habermann_names, server = TRUE))
+      updateSelectizeInput(session, "scgene", choices = habermann_names, server = TRUE)
     }
     else if(input$scsource == "Cao et al(2017) - C. elegans"){
-      delay(500, updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE))
+      updateSelectizeInput(session, "scgene", choices = cele_names, server = TRUE)
     }
   })
 
@@ -3074,8 +3074,70 @@ server <- function(input, output, session){
 
   ## Download page ----
 
-  downloadUI<-renderUI({
+  output$downloadtable2<-renderReactable({
+    reactable(downloads2[1:4,], resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Description = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              )
+    )
+  })
 
+  output$downloadtable3<-renderReactable({
+    reactable(downloads2[5,], resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Description = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              )
+    )
+  })
+
+  output$downloadtable4<-renderReactable({
+    reactable(downloads2[6:8,], resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Description = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              )
+    )
+  })
+
+  output$downloadtable5<-renderReactable({
+    reactable(downloads2[9,], resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Description = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              )
+    )
+  })
+
+  output$downloadtable6<-renderReactable({
+    reactable(downloads2[10,], resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Description = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              )
+    )
+  })
+
+  output$downloadtable1<-renderReactable({
+    reactable(downloads, resizable = FALSE, filterable = FALSE,
+              searchable = FALSE, defaultPageSize = 100, showPageSizeOptions = FALSE,
+              highlight = FALSE,
+              columns = list(
+                Organism = colDef(name = ""),
+                Download = colDef(html = TRUE, name = "")
+              ), height = 500
+    )
   })
 
   ## Source page ----
