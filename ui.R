@@ -837,7 +837,7 @@ ui <- shinydashboardPlus::dashboardPage(
         box(
           solidHeader = FALSE,
           width = 12,
-          includeHTML("howto.html")
+          includeHTML("www/howto.html")
         )
         ),
       tabItem(
