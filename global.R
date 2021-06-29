@@ -19,12 +19,16 @@ lung<-readRDS("./data/lung_reduced.RDS")
 lung_idents<-Idents(object = lung)
 cell_types_lung<-levels(lung_idents)
 lung_markers<-readRDS("./data/markers.RDS")
+lung_markers<-Map(cbind, lung_markers, "gene" = lapply(lung_markers, rownames))
+lung_markers<-lapply(lung_markers, function(x) relocate(x, gene, .before = p_val))
 
 reyfman<-readRDS("./data/reyfmans_seurat_reduced.RDS")
-reyfman_markers<-readRDS("./data/markers_reyfman.RDS")
+reyfman_markers<-readRDS("./data/markers_reyfman.RDS") %>%
+  relocate(gene, .before = p_val)
 
 habermann<-readRDS("./data/banovich_reduced.RDS")
-habermann_markers<-fread("./data/banovich_markers.txt")
+habermann_markers<-fread("./data/banovich_markers.txt") %>%
+  relocate(gene, .before = p_val)
 
 cele<-readRDS("./data/cele_seurat.RDS")
 sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
@@ -331,5 +335,10 @@ colnames(downloads)[2]<-"Download"
 
 downloads2<-read_xlsx("./data/downloads2.xlsx")
 downloads2$Download<-paste0("<a href='",downloads2$Download,"' target='_blank'>",downloads2$Download,"</a>")
+
+db<-load_data_mysql()
+protein_atlas<-tbl(db, "protein_atlas") %>%
+  collect()
+dbDisconnect(db)
 
 

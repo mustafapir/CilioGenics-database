@@ -307,7 +307,14 @@ ui <- shinydashboardPlus::dashboardPage(
               status = "success",
               width = 6,
               #withSpinner(uiOutput("bargeneinfo"), type = 8, color = "#10c891")
-              uiOutput("polarUI") %>% withSpinner(type = 8)
+              uiOutput("polarUI") %>% withSpinner(type = 8),
+              h5("* Integrated normalized CilioGenics scores."),
+              h5("* Motif score represents the occurrence of RFX1 and MIF-1 motifs
+                 around the 1000 bp upstream region of searched gene."),
+              h5("* Phylogeny score is based on the cluster the searched gene belongs to."),
+              h5("* Protein and genetic interaction scores are based on the rate of interactions
+                 with ciliary proteins/genes by all interactions"),
+              h5("")
             )
           )
         )
@@ -384,7 +391,8 @@ ui <- shinydashboardPlus::dashboardPage(
                 title = "Protein interactions",
                 solidHeader = TRUE,
                 status = "success",
-                reactableOutput("pro_int") %>% withSpinner(type = 8)
+                reactableOutput("pro_int") %>% withSpinner(type = 8),
+                downloadButton(outputId = "prot.table", label = "Download Table")
               )
               #uiOutput("protable")
             )
@@ -413,7 +421,8 @@ ui <- shinydashboardPlus::dashboardPage(
                 title = "Genetic interactions",
                 solidHeader = TRUE,
                 status = "success",
-                reactableOutput("gene_int") %>% withSpinner(type = 8)
+                reactableOutput("gene_int") %>% withSpinner(type = 8),
+                downloadButton(outputId = "gene.table", label = "Download Table")
               )
               #uiOutput("genetable")
             )
@@ -428,7 +437,7 @@ ui <- shinydashboardPlus::dashboardPage(
           #uiOutput("searchUI"),
         fluidRow(
           div(
-            br(), br(),
+            br(),
             id = "cluster_page",
             uiOutput("clusterui"),
             uiOutput("clustertableui")
@@ -551,6 +560,7 @@ ui <- shinydashboardPlus::dashboardPage(
                 #theme = "cerulean",
                 #width = 12,
                 title = "Explore the genes",
+                #### Gene table ----
                 tabPanel(
                   br(), br(),
                   title = "Gene table",
@@ -561,10 +571,17 @@ ui <- shinydashboardPlus::dashboardPage(
                     solidHeader = TRUE,
                     status = "success",
                     width = 12,
-                    withSpinner(reactableOutput("generaltable2"), type = 8)
+                    h4("This is an extensive list of all human genes included in the database.
+                       The column headers provide the description of the data, giving a score for each gene.
+                       Users can type a gene name and sort columns."),
+                    h5("* Table shows weighted scores for all categories. Weights are calculated based on
+                       each section's capability to find ciliary genes."),
+                    withSpinner(reactableOutput("generaltable2"), type = 8),
+                    h5("Click the genes to easily switch to its gene search page.")
                   ),
                   br(), br()
                   ),
+                #### Phylogenetic analysis ----
                 tabPanel(
                   id = "tab2",
                   value = "tab2",
@@ -626,23 +643,13 @@ ui <- shinydashboardPlus::dashboardPage(
                   #     )
                   #   )
                   # ),
+
                   uiOutput("heatmapclusternumberUI"),
 
-                  fluidRow(
-                    column(
-                      width = 10,
-                      offset = 1,
-                      box(
-                        title = "Genes in cluster",
-                        solidHeader = TRUE,
-                        status = "success",
-                        width = 12,
-                        withSpinner(reactableOutput("hclusternumbertable"), type = 8)
-                      )
-                    )
-                  ),
+                  uiOutput("clustergenetable"),
                   br(),br()
                 ),
+                #### Single cell ----
                 tabPanel(
                   id = "tab3",
                   title = "Single cell clusters",
@@ -725,6 +732,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   #   )
                   # )
                 ),
+                #### Publications ----
                 tabPanel(
                   id = "tab4",
                   title = "Publications",
@@ -742,7 +750,10 @@ ui <- shinydashboardPlus::dashboardPage(
                   #   ),
                   fluidRow(
                     div(
-
+                      h3(tags$b("Explore a compilation of 58 papers that presents the list of
+                                ciliary and putative ciliary genes."),
+                         style = "margin-left: 50px;"),
+                      br(),
                       column(
                         width = 6,
                         box(
@@ -750,6 +761,10 @@ ui <- shinydashboardPlus::dashboardPage(
                           solidHeader = TRUE,
                           status = "success",
                           title = "List of publications",
+                          h4("To explore the data sets,
+                                choose the article of interest from the table below."),
+                          br(style = "line-height: 0.1"),
+                          h5("* Click title of the paper to open the paper."),
                           reactableOutput("pubselecttable2") %>% withSpinner(type = 8)
                         )
                       ),
@@ -759,19 +774,22 @@ ui <- shinydashboardPlus::dashboardPage(
 
 
                   fluidRow(
-
                     uiOutput("publicationUI2")
                   )
                 ),
+                #### Motifs ----
                 tabPanel(
                   id = "tab5",
                   title = "Motifs",
                   box(
                     width = 12,
+                    solidHeader = TRUE,
+                    status = "success",
+                    title = "Motifs",
                     column(
                       width = 12,
                       offset = 1,
-                      h4("Explore the TFs and the genes having their binding sites"),
+                      h4("Explore the motifs and the genes with these motifs in their promoter."),
                     ),
                     fluidRow(
                       column(
@@ -788,6 +806,23 @@ ui <- shinydashboardPlus::dashboardPage(
                     br(),
                     fluidRow(
                       uiOutput("motiftableUI")
+                    )
+                  )
+                ),
+                #### Protein atlas ----
+                tabPanel(
+                  id = "tab6",
+                  title = "Protein Atlas",
+                  div(
+                    box(
+                      width = 12,
+                      title = "Protein Atlas",
+                      solidHeader = TRUE,
+                      status = "success",
+                      h5("* List of genes that appear in Human Protein Atlas database and having at least one of the cilia-related keywords",
+                         tags$b("Cilia, Cilium, Centrosome, Flagella, Flagellum.")),
+                      h5("* Comment column shows the text where the keyword appears."),
+                      reactableOutput("proAtlas")
                     )
                   )
                 )
@@ -811,8 +846,9 @@ ui <- shinydashboardPlus::dashboardPage(
       tabItem(
         "abouttab2",
         tags$iframe(src = 'about.html', # put testdoc.html to /www
-                    width = '100%', height = '800px',
+                    width = '100%', height = '1200px',
                     frameborder = 0, scrolling = 'auto')
+        #includeHTML("about.html")
       ),
       tabItem(
         "sourcetab",
@@ -878,6 +914,7 @@ ui <- shinydashboardPlus::dashboardPage(
   ## Footer ----
   footer = tags$footer(
     class = "main-footer",
+    #tags$div(style = "margin: auto; top: 50%; left: 50%;",
     shiny::tags$div(
       class = "pull-right hidden-xs",
       "By Mustafa S. Pir"),
@@ -889,7 +926,9 @@ ui <- shinydashboardPlus::dashboardPage(
         height = "7%",
         width = "7%"
       )
-    )
+    ),
+    #tags$h5("CilioGenics", style = "display: inline-block; margin-left: 40%;"),
+    tags$h5("CilioGenics",br(),"Ver 0.1.0", style = "display: inline-block; margin-left: 40%; margin-top: 1px;")
   )
 )
 

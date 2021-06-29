@@ -7,13 +7,7 @@ output:
     theme: cerulean
 ---
 
-```{css, echo=FALSE}
-body {
-    background-color: #eeeeee;
-}
-```
-|
-## A cilia database
+## A Cilia Database
 
 CilioGenics is an integrated and open source, community friendly database for ciliary genes. The key goal is to combine a variety of cilia-related data, including single-cell RNA-seq, comparative genomics, aggregation of gene list from cilia-related publications, protein atlas, proteomics, and cilia-specific motifs. Gene search is quick and user friendly, and it connects to a page devoted to the specific gene, which displays a variety of cilia-related information about that gene.
 
@@ -27,11 +21,30 @@ CilioGenics also provides a number of resources to:
 
 -   search for the name of gene in each cilia related publications
 
-|
-|
+| <br/><br/>
 
 ## Update Policy of CilioGenics
 
 Cilia are a complex organelle that possibly house hundreds of various proteins, and CilioGenics is a user-friendly database that aims to provide all existing knowledge about a gene. An automatic update is introduced into CilioGenics. For example, proteomics database BioGRID is automatically updated when a new update from BioGRID is released. However, since any effort to reveal the full constituents of cilia by one technique or a combination of two techniques is likely to fail to catch the entire ciliary genes and there will always new data about a gene, please help us to update the website if you have new data about a gene(s), as CilioGenics strives to incorporate new emerging data about each gene.
 
-## 
+<br/><br/>
+
+## Make a Contribution to CilioGenics
+
+We would be glad if you would contribute to expanding and improving the CilioGenics database. Here are a few ways you can help CilioGenics:
+
+-   Submit a new paper presenting the ciliary gene list or single-cell RNA-seq paper.
+
+    Please submit a paper that is not currently in the CilioGenics collection, along with a brief description of the paper, such as a DOI for the paper and/or the integration table number. Please email us if you are willing to submit previously unpublished work. 
+
+-   Update existing data on the CilioGenics
+
+    Please consider submitting a feedback if you find any missing or incorrect information. <br/><br/>
+
+## CilioGenics Version
+
+CilioGenics is a dynamic and a constantly updated database, and if a major update is made, a new version of the database will be made available. <br/><br/>
+
+## Cookie Policy
+
+We use cookies to recognize your device or browser to adjust the content accordingly.

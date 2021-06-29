@@ -268,6 +268,7 @@ server <- function(input, output, session){
     }
   })
 
+
   observeEvent(input$generadio, {
     session$sendCustomMessage("geneName", input$generadio)
     #click("generalPage")
@@ -525,6 +526,7 @@ server <- function(input, output, session){
     if (input$nvbr == "Home"){
       hide("nvbr")
       hide("inpt")
+      click("geneName2_reset")
       #hide("geneName2")
     }
   })
@@ -541,6 +543,7 @@ server <- function(input, output, session){
         session$sendCustomMessage("geneName", genenumber())
         updateTabItems(session, "tabs", selected = "hometab")
         updateNavbarPage(inputId = "nvbr", selected = "General info")
+        show("nvbr")
         # hide("exptab")
         # show("buttonsui")
         # show("general_info")
@@ -1155,6 +1158,45 @@ server <- function(input, output, session){
     }
   })
 
+  reactiveDownload4<-reactive({
+    filename = paste0(genename(), "_protein_interactions.csv")
+  })
+
+  output$prot.table<-downloadHandler(
+    filename = function() {
+      reactiveDownload4()
+    },
+    content = function(file) {
+      shiny::withProgress(
+        message = "Downloading table",
+        value = 0,
+        {
+          shiny::incProgress(7/10)
+          Sys.sleep(1)
+          shiny::incProgress(3/10)
+          write.csv(networkdata(), file = file)
+          shiny::incProgress(2/10)
+        }
+      )
+    },
+    contentType = "csv"
+  )
+
+  # column(
+  #   width = 12,
+  #   align = "left",
+  #   div(
+  #     id = "button3",
+  #     style = "left: 10ex;",
+  #     #dropdown(
+  #     downloadButton(outputId = "prot.table", label = "Download Table")
+  #     #   size = "xm",
+  #     #   icon = icon("download", class = "opt"),
+  #     #   up = TRUE
+  #     # )
+  #   )
+  # )
+
   # Genetic interactions
 
   genenetworkdata<-reactive({
@@ -1228,6 +1270,30 @@ server <- function(input, output, session){
     paste("There is no genetic interaction for", genename(), "gene")
   })
 
+  reactiveDownload5<-reactive({
+    filename = paste0(genename(), "_genetic_interactions.csv")
+  })
+
+  output$gene.table<-downloadHandler(
+    filename = function() {
+      reactiveDownload5()
+    },
+    content = function(file) {
+      shiny::withProgress(
+        message = "Downloading table",
+        value = 0,
+        {
+          shiny::incProgress(7/10)
+          Sys.sleep(1)
+          shiny::incProgress(3/10)
+          write.csv(genenetworkdata(), file = file)
+          shiny::incProgress(2/10)
+        }
+      )
+    },
+    contentType = "csv"
+  )
+
 
   ### Publication page ----
   pubdata<-reactive({
@@ -1241,7 +1307,9 @@ server <- function(input, output, session){
     dbDisconnect(db)
     #a<-data.frame(Publication = unique(publications$Publication[which(toupper(publications$Gene_name) %in% toupper(genename()))]))
     b<-merge(pub, publ, by = "Publication")
-    b$Link <- paste0("<a href='",b$Link,"' target='_blank'>",b$Paper,"</a>")
+    if (length(b[[1]]) > 0){
+      b$Link <- paste0("<a href='",b$Link,"' target='_blank'>",b$Paper,"</a>")
+    }
     b
   })
 
@@ -1306,8 +1374,8 @@ server <- function(input, output, session){
                               div(style = list(display = "inline-block", width = "220px"), image)
                             )
                           },
-                          header = div(tags$style("display: flex; flexDirection: column; justifyContent: center; text-align: center;"),
-                                       "Consensus sequence")
+                          header = with_tooltip3("Consensus sequence",
+                                                          "Consensus sequence taken from MotifMap")
                           ),
       Motif = colDef(name = "Motif",
                      style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
@@ -1321,7 +1389,7 @@ server <- function(input, output, session){
                     align = "left",
                     format = colFormat(digits = 3),
                     header = with_tooltip3("BBLS",
-                                          "BBLS () is conservation score.")),
+                                           "Bayesian Branch Length Score (BBLS) is assessment of the degree of evolutionary conservation")),
       `Distance(bp)` = colDef(name = "Distance(bp)",
                               style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
                               header = with_tooltip3("Distance (bp)",
@@ -1333,6 +1401,9 @@ server <- function(input, output, session){
 
   ### Phylogeny page ----
   inputcluster<-reactive({
+    validate(
+      need(nscores2$Gene_name %in% genename(), sprintf("No data for %s gene", genename()))
+    )
     a<-as.matrix(nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]),2:73])
     rownames(a)<-nscores2$Gene_name[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))])]
     if (length(a[,1]) > 500){
@@ -1353,6 +1424,9 @@ server <- function(input, output, session){
   })
 
   inputclustertable<-reactive({
+    validate(
+      need(nscores2$Gene_name %in% genename(), sprintf("No data for %s gene", genename()))
+    )
 
     df<-data.frame('Gene name' = nscores2[which(nscores2$cluster_number == nscores2$cluster_number[which(toupper(nscores2$Gene_name) == toupper(genename()))]),1], stringsAsFactors = FALSE)
     df$Score<-final_score_table$Mean_score[match(df[[1]], final_score_table$Gene_name)]
@@ -1374,6 +1448,7 @@ server <- function(input, output, session){
   })
 
   reactiveHeatmap1<-reactive({
+
     #isolate({selected3()})
     #req(genename())
     #inputclustergname()
@@ -1419,53 +1494,8 @@ server <- function(input, output, session){
   })
 
   output$clusterui<-renderUI({
-    if (as.numeric(input$GetScreenWidth) >= 1600){
-      div(
-        style = "position: relative",
-        column(
-          id = "colcolcol",
-          width = 10,
-          #align = "center",
-          offset = 1,
-          box(
-            width = 12,
-            solidHeader = TRUE,
-            status = "success",
-            title = paste("Cluster", inputclusternamenumber()),
-            height = "750px",
-            div(
-              id = "button1",
-              style = "position: absolute; left: 2em; bottom: 0.5em;",
-              dropdown(
-                radioGroupButtons(
-                  inputId = "hmapradio",
-                  label = "Genes to display:",
-                  choiceNames = c("Cluster", genename()),
-                  choiceValues = c("clusterradbut", "generadbut"),
-                  direction = "vertical",
-                  selected = "clusterradbut"
-                ),
-                size = "xm",
-                icon = icon("gear", class = "opt"),
-                up = TRUE,
-                inputId = "ddownid"
-              )
-            ),
-            div(
-              id = "button2",
-              style = "position: absolute; left: 8em;bottom: 0.5em;",
-              dropdown(
-                downloadButton(outputId = "hmap1", label = "Download Plot"),
-                size = "xm",
-                icon = icon("download", class = "opt"),
-                up = TRUE
-              )
-            ),
-            withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8),
-            br(),br(),br()
-          )
-        )
-      )
+    if (!(genename() %in% nscores2$Gene_name)){
+      h3(sprintf("No data for %s gene", genename()))
     }
     else {
       div(
@@ -1481,6 +1511,21 @@ server <- function(input, output, session){
             status = "success",
             title = paste("Cluster", inputclusternamenumber()),
             height = "750px",
+            # h4("This page shows the results of comparative genomics analysis which includes genome of
+            #          72 different species and 60 clusters grouping genes that are conserved in the same species."),
+
+            h3(tags$b("Interactive Heatmap of Comparative Genomics between ciliated and non-ciliated cells"),
+               style = "line-height: 0.1; margin-left: 50px;"),
+            br(),
+            h5(paste0("* The heatmap shows the cluster in which human ", genename(), " gene belongs to.
+                      Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
+                      dark color. The list of all human genes in each cluster can be explored in the bottom page."),
+               style = "line-height: 1.5, margin-left: 50px;"),
+            # h5("Explore the comparative genomics of a wide range of ciliated and non-ciliated organisms.
+            #    There are 60 distinct clusters depending on distributions of genes across the species.
+            #    Please select the cluster and view the interactive heatmap.
+            #    The list of all human genes in each cluster can be explored in the bottom page.",
+            #    style = "line-height: 1.5;"),
             div(
               id = "button1",
               style = "position: absolute; left: 2em; bottom: 0.5em;",
@@ -1488,7 +1533,7 @@ server <- function(input, output, session){
                 radioGroupButtons(
                   inputId = "hmapradio",
                   label = "Genes to display:",
-                  choiceNames = c("Cluster", genename()),
+                  choiceNames = c("Whole cluster", paste0("Only ",genename())),
                   choiceValues = c("clusterradbut", "generadbut"),
                   direction = "vertical",
                   selected = "clusterradbut"
@@ -1496,59 +1541,120 @@ server <- function(input, output, session){
                 size = "xm",
                 icon = icon("gear", class = "opt"),
                 up = TRUE,
-                inputId = "ddownid"
+                inputId = "ddownid",
+                label = "Toggle display"
               )
             ),
             div(
               id = "button2",
-              style = "position: absolute; left: 8em;bottom: 0.5em;",
-              dropdown(
-                downloadButton(outputId = "hmap1", label = "Download Plot"),
-                size = "xm",
-                icon = icon("download", class = "opt"),
-                up = TRUE
-              )
+              style = "position: absolute; left: 15em;bottom: 0.5em;",
+              downloadButton(outputId = "hmap1", label = "Download Plot")
+              # dropdown(
+              #   downloadButton(outputId = "hmap1", label = "Download Plot"),
+              #   size = "xm",
+              #   icon = icon("download", class = "opt"),
+              #   up = TRUE
+              # )
             ),
             withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8),
-            br(),br(),br()
+            br(),br(),br(),
+            h5()
           )
         )
       )
     }
+    # else if(as.numeric(input$GetScreenWidth) < 1600){
+    #   div(
+    #     style = "position: relative",
+    #     column(
+    #       id = "colcolcol",
+    #       width = 12,
+    #       #align = "center",
+    #       #offset = 1,
+    #       box(
+    #         width = 12,
+    #         solidHeader = TRUE,
+    #         status = "success",
+    #         title = paste("Cluster", inputclusternamenumber()),
+    #         height = "750px",
+    #         h4("This page shows the results of comparative genomics analysis which includes genome of
+    #                  72 different species and 60 clusters grouping genes that are conserved in the same species."),
+    #         h5(paste0("* The heatmap shows the cluster in which human ", genename(), " gene belongs to.
+    #                   Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
+    #                   dark color.")),
+    #         div(
+    #           id = "button1",
+    #           style = "position: absolute; left: 2em; bottom: 0.5em;",
+    #           dropdown(
+    #             radioGroupButtons(
+    #               inputId = "hmapradio",
+    #               label = "Genes to display:",
+    #               choiceNames = c("Cluster", genename()),
+    #               choiceValues = c("clusterradbut", "generadbut"),
+    #               direction = "vertical",
+    #               selected = "clusterradbut"
+    #             ),
+    #             size = "xm",
+    #             icon = icon("gear", class = "opt"),
+    #             up = TRUE,
+    #             inputId = "ddownid"
+    #           )
+    #         ),
+    #         div(
+    #           id = "button2",
+    #           style = "position: absolute; left: 15em;bottom: 0.5em;",
+    #           downloadButton(outputId = "hmap1", label = "Download Plot"),
+    #           # dropdown(
+    #           #   downloadButton(outputId = "hmap1", label = "Download Plot"),
+    #           #   size = "xm",
+    #           #   icon = icon("download", class = "opt"),
+    #           #   up = TRUE
+    #           # )
+    #         ),
+    #         withSpinner(iheatmaprOutput("heatmapcluster", width = "100%", height = "630px"), type = 8),
+    #         br(),br(),br()
+    #       )
+    #     )
+    #   )
+    # }
   })
 
   output$hclustertable<-renderReactable({
-    reactable(inputclustertable(), resizable = TRUE, filterable = TRUE,
+    reactable(inputclustertable()[,-4], resizable = TRUE, filterable = TRUE,
               searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
               highlight = TRUE,
               columns = list(
-                Score = colDef(name = "Score",
+                Score = colDef(name = "CilioGenics score",
                                format = colFormat(digits = 3),
                                align = "left",
                                header = with_tooltip2("Score", "Single cell scores")),
                 Gene_name = colDef(name = "Gene name",
                                    header = with_tooltip2("Gene name", "HGNC gene name")),
-                `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?")),
-                CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
-              ),
-              rowStyle = list(cursor = "pointer"),
-              selection = "single",
-              onClick = "select")
+                `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?"))
+                #CilioGenics = colDef(header = with_tooltip2("CilioGenics", "Is the gene in the ciliary gene list of CilioGenics?"))
+              ))
   })
 
   output$clustertableui<-renderUI({
-    column(
-      width = 10,
-      offset = 1,
-      #align = "center",
-      box(
-        title = paste("Genes in cluster", inputclusternamenumber()),
-        solidHeader = TRUE,
-        status = "success",
-        width = 12,
-        withSpinner(reactableOutput("hclustertable"), type = 8)
+    if (!(genename() %in% nscores2$Gene_name)){
+
+    }
+    else {
+      column(
+        width = 10,
+        offset = 1,
+        #align = "center",
+        box(
+          title = paste("Genes in cluster", inputclusternamenumber()),
+          solidHeader = TRUE,
+          status = "success",
+          width = 12,
+          h4("Gene list which appears in the selected cluster. List can be filtered
+                           (i.e. for only gold standard genes, type 'Yes' in gold standard column."),
+          withSpinner(reactableOutput("hclustertable"), type = 8)
+        )
       )
-    )
+    }
   })
 
   reactiveDownload1<-reactive({
@@ -1731,6 +1837,7 @@ server <- function(input, output, session){
     req(input$scsource2)
     if(length(feature.names())>1){
       div(
+        h5(sprintf("There are multiple orthologs for %s gene in C. elegans. Select one:", genename())),
         pickerInput(
           inputId = "celeinput",
           label = "Select a C. elegans gene",
@@ -1774,12 +1881,17 @@ server <- function(input, output, session){
       if(length(feature.names())>1 & is.null(input$celeinput)){
 
       }
+      else if (length(feature.names())==0){
+        h4(paste0("There is no ortholog of ", genename(), " gene in C. elegans"))
+      }
       else {
         div(
           id = "scUIdiv2",
           fluidRow(
             box(
               width = 12,
+              solidHeader = TRUE,
+              status = "success",
               column(
                 width = 6,
                 plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
@@ -1794,6 +1906,8 @@ server <- function(input, output, session){
           fluidRow(
             box(
               width = 12,
+              solidHeader = TRUE,
+              status = "success",
               column(
                 width = 12,
                 plotOutput("vlngene2", height = "500px") %>% withSpinner(type = 8)
@@ -1810,6 +1924,8 @@ server <- function(input, output, session){
         fluidRow(
           box(
             width = 12,
+            solidHeader = TRUE,
+            status = "success",
             column(
               width = 6,
               plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
@@ -1824,6 +1940,8 @@ server <- function(input, output, session){
         fluidRow(
           box(
             width = 12,
+            solidHeader = TRUE,
+            status = "success",
             column(
               width = 12,
               plotOutput("vlngene") %>% withSpinner(type = 8)
@@ -2139,14 +2257,16 @@ server <- function(input, output, session){
   })
 
   output$hclusternumbertable<-renderReactable({
-    reactable(inputclusternumbertable(), resizable = TRUE, filterable = TRUE,
-              columns = list(Score = colDef(format = colFormat(digits = 3)),
-                             Gene_name = colDef(name = "Gene name")),
+    reactable(inputclusternumbertable()[,-4], resizable = TRUE, filterable = TRUE, searchable = TRUE,
+              columns = list(Score = colDef(name = "CilioGenics score",
+                                            format = colFormat(digits = 3),
+                                            align = "left",
+                                            header = with_tooltip2("Score", "Single cell scores")),
+                             Gene_name = colDef(name = "Gene name",
+                                                header = with_tooltip2("Gene name", "HGNC gene name")),
+                             `Gold standard` = colDef(header = with_tooltip2("Gold standard", "Is Gold standard gene?"))),
               defaultPageSize = 10, showPageSizeOptions = TRUE,
-              highlight = TRUE,
-              rowStyle = list(cursor = "pointer"),
-              selection = "single",
-              onClick = "select")
+              highlight = TRUE)
   })
 
   selected4 <- reactive(getReactableState("hclusternumbertable", "selected"))
@@ -2179,15 +2299,21 @@ server <- function(input, output, session){
   })
 
   output$heatmapclusternumberUI<-renderUI({
-    if (as.numeric(input$GetScreenWidth) >= 1600){
-      column(
-        width = 10,
-        offset = 1,
         box(
           title = "Phylogenetic analysis",
           solidHeader = TRUE,
           status = "success",
           width = 12,
+          # h4("This page shows the results of comparative genomics analysis which includes genome of
+          #            72 different species and 60 clusters grouping genes that are conserved in the same species."),
+          h3(tags$b("Interactive Heatmap of Comparative Genomics between ciliated and non-ciliated cells"),
+             style = "line-height: 0.1; margin-left: 50px;"),
+          br(),
+          h5("Explore the comparative genomics of a wide range of ciliated and non-ciliated organisms.
+               There are 60 distinct clusters depending on distributions of genes across the species.
+               Please select the cluster and view the interactive heatmap.
+               The list of all human genes in each cluster can be explored in the bottom page.",
+             style = "line-height: 1.5; margin-left: 50px"),
           column(
             width = 4,
             pickerInput(
@@ -2204,7 +2330,9 @@ server <- function(input, output, session){
           fluidRow(
             column(
               width = 12,
-              withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
+              withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8),
+              h5("* Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
+                      dark color.")
             ),
             column(
               width = 12,
@@ -2213,7 +2341,7 @@ server <- function(input, output, session){
                 id = "button3",
                 style = "left: 10ex;",
                 #dropdown(
-                downloadButton(outputId = "hmap3", label = "Download")
+                downloadButton(outputId = "hmap3", label = "Download Plot")
                 #   size = "xm",
                 #   icon = icon("download", class = "opt"),
                 #   up = TRUE
@@ -2222,53 +2350,76 @@ server <- function(input, output, session){
             )
           )
         )
-      )
-    }
-    else {
-      column(
+    # else {
+    #
+    #     box(
+    #       title = "Phylogenetic analysis",
+    #       solidHeader = TRUE,
+    #       status = "success",
+    #       width = 12,
+    #       column(
+    #         width = 4,
+    #         pickerInput(
+    #           inputId = "clusternumber",
+    #           label = "Select cluster number to explore",
+    #           choices = list(
+    #             "Ciliary organisms specific clusters" = c(56,58),
+    #             "Average conservation" = c(1,4,6,9,16,30),
+    #             "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
+    #           )
+    #         )
+    #       ),
+    #
+    #       fluidRow(
+    #         column(
+    #           width = 12,
+    #           withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8),
+    #           h5("* Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
+    #                   dark color.")
+    #         ),
+    #         column(
+    #           width = 12,
+    #           align = "left",
+    #           div(
+    #             id = "button3",
+    #             style = "left: 10ex;",
+    #             #dropdown(
+    #             downloadButton(outputId = "hmap3", label = "Download Plot")
+    #             #   size = "xm",
+    #             #   icon = icon("download", class = "opt"),
+    #             #   up = TRUE
+    #             # )
+    #           )
+    #         )
+    #       )
+    #     )
+    # }
+  })
+
+  output$clustergenetable<-renderUI({
+      box(
+        title = "Genes in cluster",
+        solidHeader = TRUE,
+        status = "success",
         width = 12,
-        #offset = 1,
-        box(
-          title = "Phylogenetic analysis",
-          solidHeader = TRUE,
-          status = "success",
+        column(
           width = 12,
-          column(
-            width = 4,
-            pickerInput(
-              inputId = "clusternumber",
-              label = "Select cluster number to explore",
-              choices = list(
-                "Ciliary organisms specific clusters" = c(56,58),
-                "Average conservation" = c(1,4,6,9,16,30),
-                "Low specificity" = c(2:3,5,7:8,10:15,17:29,31:55,57,58:60)
-              )
-            )
-          ),
+          #offset = 1,
 
-          fluidRow(
-            column(
-              width = 12,
-              withSpinner(iheatmaprOutput("heatmapclusternumber", height = "600px"), type = 8)
-            ),
-            column(
-              width = 12,
-              align = "left",
-              div(
-                id = "button3",
-                style = "left: 10ex;",
-                #dropdown(
-                downloadButton(outputId = "hmap3", label = "Download")
-                #   size = "xm",
-                #   icon = icon("download", class = "opt"),
-                #   up = TRUE
-                # )
-              )
-            )
+          h4("Gene list which appears in the selected cluster. List can be filtered
+                           (i.e. for only gold standard genes, type 'Yes' in gold standard column.)"),
+          withSpinner(reactableOutput("hclusternumbertable"), type = 8)
+        ),
+        column(
+          width = 12,
+          align = "left",
+          div(
+            id = "button4",
+            style = "left: 10ex;",
+            downloadButton(outputId = "clustergenetbl", label = "Download Table")
           )
         )
       )
-    }
   })
 
   reactiveDownload3<-reactive({
@@ -2297,6 +2448,31 @@ server <- function(input, output, session){
     },
     contentType = "image/png"
   )
+
+  reactiveDownload4<-reactive({
+    filename = paste0("cluster_", input$clusternumber, "_genes.csv")
+  })
+
+  output$clustergenetbl<-downloadHandler(
+    filename = function() {
+      reactiveDownload4()
+    },
+    content = function(file) {
+      shiny::withProgress(
+        message = "Downloading table",
+        value = 0,
+        {
+          shiny::incProgress(7/10)
+          Sys.sleep(1)
+          shiny::incProgress(2/10)
+          write.csv(inputclusternumbertable()[,-4], file)
+          shiny::incProgress(3/10)
+        }
+      )
+    },
+    contentType = "csv"
+  )
+
 
   ### Single cell ----
   # r_scclusternumber2<-reactive({
@@ -2394,7 +2570,7 @@ server <- function(input, output, session){
           width = 6,
           align = "center",
           offset = 3,
-          h3("Select a single cell RNA-seq data to visualize cell groups and gene expressions"),
+          h3(tags$b("Select a single cell RNA-seq data to visualize cell groups and gene expressions")),
           br(),
           pickerInput(
             inputId = "scsource",
@@ -2418,6 +2594,78 @@ server <- function(input, output, session){
     if (is.null(input$scsource)){
 
     }
+    else if(input$scsource == "Cao et al(2017) - C. elegans"){
+      div(
+        id = "scUIdiv",
+        # fluidRow(
+        #   column(
+        #     width = 6,
+        #     offset = 6,
+        #     uiOutput("scgeneinput"),
+        #     uiOutput("scgenebutton")
+        #   )
+        # ),
+        fluidRow(
+          box(
+            width = 12,
+            solidHeader = TRUE,
+            status = "success",
+            column(
+              width = 6,
+              plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
+              bsTooltip("scsource", "Select a source to visualize the cells", placement = "top")
+            ),
+            column(
+              width = 6,
+              fluidRow(
+                uiOutput("message"),
+                column(
+                  width = 6,
+                  #uiOutput("scgeneinput")
+                  selectInput(
+                    "scgene",
+                    "Select multiple genes",
+                    multiple = TRUE,
+                    choices = NULL
+                  )
+                ),
+                column(
+                  width = 3,
+                  br(),
+                  uiOutput("scgenebutton")
+                )
+              ),
+              fluidRow(
+                column(
+                  width = 12,
+                  br(),
+                  plotOutput("dotgene", height = "600px") %>% withSpinner(type = 8)
+                )
+              )
+            )
+            # column(
+            #   width = 6,
+            #   plotOutput("heatmapgene") %>% withSpinner(type = 8),
+            # )
+          )
+        )
+        # fluidRow(
+        #   column(
+        #     width = 8,
+        #     align = "center",
+        #     offset = 2,
+        #     br(),br(),
+        #     box(
+        #       width = 12,
+        #       h4("Select a cluster to explore differentially expressed genes"),
+        #       uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
+        #       reactableOutput("scmaptable2"),
+        #       bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
+        #     )
+        #   )
+        # )
+      )
+    }
     else {
       div(
         id = "scUIdiv",
@@ -2432,6 +2680,8 @@ server <- function(input, output, session){
         fluidRow(
           box(
             width = 12,
+            solidHeader = TRUE,
+            status = "success",
             column(
               width = 6,
               plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
@@ -2477,9 +2727,11 @@ server <- function(input, output, session){
             align = "center",
             offset = 2,
             br(),br(),
-            h4("Select a cluster to explore differentially expressed genes"),
             box(
               width = 12,
+              solidHeader = TRUE,
+              status = "success",
+              h4("Select a cluster to explore differentially expressed genes"),
               uiOutput("sccelltypeinput") %>% withSpinner(type = 8),
               reactableOutput("scmaptable"),
               bsTooltip("sccelltypeinput", "Select a group to list genes differentially expressed in that group", placement = "top")
@@ -2698,10 +2950,10 @@ server <- function(input, output, session){
       lung_markers[[i]]
     }
     else if (source.list() == "reyfman"){
-      reyfman_markers[reyfman_markers$cluster == input$sccelltypes,]
+      reyfman_markers[reyfman_markers$cluster == input$sccelltypes,-7]
     }
     else if (source.list() == "habermann"){
-      habermann_markers[habermann_markers$cluster == input$sccelltypes,]
+      habermann_markers[habermann_markers$cluster == input$sccelltypes,-7]
     }
   })
 
@@ -2717,9 +2969,47 @@ server <- function(input, output, session){
     reactable(
       diff_list(), resizable = TRUE, filterable = TRUE,
       searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
-      highlight = TRUE
+      highlight = TRUE,
+      columns = list(
+        gene = colDef(header = with_tooltip("Gene name", "Gene name")),
+        p_val = colDef(header = with_tooltip("p_val","p_val (unadjusted)"), width = 100,
+                       format = colFormat(digits = 3)),
+        avg_log2FC = colDef(header = with_tooltip("avg_log2FC","log fold-chage of the average expression between the two groups.
+                                          Positive values indicate that the feature is more
+                                          highly expressed in the first group."),
+                            format = colFormat(digits = 3)),
+        pct.1 = colDef(header = with_tooltip("pct.1","The percentage of cells where the feature is detected in the first group"),
+                       format = colFormat(digits = 3)),
+        pct.2 = colDef(header = with_tooltip("pct.2","The percentage of cells where the feature is detected in the second group"),
+                       format = colFormat(digits = 3)),
+        p_val_adj = colDef(header = with_tooltip("p_val_adj","Adjusted p-value, based on bonferroni
+                                     correction using all features in the dataset"),
+                           format = colFormat(digits = 3))
+      ),
+      rownames = FALSE
     )
   })
+
+  # output$scmaptable2<-renderReactable({
+  #   req(input$sccelltypes)
+  #   reactable(
+  #     diff_list(), resizable = TRUE, filterable = TRUE,
+  #     searchable = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE,
+  #     highlight = TRUE,
+  #     columns = list(
+  #       gene = colDef(header = with_tooltip("Gene name", "Gene name")),
+  #       p_val = colDef(header = with_tooltip("p_val","p_val (unadjusted)"), width = 100),
+  #       avg_log2FC = colDef(header = with_tooltip("avg_log2FC","log fold-chage of the average expression between the two groups.
+  #                                         Positive values indicate that the feature is more
+  #                                         highly expressed in the first group.")),
+  #       pct.1 = colDef(header = with_tooltip("pct.1","The percentage of cells where the feature is detected in the first group")),
+  #       pct.2 = colDef(header = with_tooltip("pct.2","The percentage of cells where the feature is detected in the second group")),
+  #       p_val_adj = colDef(header = with_tooltip("p_val_adj","Adjusted p-value, based on bonferroni
+  #                                    correction using all features in the dataset"))
+  #     ),
+  #     rownames = FALSE
+  #   )
+  # })
 
   # output$scmaptable<-renderDT({
   #   #req(input$sccelltypes)
@@ -2841,7 +3131,8 @@ server <- function(input, output, session){
               columns = list(
                 Link = colDef(name = "Title",
                               html = TRUE,
-                              width = 300)
+                              width = 300),
+                Year = colDef(width = 50)
               ))
   })
 
@@ -2880,11 +3171,15 @@ server <- function(input, output, session){
     pub_list()[[2]][selected5()]
   })
 
+  pubselecttable_selection2<-reactive({
+    pub_list()$Publication[selected5()]
+  })
+
   output$pubselecttable<-renderReactable({
     #req(input$pubpub)
     reactable(gene_pub_list(), resizable = TRUE, filterable = FALSE,
               searchable = TRUE, defaultPageSize = 20, showPageSizeOptions = TRUE,
-              highlight = TRUE, height = 500
+              highlight = TRUE, height = 600
     )
   })
 
@@ -2893,7 +3188,7 @@ server <- function(input, output, session){
       column(
         width = 6,
         box(
-          title = sprintf("Gene list for %s", pubselecttable_selection()),
+          title = sprintf("Gene list for %s", pubselecttable_selection2()),
           solidHeader = TRUE,
           status = "success",
           width = 12,
@@ -2915,7 +3210,7 @@ server <- function(input, output, session){
       column(
         width = 6,
         box(
-          title = sprintf("Gene list for %s", pubselecttable_selection()),
+          title = sprintf("Gene list for %s", pubselecttable_selection2()),
           solidHeader = TRUE,
           status = "success",
           width = 12,
@@ -2945,7 +3240,8 @@ server <- function(input, output, session){
           status = "success",
           width = 12,
           br(),br(),br(),br(),
-          highchartOutput("pubchart") %>% withSpinner(type = 8)
+          highchartOutput("pubchart") %>% withSpinner(type = 8),
+          h5("* Line plot showing total reported gene number and ciliary gene number.")
         )
       )
     }
@@ -2958,7 +3254,8 @@ server <- function(input, output, session){
           status = "success",
           width = 12,
           br(),br(),br(),br(),
-          highchartOutput("pubchart") %>% withSpinner(type = 8)
+          highchartOutput("pubchart") %>% withSpinner(type = 8),
+          h5("* Line plot showing total reported gene number and ciliary gene number.")
         )
       )
     }
@@ -2991,7 +3288,9 @@ server <- function(input, output, session){
   output$motiftbl2<-renderReactable({
     req(input$motifname)
     reactable(motiftable2(), columns = list(
-      `Motif ID` = colDef(name = "Motif id"
+      `Motif ID` = colDef(name = "Motif id",
+                          header = with_tooltip4("Motif id",
+                                                 "Motif id from MotifMap")
       ),
       `Gene name` = colDef(name = "Gene name",
                      style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
@@ -3025,6 +3324,22 @@ server <- function(input, output, session){
       tagList("* For more information: ", a("http://motifmap.ics.uci.edu/", href = "http://motifmap.ics.uci.edu/",
                                             target="_blank"))
     )
+  })
+
+  ### Protein Atlas ----
+
+  # output$proAtlas<-renderTable({
+  #   reactable(protein_atlas, filterable = TRUE, searchable = TRUE, defaultPageSize = 10, height = 700)
+  # },bordered = TRUE, sanitize.text.function=identity)
+
+  output$proAtlas<-renderReactable({
+    reactable(protein_atlas, resizable = TRUE, filterable = TRUE, searchable = TRUE,
+              defaultPageSize = 15, showPageSizeOptions = TRUE,
+              columns = list(
+                Gene_name = colDef(name = "Gene name", maxWidth = 110),
+                Comment = colDef(html = TRUE),
+                Keyword = colDef(html = TRUE, maxWidth = 110)
+              ))
   })
 
   # Source Page ----
@@ -3176,7 +3491,7 @@ server <- function(input, output, session){
   })
 
   output$sourcetable3<-renderReactable({
-    reactable(sources[9:12,1:2], resizable = FALSE, filterable = FALSE,
+    reactable(sources[9:13,1:2], resizable = FALSE, filterable = FALSE,
               searchable = FALSE, defaultPageSize = 20, showPageSizeOptions = FALSE,
               highlight = FALSE,
               columns = list(
