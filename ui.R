@@ -533,8 +533,8 @@ ui <- shinydashboardPlus::dashboardPage(
                   solidHeader = TRUE,
                   status = "success",
                   title = "Motifs",
-                  h4("The table below shows the motifs that appears in the promoter (1000bp upstream) region of ",
-                     genename(), "gene."),
+                  h4("The table below shows the motifs that appears in the promoter (1000bp upstream) region of
+                     the gene of interest."),
                   reactableOutput("motiftbl")
                 )
               )
