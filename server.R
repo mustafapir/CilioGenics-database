@@ -1515,12 +1515,13 @@ server <- function(input, output, session){
             #          72 different species and 60 clusters grouping genes that are conserved in the same species."),
 
             h3(tags$b("Interactive Heatmap of Comparative Genomics between ciliated and non-ciliated cells"),
-               style = "line-height: 0.1; margin-left: 50px;"),
+               style = "margin-left: 50px;"),
             br(),
             h5(paste0("* The heatmap shows the cluster in which human ", genename(), " gene belongs to.
                       Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
                       dark color. The list of all human genes in each cluster can be explored in the bottom page."),
                style = "line-height: 1.5, margin-left: 50px;"),
+            h5("You can also plot heatmap for only gene of interest by selecting 'Toggle display'"),
             # h5("Explore the comparative genomics of a wide range of ciliated and non-ciliated organisms.
             #    There are 60 distinct clusters depending on distributions of genes across the species.
             #    Please select the cluster and view the interactive heatmap.
@@ -1797,9 +1798,9 @@ server <- function(input, output, session){
           width = 6,
           align = "center",
           offset = 3,
-          h3(paste0("Select a single cell RNA-seq data to visualize cell groups and expression profile of ",
+          h3(tags$b(paste0("Select a single cell RNA-seq data to visualize cell groups and expression profile of ",
                     genename(),
-                    " gene")),
+                    " gene"))),
           br(),
           pickerInput(
             inputId = "scsource2",
@@ -1892,6 +1893,12 @@ server <- function(input, output, session){
               width = 12,
               solidHeader = TRUE,
               status = "success",
+              h4(sprintf("The plot on the left is UMAP or t-SNE plot showing all cells for the selected single cell RNA-seq data.
+                 The plot on the right is UMAP or t-SNE plot showing only cells expressing %s gene. The violin plot
+                         at the bottom of the page shows expression levels of gene of interest in different cell types",
+                         genename()), style = "margin-left: 50px;"),
+              h5("* Clusters having a number as cluster name represent unidentified clusters.",
+                 style = "margin-left: 50px;"),
               column(
                 width = 6,
                 plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
@@ -2307,7 +2314,7 @@ server <- function(input, output, session){
           # h4("This page shows the results of comparative genomics analysis which includes genome of
           #            72 different species and 60 clusters grouping genes that are conserved in the same species."),
           h3(tags$b("Interactive Heatmap of Comparative Genomics between ciliated and non-ciliated cells"),
-             style = "line-height: 0.1; margin-left: 50px;"),
+             style = "margin-left: 50px;"),
           br(),
           h5("Explore the comparative genomics of a wide range of ciliated and non-ciliated organisms.
                There are 60 distinct clusters depending on distributions of genes across the species.
@@ -2610,6 +2617,13 @@ server <- function(input, output, session){
             width = 12,
             solidHeader = TRUE,
             status = "success",
+            h4("The plot on the left is UMAP or t-SNE plot showing all cells for the selected single cell RNA-seq data.
+                 On the right, you can type single or multiple gene names to visualize and compare their expression
+               profiles on a dot plot. On the bottom of the page, differentially expressed genes and related data
+               can be explored for each cluster.", style = "margin-left: 50px;"),
+            h5("* Clusters having a number as cluster name represent unidentified clusters.",
+               style = "margin-left: 50px;"),
+            h5("* Differential expression data is not available for Cao et al. (C. elegans)"),
             column(
               width = 6,
               plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
@@ -3296,7 +3310,8 @@ server <- function(input, output, session){
                      style = "display: flex; flexDirection: column; justifyContent: center; text-align: center;",
                      header = with_tooltip4("Gene name",
                                             "Name of the motif")),
-      Motif = colDef(name = "Motif name"),
+      Motif = colDef(name = "Motif name",
+                     header = with_tooltip4("Motif name", "Name of the motif")),
       BBLS = colDef(name = "BBLS",
                     style = function(value) {
                       bar_style2(width = value / max(motifs$BBLS), fill = "#2c5e77", color = "#fff")
