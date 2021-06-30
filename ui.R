@@ -506,8 +506,7 @@ ui <- shinydashboardPlus::dashboardPage(
                 title = "List of publications",
                 solidHeader = TRUE,
                 status = "success",
-                h4("This page shows publications among 52 cilia related papers in which ", genename(), " gene is published.
-                   In the heatmap, 11 other genes which are published by the highest amount of publication are also shown."),
+                uiOutput("pubexpui"),
                 br(),br(),br(),
                 plotOutput("pubheatmap") %>% withSpinner(type = 8),
                 br(),br(), br(),br(), br(),

@@ -39,12 +39,22 @@ We would be glad if you would contribute to expanding and improving the CilioGen
 
 -   Update existing data on the CilioGenics
 
-    Please consider submitting a feedback if you find any missing or incorrect information. <br/><br/>
+    Please consider submitting a feedback if you find any missing or incorrect information.
+
+    <br/><br/>
 
 ## CilioGenics Version
 
-CilioGenics is a dynamic and a constantly updated database, and if a major update is made, a new version of the database will be made available. <br/><br/>
+CilioGenics is a dynamic and a constantly updated database, and if a major update is made, a new version of the database will be made available.
+
+<br/><br/>
 
 ## Cookie Policy
 
 We use cookies to recognize your device or browser to adjust the content accordingly.
+
+<br/><br/>
+
+## Contact
+
+Please contact  [oktay.kaplan\@agu.edu.tr](mailto:oktay.kaplan@agu.edu.tr) or [mustafapir29\@gmail.com](mailto:mustafapir29@gmail.com) for any question or inquiries.

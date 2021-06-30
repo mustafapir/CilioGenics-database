@@ -1360,6 +1360,11 @@ server <- function(input, output, session){
             heatmap_height = unit(1.5, "npc"))
   })
 
+  output$pubexpui<-renderUI({
+    h4("This page shows publications among 52 cilia related papers in which ", genename(), " gene is published.
+                   In the heatmap, 11 other genes which are published by the highest amount of publication are also shown.")
+  })
+
   ### Motif page ----
   motiftable<-reactive({
     unique(motifs[motifs$`Gene name` == genename(),6:9])
