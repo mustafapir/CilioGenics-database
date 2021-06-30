@@ -1521,7 +1521,7 @@ server <- function(input, output, session){
                       Y axis represents genes while X axis shows organisms. Genes having ortholog in an organism shows
                       dark color. The list of all human genes in each cluster can be explored in the bottom page."),
                style = "line-height: 1.5, margin-left: 50px;"),
-            h5("You can also plot heatmap for only gene of interest by selecting 'Toggle display'"),
+            h5("* You can also plot heatmap for only gene of interest by selecting 'Toggle display'"),
             # h5("Explore the comparative genomics of a wide range of ciliated and non-ciliated organisms.
             #    There are 60 distinct clusters depending on distributions of genes across the species.
             #    Please select the cluster and view the interactive heatmap.
@@ -1894,10 +1894,9 @@ server <- function(input, output, session){
               solidHeader = TRUE,
               status = "success",
               h4(sprintf("The plot on the left is UMAP or t-SNE plot showing all cells for the selected single cell RNA-seq data.
-                 The plot on the right is UMAP or t-SNE plot showing only cells expressing %s gene. The violin plot
+                 The plot on the right is UMAP or t-SNE plot showing only cells expressing %s gene. The plot
                          at the bottom of the page shows expression levels of gene of interest in different cell types",
-                         genename()), style = "margin-left: 50px;"),
-              h5("* Clusters having a number as cluster name represent unidentified clusters.",
+                         feature.names()), style = "margin-left: 50px;"),
                  style = "margin-left: 50px;"),
               column(
                 width = 6,
@@ -1933,6 +1932,12 @@ server <- function(input, output, session){
             width = 12,
             solidHeader = TRUE,
             status = "success",
+            h4(sprintf("The plot on the left is UMAP or t-SNE plot showing all cells for the selected single cell RNA-seq data.
+                 The plot on the right is UMAP or t-SNE plot showing only cells expressing %s gene. The violin plot
+                         at the bottom of the page shows expression levels of gene of interest in different cell types",
+                       genename()), style = "margin-left: 50px;"),
+            h5("* Clusters having a number as cluster name represent unidentified clusters.",
+               style = "margin-left: 50px;"),
             column(
               width = 6,
               plotOutput("scumapgeneral2_binding", height = "600px") %>% withSpinner(type = 8)
@@ -2617,13 +2622,10 @@ server <- function(input, output, session){
             width = 12,
             solidHeader = TRUE,
             status = "success",
-            h4("The plot on the left is UMAP or t-SNE plot showing all cells for the selected single cell RNA-seq data.
+            h4("The plot on the left is t-SNE plot showing all cells for the selected single cell RNA-seq data.
                  On the right, you can type single or multiple gene names to visualize and compare their expression
-               profiles on a dot plot. On the bottom of the page, differentially expressed genes and related data
-               can be explored for each cluster.", style = "margin-left: 50px;"),
-            h5("* Clusters having a number as cluster name represent unidentified clusters.",
+               profiles on a dot plot.", style = "margin-left: 50px;"),
                style = "margin-left: 50px;"),
-            h5("* Differential expression data is not available for Cao et al. (C. elegans)"),
             column(
               width = 6,
               plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),
@@ -2696,6 +2698,12 @@ server <- function(input, output, session){
             width = 12,
             solidHeader = TRUE,
             status = "success",
+            h4("The plot on the left is UMAP plot showing all cells for the selected single cell RNA-seq data.
+                 On the right, you can type single or multiple gene names to visualize and compare their expression
+               profiles on a dot plot. On the bottom of the page, differentially expressed genes and related data
+               can be explored for each cluster.", style = "margin-left: 50px;"),
+            h5("* Clusters having a number as cluster name represent unidentified clusters.",
+               style = "margin-left: 50px;"),
             column(
               width = 6,
               plotOutput("scumapgeneral",height = "600px") %>% withSpinner(type = 8),

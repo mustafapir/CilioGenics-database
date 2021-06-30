@@ -506,6 +506,8 @@ ui <- shinydashboardPlus::dashboardPage(
                 title = "List of publications",
                 solidHeader = TRUE,
                 status = "success",
+                h4("This page shows publications among 52 cilia related papers in which ", genename(), " gene is published.
+                   In the heatmap, 11 other genes which are published by the highest amount of publication are also shown."),
                 br(),br(),br(),
                 plotOutput("pubheatmap") %>% withSpinner(type = 8),
                 br(),br(), br(),br(), br(),
@@ -528,7 +530,11 @@ ui <- shinydashboardPlus::dashboardPage(
                 offset = 1,
                 box(
                   width = 12,
+                  solidHeader = TRUE,
+                  status = "success",
                   title = "Motifs",
+                  h4("The table below shows the motifs that appears in the promoter (1000bp upstream) region of ",
+                     genename(), "gene.")
                   reactableOutput("motiftbl")
                 )
               )
@@ -750,7 +756,7 @@ ui <- shinydashboardPlus::dashboardPage(
                   #   ),
                   fluidRow(
                     div(
-                      h3(tags$b("Explore a compilation of 58 papers that presents the list of
+                      h3(tags$b("Explore a compilation of 52 papers that presents the list of
                                 ciliary and putative ciliary genes."),
                          style = "margin-left: 50px;"),
                       br(),
@@ -764,7 +770,7 @@ ui <- shinydashboardPlus::dashboardPage(
                           h4("To explore the data sets,
                                 choose the article of interest from the table below."),
                           br(style = "line-height: 0.1"),
-                          h5("* Click title of the paper to open the paper."),
+                          h5("* To open the paper on Pubmed instead, click title of the paper."),
                           reactableOutput("pubselecttable2") %>% withSpinner(type = 8)
                         )
                       ),
@@ -789,7 +795,7 @@ ui <- shinydashboardPlus::dashboardPage(
                     column(
                       width = 12,
                       offset = 1,
-                      h4("Explore the motifs and the genes with these motifs in their promoter."),
+                      h4(tags$b("Explore the motifs and the genes with these motifs in their promoter.")),
                     ),
                     fluidRow(
                       column(
@@ -819,7 +825,8 @@ ui <- shinydashboardPlus::dashboardPage(
                       title = "Protein Atlas",
                       solidHeader = TRUE,
                       status = "success",
-                      h5("* List of genes that appear in Human Protein Atlas database and having at least one of the cilia-related keywords",
+                      h4("* List of genes in the Human Protein Atlas database", tags$a(src="https://www.proteinatlas.org/"),
+                         " is compiled. The following keywords were used in compilation: ",
                          tags$b("Cilia, Cilium, Centrosome, Flagella, Flagellum.")),
                       h5("* Comment column shows the text where the keyword appears."),
                       reactableOutput("proAtlas")
