@@ -31,6 +31,18 @@ server <- function(input, output, session){
   #   dbDisconnect(db)
   #   scores
   # })
+  # observeEvent(input$helpbutton, {
+  #   showModal(
+  #     modalDialog(
+  #       includeHTML("intro.html"),
+  #       easyClose = TRUE,
+  #       footer = tagList(
+  #         actionButton(inputId = "tour2", label = "Introductory Tour", icon = icon("info-circle")),
+  #         actionButton(inputId = "close", label = "Close", icon = icon("close"))
+  #       )
+  #     )
+  #   )
+  # })
 
 
   customnumber<-reactiveVal(0)
@@ -63,6 +75,40 @@ server <- function(input, output, session){
     js$setcookie(sessionid)
     nn<-customnumber()+1
     customnumber(nn)
+  })
+
+  observeEvent(input$helpbutton, {
+    #removeModal()
+    if (input$nvbr == "Home"){
+      showModal(
+        modalDialog(
+          includeHTML("intro.html"),
+          easyClose = TRUE,
+          footer = tagList(
+            actionButton(inputId = "tour", label = "Introductory Tour", icon = icon("info-circle")),
+            actionButton(inputId = "close", label = "Close", icon = icon("close"))
+          )
+        )
+      )
+    }
+    else if(input$nvbr == "General info"){
+      guide2$init()$start()
+    }
+    else if(input$nvbr == "Interactions"){
+      guide3$init()$start()
+    }
+    else if(input$nvbr == "Phylogenetic analysis"){
+      guide4$init()$start()
+    }
+    else if(input$nvbr == "Single cell"){
+      guide5$init()$start()
+    }
+    else if(input$nvbr == "Publications"){
+      guide6$init()$start()
+    }
+    else if(input$nvbr == "Motifs"){
+      guide7$init()$start()
+    }
   })
 
   # Remove modal
@@ -1537,6 +1583,7 @@ server <- function(input, output, session){
               id = "button1",
               style = "position: absolute; left: 2em; bottom: 0.5em;",
               dropdown(
+                #inputId = "drpbttn",
                 radioGroupButtons(
                   inputId = "hmapradio",
                   label = "Genes to display:",
@@ -1652,6 +1699,7 @@ server <- function(input, output, session){
         #offset = 1,
         #align = "center",
         box(
+          id = "cluster_box",
           title = paste("Genes in cluster", inputclusternamenumber()),
           solidHeader = TRUE,
           status = "success",

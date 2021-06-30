@@ -127,14 +127,23 @@ ui <- shinydashboardPlus::dashboardPage(
         menuItem("Gene search", tabName = "hometab", icon = icon("home")),
         menuItem("Explore data", tabName = "exploretab", icon = icon("search")),
         menuItem("How to use CilioGenics", tabName = "howtab", icon = icon("question-circle")),
-        menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
+        #menuItem("Stats", tabName = "statstab", icon = icon("superscript")),
         menuItem("Data", tabName = "datatab", icon = icon("database"),
                  menuSubItem("Source","sourcetab",icon = icon("file")),
                  menuSubItem("Download", "downloadtab", icon = icon("download"))
         ),
-        menuItem("About", tabName = "abouttab", icon = icon("address-card"),
-                 menuSubItem("About us","abouttab2",icon = icon("id-card")),
-                 menuSubItem("Cite", tabName = "citetab", icon = icon("file-alt")))
+        menuItem("About", tabName = "abouttab", icon = icon("address-card")),
+        actionBttn(
+          inputId = "helpbutton",
+          label = "Help",
+          icon = icon("question-circle"),
+          style = "bordered",
+          color = "primary",
+          size = "sm"
+        )
+        #menuItem("Help", tabName = "helptab", icon = icon("question-circle"))
+                 # menuSubItem("About us","abouttab2",icon = icon("id-card")),
+                 # menuSubItem("Cite", tabName = "citetab", icon = icon("file-alt")))
       )
     )
     # div(
@@ -294,14 +303,18 @@ ui <- shinydashboardPlus::dashboardPage(
             id = "general_info",
             br(),
             box(
+              id = "general_info_box",
               title = "Gene info",
               solidHeader = TRUE,
               status = "success",
               width = 6,
               htmlOutput("textgeneid") %>% withSpinner(type = 8)
-            ),
-
+            )
+          ),
+          div(
+            id = "scoreinfo",
             box(
+              id = "score_box",
               title = "CilioGenics scores for each category",
               solidHeader = TRUE,
               status = "success",
@@ -376,6 +389,7 @@ ui <- shinydashboardPlus::dashboardPage(
             column(
               width = 6,
               box(
+                id = "protein_box1",
                 title = "Network plot for protein interactions",
                 width = 12,
                 solidHeader = TRUE,
@@ -383,10 +397,14 @@ ui <- shinydashboardPlus::dashboardPage(
                 uiOutput("pro_box1") %>% withSpinner(type = 8)
               )
               #uiOutput("pro_box1")
-            ),
+            )
+          ),
+          div(
+            id = "protein_interaction1_tbl",
             column(
               width = 6,
               box(
+                id = "protein_box2",
                 width = 12,
                 title = "Protein interactions",
                 solidHeader = TRUE,
@@ -502,6 +520,7 @@ ui <- shinydashboardPlus::dashboardPage(
               offset = 1,
               align = "center",
               box(
+                id = "publication_box",
                 width = 12,
                 title = "List of publications",
                 solidHeader = TRUE,
@@ -528,6 +547,7 @@ ui <- shinydashboardPlus::dashboardPage(
                 width = 10,
                 offset = 1,
                 box(
+                  id = "motif_box",
                   width = 12,
                   solidHeader = TRUE,
                   status = "success",
@@ -850,7 +870,7 @@ ui <- shinydashboardPlus::dashboardPage(
         "citetab"
         ),
       tabItem(
-        "abouttab2",
+        "abouttab",
         tags$iframe(src = 'about.html', # put testdoc.html to /www
                     width = '100%', height = '1200px',
                     frameborder = 0, scrolling = 'auto')
