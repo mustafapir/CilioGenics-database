@@ -567,7 +567,7 @@ ui <- shinydashboardPlus::dashboardPage(
                 title = "Explore the genes",
                 #### Gene table ----
                 tabPanel(
-                  br(), br(),
+                  br(),
                   title = "Gene table",
                   id = "tab1",
                   value = "tab1",
@@ -578,9 +578,9 @@ ui <- shinydashboardPlus::dashboardPage(
                     width = 12,
                     h4("This is an extensive list of all human genes included in the database.
                        The column headers provide the description of the data, giving a score for each gene.
-                       Users can type a gene name and sort columns."),
+                       Users can type a gene name and sort columns.", style = "margin-left: 50px;"),
                     h5("* Table shows weighted scores for all categories. Weights are calculated based on
-                       each section's capability to find ciliary genes."),
+                       each section's capability to find ciliary genes.", style = "margin-left:50px;"),
                     withSpinner(reactableOutput("generaltable2"), type = 8),
                     h5("Click the genes to easily switch to its gene search page.")
                   ),
@@ -824,7 +824,7 @@ ui <- shinydashboardPlus::dashboardPage(
                       title = "Protein Atlas",
                       solidHeader = TRUE,
                       status = "success",
-                      h4("* List of genes in the Human Protein Atlas database", tags$a(src="https://www.proteinatlas.org/"),
+                      h4("List of genes in the Human Protein Atlas database", tags$a(src="https://www.proteinatlas.org/"),
                          " is compiled. The following keywords were used in compilation: ",
                          tags$b("Cilia, Cilium, Centrosome, Flagella, Flagellum.")),
                       h5("* Comment column shows the text where the keyword appears."),
