@@ -94,6 +94,7 @@ header$children[[2]]$children <- tags$div(
 # Ui ----
 
 ui <- shinydashboardPlus::dashboardPage(
+  title = "Welcome to CilioGenics database",
   md = TRUE,
   skin = "blue-light",
   header,
