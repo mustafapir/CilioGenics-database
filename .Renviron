@@ -1,4 +1,4 @@
 host = "localhost"
-user = "user"
-password = "pswd"
+user = ""
+password = ""
 port = 3306
