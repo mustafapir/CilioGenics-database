@@ -1,3 +1,8 @@
+
+* {
+    color: #f86;
+}
+
 .skin-blue-light .sidebar-menu>li:hover>a, .skin-blue-light .sidebar-menu>li.active>a {
     color: #FFF;
     background: #426f75;
@@ -18,7 +23,7 @@
 }
 
 .content-wrapper, .right-side {
-    background-color: #c1b9b9;
+    background-color: #353c39;
 }
 
 .box {
@@ -31,6 +36,92 @@
     box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
 }
 
+.box-body {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    padding: 10px;
+    background: #444;
+}
+
+.rt-filter {
+    padding: 5px 7px;
+    width: 100%;
+    color: inherit;
+    background-color: #666;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 400;
+    outline-width: 0;
+    outline-style: solid;
+}
+
+.rt-search {
+    display: block;
+    -ms-flex-item-align: end;
+    align-self: flex-end;
+    margin-bottom: 8px;
+    padding: 5px 7px;
+    color: inherit;
+    background-color: #666;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 3px;
+    outline-width: 0;
+    outline-style: solid;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.rt-search-placeholder {
+    color: #f86;
+}
+
+#genetable td, th {
+    color: #d2d2d2;
+}
+
+#scgene {
+    background-color: #666;
+}
+
+div#driver-popover-item {
+    background: #999;
+}
+
+text.highcharts-title {
+    color: #d2d2d2;
+    fill: #d2d2d2;
+}
+
+.highcharts-axis-label.highcharts-xaxis-label {
+    color: #d2d2d2;
+    fill: #d2d2d2;
+}
+
+.bootstrap-select .dropdown-menu.inner {
+    background: #666666;
+}
+
+.bootstrap-select .dropdown-menu {
+    background: #666666;
+}
+
+.bootstrap-select>.dropdown-toggle.bs-placeholder, .bootstrap-select>.dropdown-toggle.bs-placeholder:active, .bootstrap-select>.dropdown-toggle.bs-placeholder:focus, .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+    background: #666;
+}
+
+.btn:not(.btn-raised), .btn:not(.btn-raised).btn-default, .input-group-btn .btn:not(.btn-raised), .input-group-btn .btn:not(.btn-raised).btn-default {
+    color: #d2d2d2;
+    background: #666666;
+}
+
+.tippy-tooltip.blue-theme {
+    background: darkslategrey;
+}
+
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     font-family: inherit;
     font-weight: 500;
@@ -39,12 +130,12 @@
 }
 
 .skin-blue-light a, .skin-blue-light a:hover, .skin-blue-light a:focus {
-    color: #444;
+    color: #d2d6de;
 }
 
 b, strong {
     font-weight: 700;
-    color: black;
+    color: #d2d6de;
 }
 
 td, th {
@@ -58,4 +149,9 @@ td, th {
 .navbar, .navbar.navbar-default {
     background-color: #666;
     border-radius: 10px;
+}
+
+.ReactTable {
+    height: 100%;
+    background-color: #353c39;
 }

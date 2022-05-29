@@ -13,6 +13,36 @@ source("functions.R")
 
 #rmdfiles <- rmarkdown::render("about.Rmd")
 #sapply(rmdfiles, knitr::knit, quiet = T)
+mouse_orthology<-data.table::fread("./data/HGNC_AllianceHomology.rpt")
+colnames(mouse_orthology)[1:16]<-colnames(mouse_orthology)[2:17]
+mouse_orthology<-mouse_orthology[,-17]
+colnames(mouse_orthology)[2]<-"Gene_name"
+
+mouse_synonyms<-data.table::fread("./data/MRK_List2.rpt")
+colnames(mouse_synonyms)[c(7,12)]<-c("Gene_name","Gene_synonyms")
+mouse_synonyms<-tidyr::separate_rows(mouse_synonyms, Gene_synonyms, sep = "\\|") %>% select(7,12) %>% unique()
+mouse_synonyms<-mouse_synonyms[mouse_synonyms$Gene_synonyms != "",]
+mouse_orthology<-left_join(mouse_orthology, mouse_synonyms, by = "Gene_name")
+
+
+# rbt<-data.frame(Gene_name = rownames(pandora_rabbit))
+# rbt$Gene_name<-str_split(rbt$Gene_name, "\\.", simplify = TRUE)[,1]
+# 
+# rbt$Gene_name2<-mouse_orthology$`HGNC ID`[match(rbt$Gene_name, mouse_orthology$Gene_name)]
+# rbt$Gene_name3<-mouse_orthology$`HGNC ID`[match(rbt$Gene_name, mouse_orthology$Gene_synonyms)]
+# rbt$Gene_name2<-with(rbt, ifelse(is.na(Gene_name2), Gene_name3, Gene_name2))
+# rbt$Gene_name2<-with(rbt, ifelse(is.na(Gene_name2), Gene_name, Gene_name2))
+
+
+hgnc_names<-fread("./data/hgnc_names.txt") %>% filter(Status == "Approved") %>% dplyr::select(1,3)
+mouse_orthology2<-tidyr::separate_rows(mouse_orthology, `HGNC ID`, sep = "\\|")
+mouse_orthology2<-mouse_orthology2[,c(1,2,5,10,16,17)]
+mouse_orthology2<-left_join(mouse_orthology2, hgnc_names, by = "HGNC ID")
+
+
+# pandora_rabbit_full<-readRDS("./data/sc_data/12_Rabbit_Lung.rds")
+# data_to_write_out <- as.data.frame(as.matrix(pandora_rabbit_full@assays$RNA@data))
+# fwrite(x = data_to_write_out, row.names = TRUE, file = "rabbit.csv")
 
 lung<-readRDS("./data/lung_reduced.RDS")
 #lung<-readRDS(url("https://drive.google.com/uc?export=download&id=1Q9WKkQml3woMnvvHPj_whj9O37a5cMjF","rb"))
@@ -30,12 +60,36 @@ habermann<-readRDS("./data/banovich_reduced.RDS")
 habermann_markers<-fread("./data/banovich_markers.txt") %>%
   relocate(gene, .before = p_val)
 
+pandora_tiger<-readRDS("./data/sc_data/tiger_reduced.rds")
+pandora_pangolin<-readRDS("./data/sc_data/pangolin_reduced.rds")
+pandora_deer<-readRDS("./data/sc_data/deer_reduced.rds")
+pandora_goat<-readRDS("./data/sc_data/goat_reduced.rds")
+pandora_rabbit<-readRDS("./data/sc_data/rabbit_reduced.rds")
+pandora_cat<-readRDS("./data/sc_data/cat_reduced.rds")
+pandora_dog<-readRDS("./data/sc_data/dog_reduced.rds")
+pandora_hamster<-readRDS("./data/sc_data/hamster_reduced.rds")
+pandora_lizard<-readRDS("./data/sc_data/lizard_reduced.rds")
+pandora_duck<-readRDS("./data/sc_data/duck_reduced.rds")
+pandora_pigeon<-readRDS("./data/sc_data/pigeon_reduced.rds")
+pandora_bat<-readRDS("./data/sc_data/bat_reduced.rds")
+
+
 cele<-readRDS("./data/cele_seurat.RDS")
+
+pandora.list<-data.frame(paper = c("Tiger Lung","Pangolin Lung","Deer Lung","Goat Lung","Rabbit Lung","Cat Lung",
+                                   "Dog Lung","Hamster Lung","Lizard Lung","Duck Lung","Pigeon Lung","Bat Lung"),
+                         data = c("pandora_tiger","pandora_pangolin","pandora_deer","pandora_goat","pandora_rabbit",
+                                  "pandora_cat","pandora_dog","pandora_hamster","pandora_lizard","pandora_duck",
+                                  "pandora_pigeon","pandora_bat"))
+
 sc.paper.list<-data.frame(paper = c("Carraro et al(2021) - Lung (human)",
                                     "Reyfman et al(2018) - Lung (human)",
                                     "Habermann et al(2020) - Lung (human)",
+                                    "Chen et al(2021) - Lung(mammals, reptiles, birds)",
                                     "Cao et al(2017) - C. elegans"),
-                          data = c("lung","reyfman","habermann","cele"))
+                          data = c("lung","reyfman","habermann","pandora.list","cele"))
+
+
 lung_names<-rownames(lung)
 reyfman_names<-rownames(reyfman)
 habermann_names<-rownames(habermann)
@@ -65,6 +119,10 @@ homsap<-tbl(db, "gene_info_edited") %>%
   collect()
 orthology<-tbl(db, "orthology") %>%
   collect()
+orthology<-hgncConverter(orthology, "Gene2Symbol")
+colnames(orthology)[1]<-"Gene_name"
+orthology<-semi_join(orthology, homsap, by = "Gene_name")
+colnames(orthology)[1]<-"Gene2Symbol"
 dbDisconnect(db)
 
 ciliogenics<-final_score_table %>%
